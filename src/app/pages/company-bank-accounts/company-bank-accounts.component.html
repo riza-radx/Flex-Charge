@@ -1,0 +1,163 @@
+<div class="header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h3 class="h2 text-white d-inline-block mb-0">Llogarite Bankare</h3>
+          <p class="text-white mb-0" style="opacity:0.85;font-size:13px;">Menaxho llogarite bankare te kompanise tende</p>
+        </div>
+        <div class="col-lg-6 col-5 text-right" *ngIf="canEdit">
+          <button class="btn btn-light" (click)="openAddModal()">
+            + Shto Llogari te Re
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+          <div *ngIf="!canManage" class="alert alert-warning">
+            Ju nuk keni akses te menaxhoni llogarite bankare. Vetem COMPANY_ADMIN dhe COMPANY_ANALYST mund ta perdorin kete page.
+          </div>
+
+          <div *ngIf="canManage && loading && accounts.length === 0" class="text-center py-4">
+            <em>Po ngarkohet...</em>
+          </div>
+
+          <div *ngIf="canManage && !loading && accounts.length === 0" class="text-center py-4 text-muted">
+            <p>Asnje llogari bankare e regjistruar.</p>
+            <p>Klikoni <strong>"+ Shto Llogari te Re"</strong> me siper per te filluar.</p>
+          </div>
+
+          <div *ngIf="canManage && accounts.length > 0" class="table-responsive">
+            <table class="table table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>#</th>
+                  <th>Banka</th>
+                  <th>IBAN</th>
+                  <th>SWIFT</th>
+                  <th>Currency</th>
+                  <th>Mbajtesi</th>
+                  <th class="text-center">Primary</th>
+                  <th class="text-center">Renditja</th>
+                  <th *ngIf="canEdit" class="text-right">Veprime</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let acc of accounts; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td><strong>{{ acc.bank_name }}</strong></td>
+                  <td style="font-family:monospace;">{{ acc.iban }}</td>
+                  <td>{{ acc.swift || '—' }}</td>
+                  <td>{{ acc.currency }}</td>
+                  <td>{{ acc.account_holder || '—' }}</td>
+                  <td class="text-center">
+                    <span *ngIf="acc.is_primary" class="badge badge-success">⭐ Primary</span>
+                    <span *ngIf="!acc.is_primary" class="text-muted">—</span>
+                  </td>
+                  <td class="text-center">{{ acc.display_order }}</td>
+                  <td *ngIf="canEdit" class="text-right">
+                    <button class="btn btn-sm btn-outline-primary mr-1" (click)="openEditModal(acc)">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(acc.id)">Fshi</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───── Modal: Add/Edit Form ───── -->
+<div *ngIf="showModal" class="modal-backdrop" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1040;"></div>
+<div *ngIf="showModal" class="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:1050;">
+  <div class="modal-content" style="background:#fff;border-radius:8px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-header" style="padding:16px 24px;border-bottom:1px solid #e9ecef;display:flex;justify-content:space-between;align-items:center;">
+      <h4 class="mb-0">{{ editingId === null ? 'Shto Llogari te Re' : 'Edito Llogari' }}</h4>
+      <button class="close" (click)="closeModal()" style="background:none;border:none;font-size:24px;">×</button>
+    </div>
+
+    <div class="modal-body" style="padding:24px;">
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+      <div class="form-group">
+        <label>Banka <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="form.bank_name" placeholder="p.sh. Raiffeisen Bank Albania" />
+      </div>
+
+      <div class="form-group">
+        <label>IBAN <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" style="font-family:monospace;" [(ngModel)]="form.iban" placeholder="AL47 2121 1009 0000 0002 3569 8741" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>SWIFT / BIC</label>
+          <input type="text" class="form-control" [(ngModel)]="form.swift" placeholder="SGSBALTX" />
+        </div>
+        <div class="form-group col-md-6">
+          <label>Currency</label>
+          <select class="form-control" [(ngModel)]="form.currency">
+            <option *ngFor="let c of currencies" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Mbajtesi i Llogarise (opsional)</label>
+        <input type="text" class="form-control" [(ngModel)]="form.account_holder" placeholder="Nese ndryshon nga emri i kompanise" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Renditja ne PDF</label>
+          <input type="number" class="form-control" [(ngModel)]="form.display_order" min="0" />
+          <small class="text-muted">Me i vogli del i pari ne PDF</small>
+        </div>
+        <div class="form-group col-md-6 d-flex flex-column justify-content-end">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="isPrimary" [(ngModel)]="form.is_primary" />
+            <label class="custom-control-label" for="isPrimary">Primary (kryesore)</label>
+          </div>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="isActive" [(ngModel)]="form.active" />
+            <label class="custom-control-label" for="isActive">Aktiv (shfaqet ne PDF)</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" style="padding:16px 24px;border-top:1px solid #e9ecef;display:flex;justify-content:flex-end;">
+      <button class="btn btn-secondary mr-2" (click)="closeModal()">Anullo</button>
+      <button class="btn btn-primary" (click)="saveForm()" [disabled]="loading">
+        {{ loading ? 'Po ruhet...' : (editingId === null ? 'Krijo' : 'Ruaj') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ───── Confirm Delete Dialog ───── -->
+<div *ngIf="confirmDeleteId !== null" class="modal-backdrop" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1060;"></div>
+<div *ngIf="confirmDeleteId !== null" class="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:1070;">
+  <div style="background:#fff;border-radius:8px;width:100%;max-width:400px;padding:24px;text-align:center;">
+    <h4>Konfirmoni fshirjen</h4>
+    <p>Llogaria do markohet si inactive dhe nuk do shfaqet me ne PDF. Audit history mbahet.</p>
+    <div class="mt-4">
+      <button class="btn btn-secondary mr-2" (click)="cancelDelete()">Anullo</button>
+      <button class="btn btn-danger" (click)="doDelete()" [disabled]="loading">Po, fshi</button>
+    </div>
+  </div>
+</div>

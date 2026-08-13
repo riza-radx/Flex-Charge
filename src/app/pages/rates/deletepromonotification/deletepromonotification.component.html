@@ -1,0 +1,10 @@
+<div class="popup-container" *ngIf="isPopupVisible">
+  <div class="popup-content" style="padding:2%; width: 350px; margin: 0 auto; border-radius: 8px;">
+    <img class="close-btn" src="assets/img/icons/closeX.png" alt="Close" (click)="closePopupHandler()">
+    <h3>Are you sure you want to delete the Notification "{{notificationTitle}}"?</h3>
+    <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+      <button class="btn btn-primary btn-sm" (click)="confirmDelete()">Yes, I'm sure!</button>
+      <button class="btn btn-secondary btn-sm" (click)="closePopupHandler()">No, keep it!</button>
+    </div>
+  </div>
+</div>

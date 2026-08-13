@@ -1,0 +1,366 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div *ngIf="isAble" class="card-header">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Report</h3>
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-icon-clipboard btn-outline-primary" tooltip="Add New Report">
+                  <a [routerLink]="['/reports/companycreatefinancial']">
+                    <i class="fas fa-file-invoice"></i>
+                  </a>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dataTables_wrapper py-4">
+          <div class="row">
+            <div class="col-auto">
+              <div class="dataTables_length" id="datatable_length">
+                <label>
+                  <span *ngIf="!isSmallScreen">Show</span>
+                  <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                    (change)="entriesChange($event)">
+                    <option value="10" [selected]="entries == 10">10</option>
+                    <option value="25" [selected]="entries == 25">25</option>
+                    <option value="50" [selected]="entries == 50">50</option>
+                    <option value="-1" [selected]="entries == -1">All</option>
+                  </select>
+                  <span *ngIf="!isSmallScreen">entries</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="col ml--2   custom-flex-end-center">
+              <!-- Search Input -->
+              <div id="datatable_filter" class="dataTables_filter">
+                <label>
+                  <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                    placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+
+                  <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                </label>
+              </div>
+              <div id="datatable_filter" class="dataTables_filter mr-2"
+                *ngIf="isRadXRole || isCompanyRole || isPartnerRole || isUserGroupRole">
+                <!-- Filter Dropdown Button -->
+                <div class="btn-group" dropdown>
+                  <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle"
+                    aria-controls="dropdown-basic">
+                    <span *ngIf="!isSmallScreen">Filters</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                    aria-labelledby="button-basic">
+                    <!-- Dropdown for Company -->
+                    <li role="menuitem" *ngIf="isRadXRole">
+                      <label for="companySelect" class="dropdown-item">Company</label>
+                      <select id="companySelect" [(ngModel)]="selectedCompany" class="form-control"
+                        (change)="getVReports()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Companies</option>
+                        <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                          }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Partner -->
+                    <li role="menuitem" *ngIf="isRadXRole || isCompanyRole r">
+                      <label for="partnerSelect" class="dropdown-item">Partner</label>
+
+
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="partnerSelect" [(ngModel)]="selectedPartner" class="form-control"
+                        (change)="getVReports()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Partners</option>
+                        <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name }}
+                        </option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="partnerSelect" [(ngModel)]="selectedPartner"
+                        class="form-control" (change)="getVReportsByCompany()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Partners</option>
+                        <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name }}
+                        </option>
+                      </select>
+                    </li>
+
+
+
+
+                    <!-- Dropdown for User Groups -->
+                    <li role="menuitem" *ngIf="isRadXRole || isCompanyRole">
+                      <label for="userGroupSelect" class="dropdown-item">User Group</label>
+                      <select *ngIf="isRadXRole" id="userGroupSelect" [(ngModel)]="selectedUserGroup"
+                        class="form-control" (change)="getVReports()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All User Groups</option>
+                        <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                          userGroup.usergr_name }}</option>
+                      </select>
+
+                      <select *ngIf="isCompanyRole" id="userGroupSelect" [(ngModel)]="selectedUserGroup"
+                        class="form-control" (change)="getVReportsByCompany()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All User Groups</option>
+                        <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                          userGroup.usergr_name }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Users -->
+                    <li role="menuitem" *ngIf="isRadXRole">
+                      <label for="userSelect" class="dropdown-item">User</label>
+                      <select id="userSelect" [(ngModel)]="selectedUser" class="form-control" (change)="getVReports()"
+                        (click)="$event.stopPropagation()">
+                        <option value="" selected>All Users</option>
+                        <option *ngFor="let user of users" [value]="user.id">{{ user.username }}</option>
+                      </select>
+                    </li>
+                    <!-- Dropdown for Users -->
+                    <li role="menuitem" *ngIf="isCompanyRole || isUserGroupRole || isPartnerRole">
+                      <label for="userSelect" class="dropdown-item">User</label>
+                      <select *ngIf="isCompanyRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                        (change)="getVReportsByCompany()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Users</option>
+                        <option *ngFor="let user of users" [value]="user.id">{{ user.username }}</option>
+                      </select>
+                      <select *ngIf="isPartnerRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                        (change)="getVReportsByPartner()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Users</option>
+                        <option *ngFor="let user of users" [value]="user.User.id">{{ user.User.username }}</option>
+                      </select>
+                      <select *ngIf="isUserGroupRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                        (change)="getVReportsByUserGroup()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Users</option>
+                        <option *ngFor="let user of users" [value]="user.User.id">{{ user.User.username }}</option>
+                      </select>
+                    </li>
+                    <li *ngIf="isRadXRole" role="menuitem">
+                      <label for="reportTypeSelect" class="dropdown-item">Report Type</label>
+                      <select id="reportTypeSelect" [(ngModel)]="selectedReportType" class="form-control"
+                        (change)="getVReports()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Report Types</option>
+                        <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+                      </select>
+                    </li>
+                    <li *ngIf="isCompanyRole" role="menuitem">
+                      <label for="reportTypeSelect" class="dropdown-item">Report Type</label>
+                      <select id="reportTypeSelect" [(ngModel)]="selectedReportType" class="form-control"
+                        (change)="getVReportsByCompany()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Report Types</option>
+                        <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+                      </select>
+                    </li>
+                    <li *ngIf="isPartnerRole" role="menuitem">
+                      <label for="reportTypeSelect" class="dropdown-item">Report Type</label>
+                      <select id="reportTypeSelect" [(ngModel)]="selectedReportType" class="form-control"
+                        (change)="getVReportsByPartner()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Report Types</option>
+                        <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+                      </select>
+                    </li>
+                    <li *ngIf="isUserGroupAdmin" role="menuitem">
+                      <label for="reportTypeSelect" class="dropdown-item">Report Type</label>
+                      <select id="reportTypeSelect" [(ngModel)]="selectedReportType" class="form-control"
+                        (change)="getVReportsByUserGroup()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Report Types</option>
+                        <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+                      </select>
+                    </li>
+                    <li *ngIf="isUser" role="menuitem">
+                      <label for="reportTypeSelect" class="dropdown-item">Report Type</label>
+                      <select id="reportTypeSelect" [(ngModel)]="selectedReportType" class="form-control"
+                        (change)="getVReportsByUser()" (click)="$event.stopPropagation()">
+                        <option value="" selected>All Report Types</option>
+                        <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+                      </select>
+                    </li>
+                    <!-- Date Range Filter -->
+                    <li  *ngIf="isCompanyRole" role="menuitem">
+                      <label class="dropdown-item">From Date</label>
+                      <input [(ngModel)]="startDate" (ngModelChange)="getVReportsByCompany()" type="date"
+                        class="form-control mb-2" (click)="$event.stopPropagation()" />
+
+                      <label class="dropdown-item mt-2">To Date</label>
+                      <input [(ngModel)]="endDate" (ngModelChange)="getVReportsByCompany()" type="date" class="form-control"
+                        (click)="$event.stopPropagation()" />
+
+                    </li>
+                    <li  *ngIf="isPartnerRole" role="menuitem">
+                      <label class="dropdown-item">From Date</label>
+                      <input [(ngModel)]="startDate" (ngModelChange)="getVReportsByPartner()" type="date"
+                        class="form-control mb-2" (click)="$event.stopPropagation()" />
+
+                      <label class="dropdown-item mt-2">To Date</label>
+                      <input [(ngModel)]="endDate" (ngModelChange)="getVReportsByPartner()" type="date" class="form-control"
+                        (click)="$event.stopPropagation()" />
+
+                    </li>
+
+                    <li  *ngIf="isUserGroupAdmin" role="menuitem">
+                      <label class="dropdown-item">From Date</label>
+                      <input [(ngModel)]="startDate" (ngModelChange)="getVReportsByUserGroup()" type="date"
+                        class="form-control mb-2" (click)="$event.stopPropagation()" />
+
+                      <label class="dropdown-item mt-2">To Date</label>
+                      <input [(ngModel)]="endDate" (ngModelChange)="getVReportsByUserGroup()" type="date" class="form-control"
+                        (click)="$event.stopPropagation()" />
+
+                    </li>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'" [headerHeight]="50"
+          [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined" [rows]="tempReports"
+          [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+          (select)="onSelect($event)">
+          <ngx-datatable-column name="From Date" prop="from_date"></ngx-datatable-column>
+          <ngx-datatable-column *ngIf="!isSmallScreen" name="To Date" prop="to_date"></ngx-datatable-column>
+          <ngx-datatable-column name="Report Type" prop="report_type"></ngx-datatable-column>
+          <ngx-datatable-column name="Company" prop="Company.company_name"></ngx-datatable-column>
+          <ngx-datatable-column *ngIf="!isPartnerRole && !isUserRole" name="User Group" prop="UserGroup.usergr_name"></ngx-datatable-column>
+          <ngx-datatable-column name="User" prop="User.username"></ngx-datatable-column>
+          <ngx-datatable-column *ngIf="!isPartnerRole && !isUserRole" name="Card" prop="Card.serial_no"></ngx-datatable-column>
+          <ngx-datatable-column *ngIf="!isUserGroupRole && !isUserRole" name="Partner" prop="Partner.partner_name"></ngx-datatable-column>
+          <ngx-datatable-column name="Generated By" prop="madeBy"></ngx-datatable-column>
+        </ngx-datatable> -->
+        <div class="scrollable-table">
+          <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'" [headerHeight]="50"
+            [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined" [rows]="tempReports"
+            [selected]="selected" [selectionType]="'multiClick'" [scrollbarH]="false" (activate)="onActivate($event)"
+            (select)="onSelect($event)">
+
+            <ngx-datatable-column name="Report ID" prop="reports_id" [width]="90"></ngx-datatable-column>
+            <ngx-datatable-column name="From Date" prop="from_date"></ngx-datatable-column>
+            <ngx-datatable-column name="To Date" prop="to_date"></ngx-datatable-column>
+            <ngx-datatable-column name="Report Type" prop="report_type"></ngx-datatable-column>
+            <ngx-datatable-column name="Company" prop="Company.company_name"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isPartnerRole && !isUserRole" name="User Group"
+              prop="UserGroup.usergr_name"></ngx-datatable-column>
+            <ngx-datatable-column name="User" prop="User.username"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isPartnerRole && !isUserRole" name="Card"
+              prop="Card.serial_no"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isUserGroupRole && !isUserRole" name="Partner"
+              prop="Partner.partner_name"></ngx-datatable-column>
+            <ngx-datatable-column name="Generated By" prop="madeBy"></ngx-datatable-column>
+
+            <!-- 🆕 Send Report Actions — kolone e vetme me buton + badge horizontalisht paralel.
+                 Butonat Send Report / Send it again shfaqen VETEM per COMPANY_ADMIN / COMPANY_ANALYST. -->
+            <ngx-datatable-column name="Actions" [width]="280" [sortable]="false">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <div class="d-flex flex-row align-items-center" style="gap: 8px;">
+                  <button *ngIf="canSendReport && !row?.sent_at" type="button" class="btn btn-sm btn-primary mb-0"
+                    (click)="onClickSendReport($event, row)">
+                    <i class="fas fa-paper-plane"></i> Send Report
+                  </button>
+                  <button *ngIf="canSendReport && row?.sent_at" type="button" class="btn btn-sm btn-success mb-0"
+                    (click)="onClickSendReport($event, row)">
+                    <i class="fas fa-paper-plane"></i> Send it again
+                  </button>
+
+                  <!-- 🆕 Flag "Email Sent" — badge paralel me butonin (jo poshte).
+                       Tooltip audit me font me te madh (klasa report-tooltip-lg qe kemi definuar tek styles). -->
+                  <span *ngIf="row?.sent_at && canSeeSendInfo"
+                    class="badge badge-success"
+                    style="font-weight: 500; font-size: 12px; padding: 6px 10px; cursor: help;"
+                    [tooltip]="'Email was sent to ' + (row?.sent_to_emails || 'unknown')
+                               + ' by ' + (row?.sent_by || 'unknown')
+                               + ' ' + (row?.send_count || 1) + ' time'
+                               + ((row?.send_count || 1) === 1 ? '' : 's')
+                               + ' (last: ' + row?.sent_at + ')'"
+                    placement="left" container="body" containerClass="report-tooltip-lg">
+                    <i class="fas fa-check-circle"></i> Email sent
+                  </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+          </ngx-datatable>
+        </div>
+
+        <!-- 🆕 Toast per success/error mesazhet e dergimit -->
+        <div *ngIf="sendReportMessage" class="alert mt-3 mb-0 mx-4" [ngClass]="sendReportMessageClass" role="alert">
+          <strong *ngIf="sendReportMessageClass === 'alert-success'"><i class="fas fa-check-circle"></i> </strong>
+          <strong *ngIf="sendReportMessageClass === 'alert-danger'"><i class="fas fa-exclamation-triangle"></i> </strong>
+          {{ sendReportMessage }}
+        </div>
+
+        <!-- 🆕 Confirm modal per Send Report -->
+        <div *ngIf="showSendConfirm" class="modal fade show d-block" tabindex="-1" role="dialog"
+             style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  <i class="fas fa-paper-plane text-primary"></i>
+                  {{ reportToSend?.sent_at ? 'Send Report Again?' : 'Send Report?' }}
+                </h5>
+                <button type="button" class="close" (click)="cancelSendReport()" [disabled]="isSendingReport">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Do te dergohet nje email me raportin bashkangjitur si Excel tek:</p>
+                <div class="alert alert-info py-2 mb-2">
+                  <div><strong>{{ getRecipientLabel(reportToSend) }}</strong></div>
+                  <!-- 🆕 Email-i konkret i marresit — merret nga backend include (Partner.email etj.) -->
+                  <div *ngIf="getRecipientEmail(reportToSend)" class="mt-1" style="font-size: 13px;">
+                    <i class="fas fa-envelope"></i>
+                    <strong>Email:</strong> {{ getRecipientEmail(reportToSend) }}
+                  </div>
+                  <div *ngIf="!getRecipientEmail(reportToSend)" class="mt-1 text-warning" style="font-size: 12px;">
+                    <i class="fas fa-info-circle"></i> Email-i do rezolvohet ne backend gjate dergimit
+                    (Card owner: User + Group + Partner, ose vlere qe s'u kthye ne kete list).
+                  </div>
+                </div>
+                <ul class="mb-0" style="font-size: 13px;">
+                  <li><strong>Report Type:</strong> {{ reportToSend?.report_type }}</li>
+                  <li><strong>Period:</strong> {{ reportToSend?.from_date }} → {{ reportToSend?.to_date }}</li>
+                  <li *ngIf="reportToSend?.sent_at" class="text-warning">
+                    <strong>Note:</strong> Kete raport e ke derguar {{ reportToSend?.send_count || 1 }} here me pare
+                    (i fundit: {{ reportToSend?.sent_at }} nga {{ reportToSend?.sent_by || 'unknown' }}).
+                  </li>
+                </ul>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="cancelSendReport()"
+                        [disabled]="isSendingReport">
+                  Anullo
+                </button>
+                <button type="button" class="btn btn-primary" (click)="confirmSendReport()"
+                        [disabled]="isSendingReport">
+                  <span *ngIf="!isSendingReport"><i class="fas fa-paper-plane"></i> Dergo Tani</span>
+                  <span *ngIf="isSendingReport"><i class="fas fa-spinner fa-spin"></i> Duke dërguar...</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- </div> -->

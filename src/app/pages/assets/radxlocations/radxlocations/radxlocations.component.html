@@ -1,0 +1,177 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+        <div class=" col-lg-6 col-5 text-right">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="card-header">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Locations</h3>
+                <!-- todo : Adding the function for counting the new entries-->
+                <!-- <p *ngIf="isRadXRole"  class="text-sm mb-0">✓ {{ currentMonthCountEntry }} New Locations this month</p> -->
+              </div>
+
+              <div class="btn-group">
+                <button *ngIf="isRadXRole || isCompanyRole" type="button"
+                  class="btn btn-icon-clipboard btn-outline-primary" tooltip="Add New Location">
+                  <a [routerLink]="['/assets/locations/create/partner']">
+                    <i class="fas fa-map-pin"></i>
+                  </a>
+                </button>
+                <button (click)="exportToPDF()" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                  tooltip="Export to PDF">
+                  <i class="fas fa-file-pdf"></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                  tooltip="Export to Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="dataTables_wrapper py-4">
+            <div class="row">
+              <div class="col-auto">
+                <div class="dataTables_length" id="datatable_length">
+                  <label>
+                    <span *ngIf="!isSmallScreen">Show</span>
+                    <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                      (change)="entriesChange($event)">
+                      <option value="10" [selected]="entries == 10">10</option>
+                      <option value="25" [selected]="entries == 25">25</option>
+                      <option value="50" [selected]="entries == 50">50</option>
+                      <option value="-1" [selected]="entries == -1">All</option>
+                    </select>
+                    <span *ngIf="!isSmallScreen">entries</span>
+                  </label>
+                </div>
+              </div>
+              <div class="col ml--2  custom-flex-end-center">
+                <!-- Search Input -->
+                <div id="datatable_filter" class="dataTables_filter">
+                  <label>
+                    <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                      placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+                    <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                  </label>
+                </div>
+                <div id="datatable_filter" class="dataTables_filter">
+                  <!-- Filter Dropdown Button -->
+                  <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button"
+                      class="btn btn-outline-primary dropdown-toggle" aria-controls="dropdown-basic">
+                      <span *ngIf="!isSmallScreen">Filters</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                      aria-labelledby="button-basic">
+
+                      <!-- Dropdown for Company -->
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="companySelect" class="dropdown-item">Company</label>
+                        <select id="companySelect" [(ngModel)]="selectedCompany" class="form-control"
+                          (change)="getLocations()" (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                            }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Client-side Company filter (own + roaming partners) -->
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="companyFilterSelect" class="dropdown-item">Company</label>
+                        <select id="companyFilterSelect" [(ngModel)]="selectedCompanyFilter" class="form-control"
+                          (change)="applyCompanyFilter()" (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let opt of companyOptions" [value]="opt.id">{{ opt.name }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Dropdown for Partner -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole">
+                        <label for="partnerSelect" class="dropdown-item">Partner</label>
+
+                        <!-- Dropdown for RadX Roles -->
+                        <select *ngIf="isRadXRole" id="partnerSelect" [(ngModel)]="selectedPartner" class="form-control"
+                          (change)="getLocations()" (click)="$event.stopPropagation()">
+                          <option value="" selected>All Partners</option>
+                          <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name
+                            }}</option>
+                        </select>
+
+                        <!-- Dropdown for Company Roles -->
+                        <select *ngIf="isCompanyRole" id="partnerSelect" [(ngModel)]="selectedPartner"
+                          class="form-control" (change)="getLocationsByCompany()" (click)="$event.stopPropagation()">
+                          <option value="" selected>All Partners</option>
+                          <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name
+                            }}</option>
+                        </select>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+              [rows]="temp" [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+              (select)="onSelect($event)">
+              <ngx-datatable-column name="Location Name" prop="location_name"></ngx-datatable-column>
+              <ngx-datatable-column name="Address" prop="addres"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="City" prop="city"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Country" prop="country"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Latitude" prop="latitude"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Longitude" prop="longitude"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen && !isPartnerRole && !isUserGroupRole" name="Created By" prop="madeBy"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen && !isPartnerRole && !isUserGroupRole" name="Modified By" prop="modifiedBy"></ngx-datatable-column>
+            </ngx-datatable> -->
+            <div class="scrollable-table">
+              <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [limit]="entries != -1 ? entries : undefined" [rows]="temp" [selected]="selected"
+                [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+
+                <ngx-datatable-column name="Location Name" prop="location_name"></ngx-datatable-column>
+                <ngx-datatable-column name="Address" prop="addres"></ngx-datatable-column>
+                <ngx-datatable-column  name="City" prop="city"></ngx-datatable-column>
+                <ngx-datatable-column  name="Country" prop="country"></ngx-datatable-column>
+                <ngx-datatable-column  name="Latitude" prop="latitude"></ngx-datatable-column>
+                <ngx-datatable-column  name="Longitude" prop="longitude"></ngx-datatable-column>
+                <ngx-datatable-column name="Company" prop="Company.company_name">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row?.Company?.company_name || '-' }}
+                    <span *ngIf="row?.is_roaming"
+                          style="display:inline-block;background:#FFA500;color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;">ROAMING</span>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column *ngIf="!isPartnerRole && !isUserGroupRole" name="Created By"
+                  prop="madeBy"></ngx-datatable-column>
+                <ngx-datatable-column *ngIf="!isPartnerRole && !isUserGroupRole" name="Modified By"
+                  prop="modifiedBy"></ngx-datatable-column>
+
+                <!-- 🆕 Vendor Number OSHEE — VETEM COMPANY_ADMIN + COMPANY_ANALYST. -->
+                <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Vendor Number OSHEE"
+                  prop="vendor_number_oshee"></ngx-datatable-column>
+
+              </ngx-datatable>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

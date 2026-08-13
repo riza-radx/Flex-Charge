@@ -1,0 +1,361 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Create Location</h3>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()" #locationForm="ngForm">
+            <!-- Location Name -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="locationName">Location Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="locationName" [(ngModel)]="location.locationName" name="locationName"
+                  required #locationName="ngModel" />
+                <small *ngIf="locationName.invalid && locationName.touched" class="text-danger">
+                  Location Name is required.
+                </small>
+              </div>
+            </div>
+            <!-- Company -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                  [readonly]="true" />
+              </div>
+            </div>
+
+            <!-- Partner -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="partnerId">Select or Create Partner</label>
+              <div class="col-md-10">
+                <select class="form-control" id="partnerId" [(ngModel)]="location.partnerId" name="partnerId"
+                  (change)="onPartnerSelectChange($event)" #partnerId="ngModel">
+                  <option [ngValue]="null">Select a Partner</option>
+                  <option *ngFor="let partner of partners" [value]="partner.partner_id">
+                    {{ partner.partner_name }}
+                  </option>
+                  <option value="create">Create New Partner</option>
+                </select>
+              </div>
+            </div>
+            <!-- Address -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="address">Address</label>
+              <div class="col-md-10">
+                <input class="form-control" id="address" [(ngModel)]="location.address" name="address" required
+                  #address="ngModel" />
+                <small *ngIf="address.invalid && address.touched" class="text-danger">
+                  Address is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- City -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="city">City</label>
+              <div class="col-md-10">
+                <input class="form-control" id="city" [(ngModel)]="location.city" name="city" required
+                  #city="ngModel" />
+                <small *ngIf="city.invalid && city.touched" class="text-danger">
+                  City is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Country -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="country">Country</label>
+              <div class="col-md-10">
+                <input class="form-control" id="country" [(ngModel)]="location.country" name="country" required
+                  #country="ngModel" />
+                <small *ngIf="country.invalid && country.touched" class="text-danger">
+                  Country is required.
+                </small>
+              </div>
+            </div>
+
+
+
+            <!-- Latitude -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="latitude">Latitude</label>
+              <div class="col-md-10">
+                <input class="form-control" id="latitude" [(ngModel)]="location.latitude" name="latitude" type="number"
+                  step="any" required #latitude="ngModel" />
+                <small *ngIf="latitude.invalid && latitude.touched" class="text-danger">
+                  Latitude is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Longitude -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="longitude">Longitude</label>
+              <div class="col-md-10">
+                <input class="form-control" id="longitude" [(ngModel)]="location.longitude" name="longitude"
+                  type="number" step="any" required #longitude="ngModel" />
+                <small *ngIf="longitude.invalid && longitude.touched" class="text-danger">
+                  Longitude is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- 🆕 Vendor Number OSHEE — vetem COMPANY_ADMIN + COMPANY_ANALYST i shohin/redaktojne. -->
+            <div class="form-group row" *ngIf="isCompanyAdmin || isCompanyAnalyst">
+              <label class="col-md-2 col-form-label form-control-label" for="vendor_number_oshee">Vendor Number OSHEE</label>
+              <div class="col-md-10">
+                <input class="form-control" id="vendor_number_oshee"
+                  [(ngModel)]="location.vendor_number_oshee" name="vendor_number_oshee"
+                  placeholder="Vendor number OSHEE" />
+              </div>
+            </div>
+
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Create Location</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">
+            {{ errorMessage }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="popup-container" *ngIf="showPopup">
+  <div class="popup-content" style="padding:2%; width: 1045px; margin: 106px auto; border-radius: 8px;">
+    <img class="close-btn" src="assets/img/icons/closeX.png" alt="Close" (click)="closePopup()">
+    <h1>Create Partner</h1>
+    <form (ngSubmit)="onSubmit()" #partnerForm="ngForm">
+
+      <!-- Partner Logo -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="file">Upload Logo</label>
+        <div class="col-md-10">
+          <input type="file" class="form-control" id="file" (change)="onFileSelected($event)" />
+        </div>
+      </div>
+
+
+      <!-- Partner Name -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="partnerName">Partner Name</label>
+        <div class="col-md-10">
+          <input class="form-control" id="partnerName" [(ngModel)]="partner.partnerName" name="partnerName" required />
+          <small
+            *ngIf="partnerForm.controls.partnerName?.invalid && (partnerForm.controls.partnerName?.touched || partnerForm.controls.partnerName?.dirty)"
+            class="text-danger">
+            Partner Name is required.
+          </small>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="address">Address</label>
+        <div class="col-md-10">
+          <input class="form-control" id="address" [(ngModel)]="partner.address" name="address" required />
+          <small
+            *ngIf="partnerForm.controls.address?.invalid && (partnerForm.controls.address?.touched || partnerForm.controls.address?.dirty)"
+            class="text-danger">
+            Address is required.
+          </small>
+        </div>
+      </div>
+
+      <!-- City -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="city">City</label>
+        <div class="col-md-10">
+          <input class="form-control" id="city" [(ngModel)]="partner.city" name="city" required />
+          <small
+            *ngIf="partnerForm.controls.city?.invalid && (partnerForm.controls.city?.touched || partnerForm.controls.city?.dirty)"
+            class="text-danger">
+            City is required.
+          </small>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label">Phone Number</label>
+        <div class="col-md-3">
+          <select class="form-control" (change)="onCountryChange($event)">
+            <option *ngFor="let country of countries" [value]="country.prefix">
+              {{ country.name }} ({{ country.prefix }})
+            </option>
+          </select>
+        </div>
+        <div class="col-md-7">
+          <input class="form-control" id="phoneNumber" type="tel" [(ngModel)]="partner.phoneNumber"
+            [placeholder]="selectedCountryCode" name="phoneNumber" required (input)="formatPhoneNumber()" />
+
+        </div>
+      </div>
+
+
+      <!-- Email -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+        <div class="col-md-10">
+          <input class="form-control" id="email" type="email" [(ngModel)]="partner.email" name="email" required
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" />
+          <small *ngIf="partnerForm.submitted && !partnerForm.controls.email?.valid" class="text-danger">
+            A valid email is required.
+          </small>
+          <small *ngIf="partnerForm.controls.email?.invalid && partnerForm.controls.email?.touched" class="text-danger">
+            Please enter a valid email address.
+          </small>
+        </div>
+      </div>
+
+      <!-- NIPT -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="nipt">NIPT</label>
+        <div class="col-md-10">
+          <input class="form-control" id="nipt" [(ngModel)]="partner.nipt" name="nipt" required />
+          <small
+            *ngIf="partnerForm.controls.nipt?.invalid && (partnerForm.controls.nipt?.touched || partnerForm.controls.nipt?.dirty)"
+            class="text-danger">
+            NIPT is required.
+          </small>
+        </div>
+      </div>
+
+      <!-- Monthly Platform Fee -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="monthlyPlatformFee">Monthly Platform
+          Fee</label>
+        <div class="col-md-10">
+          <input class="form-control" id="monthlyPlatformFee" [(ngModel)]="partner.monthlyPlatformFee"
+            name="monthlyPlatformFee" />
+          <!-- <small
+            *ngIf="partnerForm.controls.monthlyPlatformFee?.invalid && (partnerForm.controls.monthlyPlatformFee?.touched || partnerForm.controls.monthlyPlatformFee?.dirty)"
+            class="text-danger">
+            Monthly Platform Fee is required.
+          </small> -->
+        </div>
+      </div>
+
+      <!-- monthly_platform_fee_per_charge_point -->
+      <!-- <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="monthly_platform_fee_per_charge_point">Monthly
+          Platform
+          Fee Per Charge Point</label>
+        <div class="col-md-10">
+          <input class="form-control" id="monthly_platform_fee_per_charge_point"
+            [(ngModel)]="partner.monthly_platform_fee_per_charge_point" name="monthly_platform_fee_per_charge_point" />
+        
+        </div>
+      </div> -->
+
+      <!-- monthly_platform_fee_per_charge_point_ac -->
+      <!-- <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="monthly_platform_fee_per_charge_point_ac">Monthly
+          Platform
+          Fee Per AC Charge Point</label>
+        <div class="col-md-10">
+          <input class="form-control" id="monthly_platform_fee_per_charge_point_ac"
+            [(ngModel)]="partner.monthly_platform_fee_per_charge_point_ac"
+            name="monthly_platform_fee_per_charge_point_ac" />
+         
+        </div>
+      </div> -->
+
+      <!-- monthly_platform_fee_per_charge_point_dc -->
+      <!-- <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="monthly_platform_fee_per_charge_point_dc">Monthly
+          Platform
+          Fee Per DC Charge Point</label>
+        <div class="col-md-10">
+          <input class="form-control" id="monthly_platform_fee_per_charge_point_dc"
+            [(ngModel)]="partner.monthly_platform_fee_per_charge_point_dc"
+            name="monthly_platform_fee_per_charge_point_dc" />
+          
+        </div>
+      </div> -->
+
+      <!-- ac_split_percentage -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="ac_split_percentage">AC Split Percentage</label>
+        <div class="col-md-10">
+          <input class="form-control" id="ac_split_percentage" [(ngModel)]="partner.ac_split_percentage"
+            name="ac_split_percentage" />
+          <!-- <small
+            *ngIf="partnerForm.controls.ac_split_percentage?.invalid && (partnerForm.controls.ac_split_percentage?.touched || partnerForm.controls.ac_split_percentage?.dirty)"
+            class="text-danger">
+            Monthly Platform Fee Per Charge Point is required.
+          </small> -->
+        </div>
+      </div>
+
+      <!-- dc_split_percentage -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="dc_split_percentage">DC Split Percentage</label>
+        <div class="col-md-10">
+          <input class="form-control" id="dc_split_percentage" [(ngModel)]="partner.dc_split_percentage"
+            name="dc_split_percentage" />
+          <!-- <small
+            *ngIf="partnerForm.controls.dc_split_percentage?.invalid && (partnerForm.controls.dc_split_percentage?.touched || partnerForm.controls.dc_split_percentage?.dirty)"
+            class="text-danger">
+            Monthly Platform Fee Per Charge Point is required.
+          </small> -->
+        </div>
+      </div>
+
+      <!-- Split Percentage -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="splitPercentage">Split Percentage</label>
+        <div class="col-md-10">
+          <input class="form-control" id="splitPercentage" [(ngModel)]="partner.splitPercentage"
+            name="splitPercentage" />
+          <!-- <small
+            *ngIf="partnerForm.controls.splitPercentage?.invalid && (partnerForm.controls.splitPercentage?.touched || partnerForm.controls.splitPercentage?.dirty)"
+            class="text-danger">
+            Split Percentage is required.
+          </small> -->
+        </div>
+      </div>
+
+
+      <!-- Company -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="companyId" [value]="company?.company_name" [readonly]="true" />
+        </div>
+      </div>
+
+      <!-- Pay As You Go Checkbox -->
+      <div class="form-group row">
+        <label class="col-md-2 col-form-label form-control-label">Allow Pay As You Go</label>
+        <div class="col-md-10">
+          <input type="checkbox" id="allow_pay_as_you_go" [(ngModel)]="partner.allow_pay_as_you_go"
+            name="allow_pay_as_you_go" />
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group row">
+        <div class="col-md-10 offset-md-2">
+          <button class="btn btn-primary" type="button" (click)="onSubmitPartner()">Create Partner</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

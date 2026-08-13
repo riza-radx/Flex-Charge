@@ -1,0 +1,781 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+<div *ngIf="!userGroups">
+  <div class="card-header">
+    <div class="row ">
+      <div class="col-auto">
+        <h3 class="mb-0">User Group Detail</h3>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-warning" role="alert">
+    🚫 <strong>This user group has been deleted and is no longer active.</strong>
+  </div>
+</div>
+<!-- Tabs Section -->
+<div *ngIf="userGroups" class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <div class="row ">
+            <div class="col-auto">
+              <h3 class="mb-0">User Group Detail</h3>
+            </div>
+            <div *ngIf=" !isCompanyAnalyst" class="col ml--2 custom-flex-end-center">
+              <button type="button" class="btn btn-sm btn-neutral" [routerLink]="['/users/addusergroupmember/', id]"
+                tooltip="Add member"><i class="fas fa-user-plus"></i></button>
+              <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                [routerLink]="['/users/usergroup/update/company', id]"><i class="fas fa-edit"></i></button>
+              <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                [routerLink]="['/users/usergroup/delete/company', id]"> <i class="fas fa-trash-alt"></i></button>
+              <button type="button" class="btn btn-sm btn-neutral" tooltip="Upload"
+                [routerLink]="['/assets/documents/import']" [queryParams]="{ usergr_id: id }"><i
+                  class="fas fa-upload"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- <tab heading="General"> -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="py-4">
+                <h4> </h4>
+                <div *ngIf="userGroups">
+
+                  <div class="container-fluid mt--12">
+                    <div class="row">
+                      <div class="col-xl-12 order-xl-1">
+                        <div class="row">
+                          <div class="col-lg-8">
+                            <div class="card card-profile" style="width:100%; height: 100%; margin-bottom: 0px;">
+                              <div class="row justify-content-center">
+                                <div class="col-lg-3 order-lg-2">
+
+                                  <div class="card-profile-image">
+                                    <a href="javascript:void(0)">
+                                      <img [src]="userGroups.usergr_logo|| 'assets/img/default-usergroup.png'"
+                                        alt="User Group Logo" class="rounded-circle"
+                                        style="top: 17px; max-width: 80px;"></a>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                                <div class="d-flex flex-row-reverse">
+                                  <button *ngIf="isCompanyAdmin && userGroups?.split_wallet === 'false'" type="button"
+                                    class="btn btn-icon-clipboard btn-outline-primary" tooltip="Use Voucher">
+                                    <a [routerLink]="['/rates/usergroupusevoucher', userGroups.usergr_id]"
+                                      [queryParams]="{ fromUserGroupDetail: true }">
+                                      <i class="fas fa-credit-card"></i>
+                                    </a>
+                                  </button>
+                                  <button *ngIf="isCompanyAdmin" type="button"
+                                    class="btn btn-icon-clipboard btn-outline-primary" tooltip="Recharge Top-Up">
+                                    <a [routerLink]="['/rfid-cards/addusergrouprecharges', userGroups.usergr_id]">
+                                      <i class="fas fa-money-bill"></i>
+                                    </a>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="card-body pt-0">
+                                <div class="user-profile text-center p-4">
+                                  <h3 class="font-weight-bold mb-3"> {{ userGroups.usergr_name }} </h3>
+                                  <div class="row p-4">
+                                    <div class="col-md-6 mb-4">
+                                      <h5 class="text-muted font-weight-normal mb-3">Part Of:</h5>
+                                      <div
+                                        class="text-dark font-weight-light mb-2 d-flex align-items-center justify-content-center">
+                                        <i class="ni business_briefcase-24 mr-2"></i>
+                                        <span class="font-weight-bold">{{ userGroups.company_name }}</span>
+                                      </div>
+                                      <!-- 🆕 Partner (nese grupi i perket njerit; perndryshe s'shfaqet). -->
+                                      <div *ngIf="userGroups.partner_name"
+                                        class="text-dark font-weight-light mb-2 d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-handshake mr-2"></i>
+                                        <span class="text-muted mr-1">Partner:</span>
+                                        <span class="font-weight-bold">{{ userGroups.partner_name }}</span>
+                                      </div>
+
+
+                                      <div class="text-dark font-weight-light mb-2">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                          <i class="ni business_briefcase-24 mr-2"></i>
+                                          <div> <span class="text-muted mr-1">Made By:</span>{{
+                                            userGroups.madeBy}}</div>
+                                        </div>
+                                        <div class="text-dark font-weight-light mb-2" *ngIf="userGroups.modifiedBy"
+                                          class="mb-2 d-flex align-items-center justify-content-center">
+                                          <i class="ni business_briefcase-24 mr-2"></i>
+                                          <div> <span class="text-muted mr-1">Modified By:</span>{{
+                                            userGroups.modifiedBy}}</div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                          <i class="ni business_briefcase-24 mr-2"></i>
+                                          <div> <span class="text-muted mr-1">Created At:</span>{{
+                                            userGroups.created_time}}</div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                      <h5 class="text-muted font-weight-normal mb-3">Information</h5>
+                                      <div class="text-dark font-weight-light mb-2 d-flex align-items-center">
+                                        <i class="ni business_briefcase-24 mr-2"> </i>
+                                        <span class="font-weight-bold"><i class="fas fa-envelope"> : </i></span>
+                                        {{ userGroups.usergr_email }}
+                                      </div>
+
+                                      <div class="text-dark font-weight-light d-flex align-items-center">
+                                        <i class="ni phone mr-2"></i>
+                                        <span class="font-weight-bold"><i class="fas fa-phone"> : </i></span>
+                                        {{ userGroups.usergr_phone_no }}
+                                      </div>
+
+                                      <div class="text-dark font-weight-light d-flex align-items-center">
+                                        <i class="ni location_pin mr-2"></i>
+                                        <span class="font-weight-bold"><i class="fas fa-location-arrow"> : </i></span>
+                                        {{ userGroups.usergr_addres }}, {{ userGroups.usergr_city }}
+                                      </div>
+                                      
+                                      <div *ngIf="isCompanyAdmin || isCompanyAnalyst" class="text-dark font-weight-light d-flex align-items-center">
+                                        <i class="ni location_pin mr-2"></i>
+                                        <span class="font-weight-bold"><i class="fas fa-hashtag"> : </i></span>
+                                        <span *ngIf="userGroups.customer_number; else noCustomerNumber">{{ userGroups.customer_number }}</span>
+                                        <ng-template #noCustomerNumber><span class="text-muted font-italic">Customer Number not set</span></ng-template>
+                                      </div>
+                                      <div *ngIf="isCompanyAdmin || isCompanyAnalyst" class="text-dark font-weight-light d-flex align-items-center">
+                                        <i class="ni location_pin mr-2"></i>
+                                        <span class="font-weight-bold"><i class="fas fa-hashtag"> : </i></span>
+                                        <span *ngIf="userGroups.dimension_value; else noDimensionValue">{{ userGroups.dimension_value }}</span>
+                                        <ng-template #noDimensionValue><span class="text-muted font-italic">Dimension Value not set</span></ng-template>
+                                      </div>
+                                      <div *ngIf="isAdminUser" class="text-dark font-weight-light d-flex align-items-center">
+                                        <i class="ni location_pin mr-2"></i>
+                                        <span class="font-weight-bold"><i class="fas fa-file-invoice-dollar"> : </i></span>
+                                        <span class="ml-1">Check Fisc :&nbsp;</span>
+                                        <i class="fas" [ngClass]="(userGroups.check_fisk === true || userGroups.check_fisk === 'true' || userGroups.check_fisk === 1 || userGroups.check_fisk === '1') ? 'fa-check text-success' : 'fa-times text-danger'"></i>
+                                      </div>
+                                      <!-- 🆕 Vega Staff — shfaqet vetem per admin/analyst; backend s'e kthen per role te tjere. -->
+                                      <div *ngIf="canViewVegaStaff" class="text-dark font-weight-light d-flex align-items-center">
+                                        <i class="ni location_pin mr-2"></i>
+                                        <span class="font-weight-bold"><i class="fas fa-bolt"> : </i></span>
+                                        <span class="ml-1">Vega Staff :&nbsp;</span>
+                                        <i class="fas" [ngClass]="(userGroups.is_vega_staff === true || userGroups.is_vega_staff === 'true' || userGroups.is_vega_staff === 1 || userGroups.is_vega_staff === '1') ? 'fa-check text-success' : 'fa-times text-danger'"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                </div>
+                                <!----><!---->
+                                <div class="row">
+                                  <div class=" col-lg-6" style="padding-right: 10px; padding-left: 10px;">
+                                    <div class=" card bg-gradient-info border-0">
+                                      <div class=" card-body">
+                                        <div class=" row">
+                                          <div class=" col">
+                                            <h5 class=" card-title text-uppercase text-muted mb-0 text-white">
+                                              Balance
+                                            </h5>
+
+                                            <span *ngIf="userGroups" class=" h2 font-weight-bold mb-0 text-white">
+                                              {{userGroups.balance | number:'1.2-2'}}
+                                            </span>
+                                          </div>
+
+                                          <div class=" col-auto">
+                                            <div class=" icon icon-shape bg-white text-dark rounded-circle shadow">
+                                              <i class=" fas fa-wallet"> </i>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class=" col-lg-6" style="padding-right: 10px; padding-left: 10px;">
+                                    <div class=" card bg-gradient-success border-0">
+                                      <div class=" card-body">
+                                        <div class=" row">
+                                          <div class=" col">
+                                            <h5 class=" card-title text-uppercase text-muted mb-0 text-white">
+                                              Debit Balance
+                                            </h5>
+
+                                            <span *ngIf="userGroups" class=" h2 font-weight-bold mb-0 text-white">
+                                              {{ userGroups.debit_balance | number:'1.2-2'}}
+                                            </span>
+                                          </div>
+
+                                          <div class=" col-auto">
+                                            <div class=" icon icon-shape bg-white text-dark rounded-circle shadow">
+                                              <i class="fas fa-credit-card"> </i>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 d-flex flex-column">
+                            <div class="card">
+                              <div class="card-header">
+                                <h5 class="h3 mb-0">Charging History</h5>
+                              </div>
+
+                              <div class="card-body p-0">
+                                <ul class="list-group list-group-flush" data-toggle="checklist">
+                                  <!-- Loop through the charging history data -->
+                                  <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4"
+                                    *ngFor="let history of chargingHistory | slice:0:4">
+                                    <div class="checklist-item checklist-item-success">
+                                      <div class="checklist-info">
+                                        <h5 class="checklist-title mb-0">{{ history.total_energy }} kWh, Station: {{
+                                          history.Charger.charger_name|| 'Unknown' }}</h5>
+                                        <small>{{ history.charging_history_date }} {{ history.started_time }} - {{
+                                          history.ended_time }}</small>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card">
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <!-- </tab> -->
+          <tabset #userGroupTabs>
+
+
+            <tab heading="Members">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterMemberTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempUserGroupMembers" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <ngx-datatable-column name="Name" prop="user.user.name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Type" prop="type"></ngx-datatable-column>
+                    <ngx-datatable-column name="Balance">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ (row?.user?.user?.balance | number:'1.2-2') || '0.00' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Debit Balance">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ (row?.user?.user?.debit_balance | number:'1.2-2') || '0.00' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf=" !isCompanyAnalyst" name="Actions" prop="actions">
+                      <ng-template ngx-datatable-cell-template let-row="row">
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                          [routerLink]="['/users/updateusergroupmember', row.user_id]">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                          [routerLink]="['/users/user/delete/company', row.user_id]">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <tab heading="Charging History">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2">
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterChargingHistoryTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempChargingHistory" [selected]="selected"
+                    [selectionType]="'multiClick'" (select)="onChargingRowSelect($event)">
+                    <ngx-datatable-column name="ID" prop="charging_history_id"></ngx-datatable-column>
+                    <ngx-datatable-column name="User">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ row?.User?.name || row?.user?.name || '—' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Charger" prop="Charger.charger_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Connector" prop="Connector.connector_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Card" [prop]="'Card.serial_no'">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ row.Card?.serial_no || 'Remote Start' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="charging_history_date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Strted Time" prop="strted_time"></ngx-datatable-column>
+                    <ngx-datatable-column name="Ended Time" prop="ended_time"></ngx-datatable-column>
+                    <ngx-datatable-column name="Total Energy" prop="total_energy"></ngx-datatable-column>
+                    <ngx-datatable-column name="Charging Cost">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ ((+row.total_cost || 0) - (+row.fullchargefeecost || 0)) | number:'1.2-2' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Idle Min">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ ((+row.fullchargefeeperminute > 0) ? ((+row.fullchargefeecost || 0) / +row.fullchargefeeperminute) : 0) | number:'1.0-0' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Fee per Minute">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ (+row.fullchargefeeperminute || 0) | number:'1.2-2' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Idle Fee Cost">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ (+row.fullchargefeecost || 0) | number:'1.2-2' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Total Cost" prop="total_cost"></ngx-datatable-column>
+                    <ngx-datatable-column name="Charging Status" prop="charging_status"></ngx-datatable-column>
+                    <ngx-datatable-column name="Battery %" prop="socValue"></ngx-datatable-column>
+                    <!-- 🆕 Roaming column — useret e nje UG karikojne te chargers e kompanive te tjera = OUT -->
+                    <ngx-datatable-column name="Roaming" [width]="180">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.is_roaming" class="badge" style="background:#ff9800;color:#fff;">
+                          🌐 OUT
+                        </span>
+                        <small *ngIf="row.is_roaming" class="text-muted d-block" style="font-size:11px;">
+                          @ {{ row.HostCompany?.company_name || row.Company?.company_name || '?' }}
+                        </small>
+                        <span *ngIf="!row.is_roaming" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Check Fisk" [width]="110">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_check_fisk === true || row.snap_check_fisk === 1" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_check_fisk === false || row.snap_check_fisk === 0" class="text-danger">No</span>
+                        <span *ngIf="row.snap_check_fisk === null || row.snap_check_fisk === undefined" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="PAYG" prop="snap_allow_payg" [width]="100">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_allow_payg === 'true' || row.snap_allow_payg === '1'" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_allow_payg === 'false' || row.snap_allow_payg === '0'" class="text-muted">No</span>
+                        <span *ngIf="!row.snap_allow_payg" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Send Email" [width]="120">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_send_email === true || row.snap_send_email === 1" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_send_email === false || row.snap_send_email === 0" class="text-muted">No</span>
+                        <span *ngIf="row.snap_send_email === null || row.snap_send_email === undefined" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="BC Invoice" [width]="140">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row?.Charging?.bc_invoice_number || row?.bc_invoice_number"
+                          class="text-success">{{ row?.Charging?.bc_invoice_number || row?.bc_invoice_number }}</span>
+                        <span *ngIf="!(row?.Charging?.bc_invoice_number || row?.bc_invoice_number)"
+                          class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <tab heading="RFID Card">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterRFIDCardTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempRfidCards" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <ngx-datatable-column name="Serial No" prop="serial_no"></ngx-datatable-column>
+                    <!-- <ngx-datatable-column name="Block No" prop="block_no"></ngx-datatable-column> -->
+                    <!-- <ngx-datatable-column name="Balance" prop="balance"></ngx-datatable-column> -->
+                    <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <tab heading="Vehicles">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterVehiclesTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempVehicles" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <ngx-datatable-column name="Vehicle Name" prop="vehicle_number"></ngx-datatable-column>
+                    <ngx-datatable-column name="Make" prop="vehicle_brand"></ngx-datatable-column>
+                    <ngx-datatable-column name="Model" prop="vehicle_model"></ngx-datatable-column>
+                    <ngx-datatable-column name="Year" prop="vehicle_year"></ngx-datatable-column>
+                    <ngx-datatable-column name="VIN" prop="vin_code"></ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <tab heading="Reports">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterReportsTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempReports" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <ngx-datatable-column name="From Date" prop="from_date"></ngx-datatable-column>
+                    <ngx-datatable-column name="To Date" prop="to_date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Report Type" prop="report_type"></ngx-datatable-column>
+                    <!-- <ngx-datatable-column *ngIf="!isSmallScreen" name="Total Current"
+                    prop="total_current"></ngx-datatable-column> -->
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <tab heading="Documents">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2  custom-flex-end-center">
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterDocumentsTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempDocuments" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivateDoc($event)" (select)="onSelect($event)">
+                    <ngx-datatable-column name="Name" prop="file_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="uploaded_date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Added By" prop="madeBy"></ngx-datatable-column>
+                    <ngx-datatable-column *ngIf=" !isCompanyAnalyst" name="Actions" prop="actions">
+                      <ng-template ngx-datatable-cell-template let-row="row">
+                        <button type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                          [routerLink]="['/assets/documents/delete/', row.document_id]">
+                          <i class="fas fa-trash-alt"></i></button>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+            <tab heading="Recharges">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2  custom-flex-end-center">
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterRechargersTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempRecharges" [selected]="selected"
+                    [selectionType]="'multiClick'" (select)="onSelect($event)">
+                    <ngx-datatable-column name="Order / Recharge ID">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ row?.recharge_from === 'Online' ? (row?.pokOrderId || row?.recharge_id) : row?.recharge_id }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="User">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row?.User?.username || row?.User?.name">{{ row?.User?.username || row?.User?.name }}</span>
+                        <span *ngIf="!(row?.User?.username || row?.User?.name)" class="text-muted">Group</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Amount" prop="amount"></ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Time" prop="time"></ngx-datatable-column>
+                    <ngx-datatable-column name="Made By" prop="madeBy"></ngx-datatable-column>
+                    <ngx-datatable-column name="Previous Balance" prop="previous_balance"></ngx-datatable-column>
+                    <ngx-datatable-column name="Previous Debit Balance" prop="previous_debit_balance"></ngx-datatable-column>
+                    <ngx-datatable-column name="Recharge Type" prop="recharge_from"></ngx-datatable-column>
+                    <!-- 🆕 TopUp Note — arsyeja e TopUp-it (vetem admin/analyst) -->
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="TopUp Note" prop="topup_note" [width]="200">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.topup_note" [title]="row.topup_note" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:200px;">{{ row.topup_note }}</span>
+                        <span *ngIf="!row.topup_note" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Check Fisk" [width]="110">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_check_fisk === true || row.snap_check_fisk === 1" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_check_fisk === false || row.snap_check_fisk === 0" class="text-danger">No</span>
+                        <span *ngIf="row.snap_check_fisk === null || row.snap_check_fisk === undefined" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="PAYG" prop="snap_allow_payg" [width]="100">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_allow_payg === 'true' || row.snap_allow_payg === '1'" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_allow_payg === 'false' || row.snap_allow_payg === '0'" class="text-muted">No</span>
+                        <span *ngIf="!row.snap_allow_payg" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Send Email" [width]="120">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_send_email === true || row.snap_send_email === 1" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_send_email === false || row.snap_send_email === 0" class="text-muted">No</span>
+                        <span *ngIf="row.snap_send_email === null || row.snap_send_email === undefined" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="BC Invoice" [width]="140">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row?.bc_invoice_number" class="text-success">{{ row.bc_invoice_number }}</span>
+                        <span *ngIf="!row?.bc_invoice_number" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+            <tab heading="Money Transfers" *ngIf="transactions && transactions.length > 0">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2  custom-flex-end-center">
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterRechargersTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempTransactions" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <ngx-datatable-column name="Amount" prop="summary"></ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Time" prop="time"></ngx-datatable-column>
+                    <ngx-datatable-column name="Transfer Description"
+                      prop="transaction_description"></ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

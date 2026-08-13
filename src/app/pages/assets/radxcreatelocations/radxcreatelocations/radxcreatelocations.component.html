@@ -1,0 +1,92 @@
+  <div class=" header pb-6" style="background-color: #931623 !important">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <h3 class="h2 text-white d-inline-block mb-0">Create Location</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #createLocationModal>
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="mb-0">Create Location</h3>
+            </div>
+            <div class="card-body">
+              <form (ngSubmit)="onSubmit()">
+                <!-- Location Name -->
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="locationName">Location Name</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="locationName" [(ngModel)]="location.locationName" name="locationName" required />
+                  </div>
+                </div>
+    
+                <!-- Address -->
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="address">Address</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="address" [(ngModel)]="location.address" name="address" required />
+                  </div>
+                </div>
+    
+                <!-- City -->
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="city">City</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="city" [(ngModel)]="location.city" name="city" required />
+                  </div>
+                </div>
+    
+                <!-- Country -->
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="country">Country</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="country" [(ngModel)]="location.country" name="country" required />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                  <div class="col-md-10">
+                    <select class="form-control" id="companyId"  name="companyId" required>
+                      <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}</option>
+                    </select>
+                  </div>
+                </div>
+    
+                <!-- Latitude -->
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="latitude">Latitude</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="latitude" [(ngModel)]="location.latitude" name="latitude" type="number" step="any" required />
+                  </div>
+                </div>
+    
+                <!-- Longitude -->
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="longitude">Longitude</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="longitude" [(ngModel)]="location.longitude" name="longitude" type="number" step="any" required />
+                  </div>
+                </div>
+    
+                <!-- Submit Button -->
+                <div class="form-group row">
+                  <div class="col-md-10 offset-md-2">
+                    <button class="btn btn-primary" type="submit">Create Location</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+    

@@ -1,0 +1,146 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+        <div class=" col-lg-6 col-7">
+          <h3 class=" h2 text-white d-inline-block mb-0">Charging</h3>
+        </div>
+
+        <div class=" col-lg-6 col-5 text-right">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="dataTables_wrapper py-4">
+          <div *ngIf="chargings.length > 0" class="text-center py-3">
+            <h3 style="font-weight: bold; color: #4CAF50;">
+              🔌 {{ chargings.length }} car{{ chargings.length > 1 ? 's are' : ' is' }} charging now
+            </h3>
+            <!-- 🆕 Numerimi i karikimeve qe do fiskalizohen — vetem admin/analyst -->
+            <h4 *ngIf="canSeeFiscalFlag" style="font-weight: 600; color: #1976d2; margin-top: 8px;">
+              🧾 {{ fiscalizableCount }} with CheckFisk
+            </h4>
+          </div>
+          <!-- Display message when no charging data is available -->
+          <div *ngIf="chargings.length === 0" class="text-center py-5">
+            <h4>No Charging at this time</h4>
+          </div>
+
+          <div *ngIf="chargings.length > 0" class="charging-container-wrapper">
+            <div *ngFor="let charging of chargings; let i = index">
+              <!-- Check if the status is not 'offline' and only show when it's not -->
+              <!-- <div*ngIf="charging.Charger.status && charging.Charger.status.trim().toLowerCase() !== 'offline'" >-->
+              <div>
+                <div class="charging-container" style="max-width: 350px; ">
+                  <div class="charging-header">
+                    <h1>
+                      <strong [routerLink]="isCompanyRole ? ['/users/user', charging.user_id] : null"
+                        [style.cursor]="isCompanyRole ? 'pointer' : 'default'">
+                        {{ charging.User.username }}
+                      </strong>
+                      <strong *ngIf="isPartnerRole">
+                        {{ charging.User.username }}
+                      </strong>
+                      is charging
+                      <span *ngIf="charging.Card; else remoteStart">
+                        with card {{ charging.Card.serial_no }}
+                      </span>
+                      <ng-template #remoteStart>
+                        via Remote start
+                      </ng-template>
+                    </h1>
+                    <!-- 🆕 Badge per karikim roaming -->
+                    <div *ngIf="charging.is_roaming" style="margin-top:8px;">
+                      <span *ngIf="charging.roaming_perspective === 'host'"
+                            style="display:inline-block;background:#fff3cd;color:#856404;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;border:1px solid #ffeeba;"
+                            [title]="'Klient nga ' + (charging.HomeCompany?.company_name || 'kompani tjeter')">
+                        🌐 Roaming IN — klient nga {{ charging.HomeCompany?.company_name || '?' }}
+                      </span>
+                      <span *ngIf="charging.roaming_perspective === 'home'"
+                            style="display:inline-block;background:#d1ecf1;color:#0c5460;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;border:1px solid #bee5eb;"
+                            [title]="'Klient i juaj karikon te ' + (charging.HostCompany?.company_name || 'kompani tjeter')">
+                        🌐 Roaming OUT — te {{ charging.HostCompany?.company_name || '?' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="charging-status-circle">
+                    <div class="charging-animation">
+                      <div class="charging-progress"></div>
+                      <div class="charging-battery">
+                        <img src="assets/img/icons/charger/battery.png" alt="Battery Icon" class="battery" />
+                      </div>
+                      <img src="assets/img/icons/charger/flash-white.png" alt="Flash Icon" class="charging-flash" />
+                    </div>
+                  </div>
+
+                  <div class="charging-time">
+                    <div>
+                      <img src="assets/img/icons/charger/flash.png" alt="Battery Icon" />
+                      <h2>Charging</h2>
+                    </div>
+                    <h2>Energy: {{ charging.energy }} kWh</h2>
+                    <h4>
+                      Battery: {{ (!charging.socValue || charging.socValue === '0' || charging.socValue === 0) ? 'Not
+                      supported' : charging.socValue + ' %' }}
+                    </h4>
+                    <h4>Start Time: {{ charging.strted_time }} </h4>
+                  </div>
+
+                  <div class="charging-details">
+                    <p>{{ charging.Charger.charger_name }} {{ charging.Charger.Location.city }}</p>
+                    <p>{{ charging.Connector.connector_name }}</p>
+                    <h3>{{ charging.cost }} ALL</h3>
+
+                    <!-- 🆕 Flag i fiskalizimit — vetem admin/analyst e sheh -->
+                    <div *ngIf="canSeeFiscalFlag" style="margin-top: 8px;">
+                      <span *ngIf="willBeFiscalized(charging)"
+                            style="display:inline-block;background:#1976d2;color:#fff;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;"
+                            title="With CheckFisk">
+                        🧾 With CheckFisk
+                      </span>
+                      <span *ngIf="!willBeFiscalized(charging)"
+                            style="display:inline-block;background:#9e9e9e;color:#fff;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;"
+                            title="Without CheckFisk">
+                        🚫 Without CheckFisk
+                      </span>
+                    </div>
+
+                    <!-- STOP button — fshehet kur company ne perspektive HOME (s'eshte pronari i charger-it ne roaming) -->
+                    <button class="stop-button"
+                      *ngIf="!isPartnerRole && !stoppedChargingIds.includes(charging.charging_id) && charging.roaming_perspective !== 'home'"
+                      (click)="confirmStop(charging.charger_id, charging.charging_id)">
+                      Stop
+                    </button>
+                    <small *ngIf="charging.roaming_perspective === 'home'" style="display:block;color:#999;margin-top:4px;font-size:11px;">
+                      ⚠️ S'mund te ndalosh — charger eshte i {{ charging.HostCompany?.company_name || 'kompani tjeter' }}
+                    </small>
+
+                    <!-- Confirmation Popup -->
+                    <div *ngIf="showConfirmation && selectedChargingId === charging.charging_id"
+                      class="popup-container">
+                      <div class="popup-content" style="padding:2%; width: 350px; margin: 0 auto; border-radius: 8px;">
+                        <h3>Are you sure you want to stop the charging session?</h3>
+                        <div>
+                          <button class="btn btn-primary btn-sm" (click)="stopConfirmed()">Yes, I'm sure!</button>
+                          <button class="btn btn-primary btn-sm" (click)="cancelStop()">No, keep it!</button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

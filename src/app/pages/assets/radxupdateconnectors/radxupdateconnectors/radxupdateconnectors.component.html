@@ -1,0 +1,121 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Update Connector</h3>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="connectorForm" (ngSubmit)="onSubmit()">
+                        <!-- Number -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="number">Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="number" formControlName="connectorNumber" required />
+                                <small
+                                    *ngIf="connectorForm.get('connectorNumber').invalid && (connectorForm.get('connectorNumber').touched || connectorForm.get('connectorNumber').dirty)"
+                                    class="text-danger">
+                                    Number is required.
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <!-- Name -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="name" formControlName="connectorName" required />
+                                <small
+                                    *ngIf="connectorForm.get('connectorName').invalid && (connectorForm.get('connectorName').touched || connectorForm.get('connectorName').dirty)"
+                                    class="text-danger">
+                                    Name is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Rate Power -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="ratePower">Rate Power
+                                (kWh)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="ratePower" formControlName="ratedPower" required />
+                                <small
+                                    *ngIf="connectorForm.get('ratedPower').invalid && (connectorForm.get('ratedPower').touched || connectorForm.get('ratedPower').dirty)"
+                                    class="text-danger">
+                                    Rate Power is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Standard -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="standard">Standard</label>
+                            <div class="col-md-10">
+                              <div class="custom-dropdown">
+                                <!-- Dropdown button to display the selected option -->
+                                <div class="dropdown-btn" (click)="toggleDropdown()">
+                                  <img *ngIf="selectedStandard" [src]="imageMap[selectedStandard]" alt="{{ selectedStandard }}" class="connector-image">
+                                  <span *ngIf="selectedStandard">{{ selectedStandard }}</span>
+                                  <span *ngIf="!selectedStandard">Select Standard</span>
+                                </div>
+                          
+                                <!-- Dropdown list with options -->
+                                <div *ngIf="dropdownOpen" class="dropdown-list">
+                                  <div *ngFor="let option of getStandardOptions()" (click)="selectOption(option)" class="dropdown-item">
+                                    <img [src]="imageMap[option]" alt="{{ option }}" class="connector-image">
+                                    <span>{{ option }}</span>
+                                  </div>
+                                </div>
+                              </div>
+                          
+                              <!-- Validation error -->
+                              <small *ngIf="connectorForm.get('standard').invalid && (connectorForm.get('standard').touched || connectorForm.get('standard').dirty)" class="text-danger">
+                                Standard is required.
+                              </small>
+                            </div>
+                          </div>
+                          
+
+                        <!-- Status -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+                            <div class="col-md-10">
+                              <div class="form-control" >
+                                {{ connectorForm.get('status')?.value }}
+                              </div>
+                            </div>
+                          </div>
+
+                        <!-- Valid -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label">Valid</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" formControlName="valid" />
+                            </div>
+                        </div>
+                        <input type="hidden" formControlName="charger_id" />
+
+                        <!-- Submit Button -->
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Update
+                                    Connector</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

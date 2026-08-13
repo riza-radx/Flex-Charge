@@ -1,0 +1,325 @@
+<nav
+  class="navbar navbar-top navbar-expand navbar-dark bg-danger border-bottom"
+  id="navbar-main" style="background-color: #931623 !important"
+>
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+      <!-- Search -->
+      <!-- <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
+        <div class="form-group mb-0 position-relative">
+          <div class="input-group input-group-alternative input-group-merge">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-search"></i>
+              </span>
+            </div>
+            <input
+              class="form-control"
+              placeholder="Search"
+              type="text"
+              [(ngModel)]="searchTerm"
+              (focus)="showDropdown = true; filteredRoutes = searchRoutes()"
+              (input)="filteredRoutes = searchRoutes()"
+            />
+          </div>
+      
+        
+          <div class="dropdown-menu show w-100 mt-1" *ngIf="showDropdown && filteredRoutes.length">
+            <a
+              *ngFor="let route of filteredRoutes"
+              class="dropdown-item"
+              [routerLink]="route.path"
+              (click)="showDropdown = false"
+            >
+              {{ route.title }}
+            </a>
+          </div>
+        </div>
+      </form> -->
+      
+      <!-- Search -->
+<!-- <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
+  <div class="form-group mb-0 position-relative" [ngClass]="{ focused: focus === true }">
+    <div class="input-group input-group-alternative input-group-merge">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+      <input
+        class="form-control"
+        placeholder="Search"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (focus)="focus = true; showDropdown = true; filteredRoutes = searchRoutes()"
+        (input)="filteredRoutes = searchRoutes()"
+        (blur)="focus = false; showDropdown = false;"
+      />
+    </div>
+
+
+    
+      <div 
+      class="dropdown-menu show w-100 mt-1 position-absolute overflow-auto"
+      *ngIf="showDropdown && filteredRoutes.length"
+      style="max-height: 300px; z-index: 1050;"
+    >
+    
+      <a
+        *ngFor="let route of filteredRoutes"
+        class="dropdown-item"
+        [routerLink]="route.path"
+        (click)="showDropdown = false"
+      >
+        {{ route.title }}
+      </a>
+    </div>
+  </div>
+
+ 
+  <button
+    type="button"
+    class="close"
+    (click)="closeSearch()"
+    (focus)="focus = false; showDropdown = false;"
+    data-action="search-close"
+    data-target="#navbar-search-main"
+    aria-label="Close"
+  >
+    <span aria-hidden="true">×</span>
+  </button>
+</form> -->
+
+
+
+      <!-- Navbar links -->
+      <ul class="navbar-nav align-items-center ml-md-auto">
+        <li class="nav-item d-xl-none">
+          <!-- Sidenav toggler -->
+          <div
+            class="pr-3 sidenav-toggler sidenav-toggler-dark"
+            data-action="sidenav-pin"
+            data-target="#sidenav-main"
+            (click)="openSidebar()"
+          >
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+            </div>
+          </div>
+        </li>
+
+        <!-- <li class="nav-item d-sm-none">
+          <a class="nav-link" (click)="openSearch()">
+            <i class="ni ni-zoom-split-in"></i>
+          </a>
+        </li> -->
+   
+        <li class="nav-item dropdown" dropdown placement="bottom-right">
+          <!-- <a class="nav-link dropdown-toggle" role="button" dropdownToggle (click)="markNotificationsAsRead()">
+            <i class="ni ni-bell-55"></i>
+            <span *ngIf="newNotificationCount > 0" class="badge notification-count">
+              {{ newNotificationCount }}
+            </span>
+          </a> -->
+          <a class="nav-link dropdown-toggle" role="button" dropdownToggle (click)="markNotificationsAsRead()">
+            <span class="notification-icon-wrapper">
+              <i class="ni ni-bell-55"></i>
+              <span *ngIf="newNotificationCount > 0" class="badge notification-count">
+                {{ newNotificationCount }}
+              </span>
+            </span>
+          </a>
+          
+          <div
+            class="dropdown-menu dropdown-menu-xl dropdown-menu-right py-0 overflow-hidden"
+            *dropdownMenu
+          >
+            <!-- Dropdown header -->
+            <div class="px-3 py-3">
+              <h6 class="text-sm text-muted m-0">
+                You have <strong class="text-primary">new</strong> notifications.
+              </h6>
+            </div>
+            <!-- List group -->
+            <div *ngFor="let notifications of notifications | slice:0:5" class="list-group list-group-flush">
+              <a 
+                href="javascript:void()"
+                class="list-group-item list-group-item-action"
+              >
+                <div class="row align-items-center">
+                  <div class="col-auto">
+                    <!-- Avatar -->
+                    <img
+                      alt="Image placeholder"
+                      src="assets/img/stations/car-charging-station.jpg"
+                      class="avatar rounded-circle"
+                    />
+                  </div>
+                  <div class="col ml--2">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div><h4 class="mb-0 text-sm">{{notifications.notification_type}}</h4></div>
+                      <div class="text-right text-muted">
+                        <small>{{notifications.created_date}} {{notifications.created_time}}</small>
+                      </div>
+                    </div>
+                    <p class="text-sm mb-0">
+                      {{notifications.notification_description}}
+                    </p>
+                  </div>
+                </div>
+              </a>
+
+            </div>
+            <!-- View all -->
+            <a
+            [routerLink]="['/appnotifications']"
+              class="dropdown-item text-center text-primary font-weight-bold py-3"
+              >View all</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown" dropdown placement="bottom-right">
+          <a
+            class="nav-link dropdown-toggle"
+            href="javascript:void(0)"
+            role="button"
+            dropdownToggle
+          >
+            <i class="ni ni-ungroup"></i>
+          </a>
+          <div
+            class="dropdown-menu dropdown-menu-lg dropdown-menu-dark bg-default dropdown-menu-right"
+            *dropdownMenu
+          >
+            <div class="row shortcuts px-4">
+              <!-- <a href="javascript:void()" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-red"
+                >
+                  <i class="ni ni-calendar-grid-58"></i>
+                </span>
+                <small>Calendar</small>
+              </a> -->
+              <!-- <a href="javascript:void()" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-orange"
+                >
+                  <i class="ni ni-email-83"></i>
+                </span>
+                <small>Email</small>
+              </a> -->
+              <a routerLink="/maps/google" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-purple"
+                >
+                  <i class="ni ni-pin-3"></i>
+                </span>
+                <small>Maps</small>
+              </a>
+              <a  routerLink="/reports/financial" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-green"
+                >
+                  <i class="ni ni-books"></i>
+                </span>
+                <small>Reports</small>
+              </a>
+              <a routerLink="/assets/documents" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-info"
+                >
+                  <i class="ni ni-folder-17"></i>
+                </span>
+                <small>Documents</small>
+              </a>
+              <a routerLink="/assets/charinghistory" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-info"
+                >
+                  <i class="ni ni-folder-17"></i>
+                </span>
+                <small>Charging History</small>
+              </a>
+              <a routerLink="/rfid-cards/allrecharges" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-info"
+                >
+                  <i class="ni ni-money-coins"></i>
+                </span>
+                <small>Rechargers</small>
+              </a>
+              <a *ngIf="isCompanyAdmin" routerLink="/rfid-cards/audit-logs" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-warning"
+                >
+                  <i class="ni ni-bullet-list-67"></i>
+                </span>
+                <small>Audit Log</small>
+              </a>
+              <!-- 🆕 Bank Accounts — per Company Admin DHE Company Analyst (financa) -->
+              <a *ngIf="isCompanyAdmin || isCompanyAnalyst" routerLink="/rfid-cards/bank-accounts" class="col-4 shortcut-item">
+                <span
+                  class="shortcut-media avatar rounded-circle bg-gradient-success"
+                >
+                  <i class="ni ni-credit-card"></i>
+                </span>
+                <small>Bank Accounts</small>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <!-- User -->
+      <ul class="navbar-nav align-items-center ml-auto ml-md-0">
+        <li class="nav-item dropdown" dropdown placement="bottom-right">
+          <a class="nav-link pr-0 dropdown-toggle" role="button" dropdownToggle>
+            <div class="media align-items-center">
+              <span class="avatar avatar-sm rounded-circle">
+                <img class="rounded-circle" [src]="image || 'assets/img/default-avatar.png'"
+                alt="User Profile Image" />
+              </span>
+              <div class="media-body ml-2 d-none d-lg-block">
+                <span class="mb-0 text-sm  font-weight-bold">{{name}}</span>
+              </div>
+            </div>
+          </a>
+          <div
+            class="dropdown-menu dropdown-menu-arrow dropdown-menu-right"
+            *dropdownMenu
+          >
+            <div class=" dropdown-header noti-title">
+              <h6 class="text-overflow m-0">Welcome!</h6>
+            </div>
+            <a
+              routerLinkActive="active"
+              [routerLink]="['/profile']"
+              class="dropdown-item"
+            >
+              <i class="ni ni-single-02"></i> <span>My profile</span>
+            </a>
+            <a
+              routerLinkActive="active"
+              [routerLink]="['/settings/setting']"
+              class="dropdown-item"
+            >
+              <i class="ni ni-settings-gear-65"></i> <span>Settings</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="javascript:void()" class="dropdown-item" (click)="logout()">
+              <i class="ni ni-user-run"></i> <span>Logout</span>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div
+  *ngIf="sidenavOpen === true"
+  class="backdrop d-xl-none"
+  (click)="toggleSidenav()"
+></div>

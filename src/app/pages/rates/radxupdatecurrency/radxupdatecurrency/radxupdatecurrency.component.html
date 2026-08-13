@@ -1,0 +1,42 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update Currency</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="currencyForm" (ngSubmit)="onSubmit()">
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="currencyName">Currency Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="currencyName" formControlName="currencyName" required />
+                <div
+                  *ngIf="currencyForm.get('currencyName').invalid && (currencyForm.get('currencyName').dirty || currencyForm.get('currencyName').touched)">
+                  <small class="text-danger" *ngIf="currencyForm.get('currencyName').errors?.required">Currency Name is
+                    required.</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Update Currency</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

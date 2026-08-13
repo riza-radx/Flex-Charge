@@ -1,0 +1,212 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Create Vehicle</h3>
+        </div>
+        <div class="card-body">
+          <form #vehicleForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
+            <!-- Create For -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="createFor">Create For</label>
+              <div class="col-md-10">
+                <select class="form-control" id="createFor" [(ngModel)]="vehicle.createFor" name="createFor" required>
+                  <option value="">Select an option</option>
+                  <option *ngIf="isCompanyRole || isUserRole" value="user">User</option>
+                  <option *ngIf="isCompanyRole" value="company">Company</option>
+                  <option *ngIf="isCompanyRole || isUserGroupRole" value="usergroup">User Group</option>
+                </select>
+                <small
+                  *ngIf="vehicleForm.controls.createFor?.invalid && (vehicleForm.controls.createFor?.touched || vehicleForm.submitted)"
+                  class="text-danger">
+                  Create For is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- User Field -->
+            <div *ngIf="vehicle.createFor === 'user'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userId" [(ngModel)]="vehicle.userId" name="userId"
+                  [required]="vehicle.createFor === 'user'">
+                  <option value="">Select a user</option>
+                  <option *ngFor="let user of users" [value]="user.id">
+                    {{ user.name }}
+                  </option>
+                </select>
+                <small
+                  *ngIf="vehicleForm.controls.userId?.invalid && (vehicleForm.controls.userId?.touched || vehicleForm.submitted)"
+                  class="text-danger">
+                  User is required when creating for a user.
+                </small>
+              </div>
+            </div>
+
+            <!-- Company Field -->
+            <div *ngIf="vehicle.createFor === 'company'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                  [readonly]="true" />
+              </div>
+            </div>
+
+            <!-- User Group Field -->
+            <div *ngIf="vehicle.createFor === 'usergroup'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergrId">User Group</label>
+              <div class="col-md-10">
+                <select class="form-control" id="usergrId" [(ngModel)]="vehicle.usergrId" name="usergrId"
+                  [required]="vehicle.createFor === 'usergroup'">
+                  <option value="">Select a user group</option>
+                  <option *ngFor="let usergroup of usergroups" [value]="usergroup.usergr_id">
+                    {{ usergroup.usergr_name }}
+                  </option>
+                </select>
+                <small
+                  *ngIf="vehicleForm.controls.usergrId?.invalid && (vehicleForm.controls.usergrId?.touched || vehicleForm.submitted)"
+                  class="text-danger">
+                  User Group is required when creating for a user group.
+                </small>
+              </div>
+            </div>
+
+            <!-- VIN Code -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vinCode">VIN Code</label>
+              <div class="col-md-10">
+                <input class="form-control" id="vinCode" [(ngModel)]="vehicle.vinCode" name="vinCode" 
+                  #vinCode="ngModel" />
+                <!-- <small *ngIf="vinCode.invalid && vinCode.touched" class="text-danger">
+                  VIN Code is required.
+                </small> -->
+              </div>
+            </div>
+
+            <!-- Vehicle Number -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleNumber">Vehicle Number</label>
+              <div class="col-md-10">
+                <input class="form-control" id="vehicleNumber" [(ngModel)]="vehicle.vehicleNumber" name="vehicleNumber"
+                   #vehicleNumber="ngModel" />
+                <!-- <small *ngIf="vehicleNumber.invalid && vehicleNumber.touched" class="text-danger">
+                  Vehicle Number is required.
+                </small> -->
+              </div>
+            </div>
+
+            <!-- Vehicle Brand -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleBrand">Vehicle Brand</label>
+              <div class="col-md-10">
+                <select class="form-control" id="vehicleBrand" [(ngModel)]="vehicle.vehicleBrand"
+                  (change)="onBrandChange($event)" required #vehicleBrand="ngModel" name="vehicleBrand">
+                  <option value="">Select Brand</option>
+                  <option *ngFor="let brand of evVehicleBrands" [value]="brand">
+                    {{ brand }}
+                  </option>
+                </select>
+                <small *ngIf="vehicleBrand.invalid && vehicleBrand.touched" class="text-danger">
+                  Vehicle Brand is required.
+                </small>
+              </div>
+            </div>
+
+
+            <!-- Vehicle Model -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleModel">Vehicle Model</label>
+              <div class="col-md-10">
+                <select class="form-control" id="vehicleModel" [(ngModel)]="vehicle.vehicleModel"
+                  (change)="onModelChange($event)" #vehicleModel="ngModel">
+                  <option value="">Select Model</option>
+                  <option *ngFor="let model of evVehicleModels" [value]="model">
+                    {{ model }}
+                  </option>
+                  <option *ngIf="evVehicleModels.length === 0" value="">No specified model for this brand</option>
+                </select>
+              </div>
+
+              <!-- <div *ngIf="isCompanyRole" class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company Name</label>
+                <div class="col-md-10">
+                  <select class="form-control" id="companyId" [(ngModel)]="vehicle.companyId" name="companyId" required>
+                    <option *ngFor="let company of companies" [value]="company.company_id">
+                      {{ company.company_name }}
+                    </option>
+                  </select>
+                </div>
+
+              </div> -->
+            </div>
+
+
+            <!-- Vehicle Year -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleYear">Vehicle Year</label>
+              <div class="col-md-10">
+                <select class="form-control" id="vehicleYear" [(ngModel)]="vehicle.vehicleYear" #vehicleYear="ngModel">
+                  <option value="">Select Year</option>
+                  <option *ngFor="let year of evVehicleYears" [value]="year">
+                    {{ year }}
+                  </option>
+                  <option *ngIf="evVehicleYears.length === 0" value="">No specified year for this model</option>
+                </select>
+              </div>
+
+              <!-- User Group ID -->
+              <!-- <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="usergrId">User Group ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="usergrId" [(ngModel)]="vehicle.usergrId" name="usergrId" type="number" required />
+                </div>
+              </div> -->
+              <!-- <div *ngIf="!isUserRole" class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="usergrId">User Group</label>
+                <div class="col-md-10">
+                  <select class="form-control" id="usergrId" [(ngModel)]="vehicle.usergrId" name="usergrId" required>
+                    <option *ngFor="let usergroup of usergroups" [value]="usergroup.usergr_id">
+                      {{ usergroup.usergr_name }}
+                    </option>
+                  </select>
+                </div>
+
+              </div> -->
+            </div>
+
+            <!-- Created Time -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="createdTime">Created Time</label>
+              <div class="col-md-10">
+                <input class="form-control" id="createdTime" [(ngModel)]="vehicle.createdTime" name="createdTime"
+                  type="datetime-local" required readonly />
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">
+                  Create Vehicle
+                </button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

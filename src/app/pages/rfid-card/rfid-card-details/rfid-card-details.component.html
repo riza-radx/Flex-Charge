@@ -1,0 +1,105 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+
+
+<!-- Tabs Section -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h2 class="mb-0">RFID Card Details</h2>
+            </div>
+            <div class="col-4 d-flex justify-content-end gap-2">
+              <button *ngIf="isAble" type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                [routerLink]="['/rfid-cards/updateradxrfidcard/', id]"><i class="fas fa-edit"></i></button>
+              <button *ngIf="isAble" type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                [routerLink]="['/rfid-cards/deleteradxrfidcard/', id]"><i class="fas fa-trash-alt"></i></button>
+              <!-- <button *ngIf="isExpired" type="button" class="btn btn-sm btn-neutral"
+                (click)="redirectToRecharge(card.card_id)">Recharge</button> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row">
+            <!-- Card Details -->
+            <div class="col-lg-8">
+              <div class="card-bg">
+                <img src="assets/flexcharge/card-background.png" class="card-background" />
+                
+                <div class="card-content">
+                  <!-- Status and Recharge Button at the top -->
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge badge-lg px-3 py-2 fw-bold"
+                      [ngClass]="{'badge-success': card?.status === 'active', 'badge-danger': card?.status !== 'active'}">
+                      {{ card ? (card.status | titlecase) : 'No Card Available' }}
+                    </span>
+                  
+                    <a *ngIf="card?.User" class="badge badge-lg px-3 py-2 custom-green fw-bold text-decoration-none"
+                       [routerLink]="['/users/user', card.user_id]">
+                      {{ card.User.username }}
+                    </a>
+                    <span *ngIf="!card?.User" class="badge badge-lg px-3 py-2 fw-bold">No User Attached</span>
+                  
+                    <a *ngIf="card?.UserGroup" class="badge badge-lg px-3 py-2 custom-green fw-bold text-decoration-none"
+                       [routerLink]="['/users/usergroup', card.usergr_id]">
+                      {{ card.UserGroup.usergr_name }}
+                    </a>
+                    <span *ngIf="!card?.UserGroup" class="badge badge-lg px-3 py-2 fw-bold">No User Group</span>
+                  </div>
+                  
+                  <!-- Card Number at Bottom Left -->
+                  <div class="card-bottom-left">
+                    <span *ngIf="card" class="h5 text-light mb-1">Serial</span>
+                    <span class="card-serial-number h1 font-weight-bold text-white">{{ card?.serial_no }}</span>
+                  </div>
+              
+                  <!-- Expiry Date on the Right -->
+                  <div class="card-bottom-right">
+                    <span *ngIf="card" class="h6 text-light d-block">Expiry Date</span>
+                    <span class="h4 text-white font-weight-bold">{{ card?.expiry_date }}</span>
+                 
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charging History -->
+            <div class="col-lg-4 d-flex flex-column">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="h3 mb-0">Charging History</h5>
+                </div>
+                <div class="card-body p-0">
+                  <ul class="list-group list-group-flush" data-toggle="checklist">
+                    <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4"
+                      *ngFor="let history of chargingHistory | slice:0:3">
+                      <div class="checklist-item checklist-item-success">
+                        <div class="checklist-info">
+                          <h5 class="checklist-title mb-0">{{ history.total_energy}} kWh || Station: {{ history.Charger.charger_name}}</h5>
+                          <small>{{ history.charging_history_date }} {{ history.strted_time}} - {{ history.ended_time}}</small>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+  
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

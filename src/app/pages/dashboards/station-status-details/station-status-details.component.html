@@ -1,0 +1,164 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+        <div class=" col-lg-6 col-7">
+          <h3 class=" h2 text-white d-inline-block mb-0">Chargers</h3>
+        </div>
+        <div class=" col-lg-6 col-5 text-right">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="dataTables_wrapper py-4" style="padding-left: 15px; padding-right: 15px;">
+          <!-- Gallery for stations with 3 columns -->
+          <div class="row">
+
+            <!-- Charger Card Start -->
+            <div class="col-md-4 flex-column flex-m-row mb-10" *ngFor="let charger of chargers">
+              <div class="card mb-4 shadow-sm" style=" border: 1px solid #000;">
+                <div class="card-body">
+                  <!-- Charger Header with Buttons -->
+                  <div class="justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title" style="font-size: 1rem;">{{ charger.charger_name }} </h5>
+                      <p>
+                        <!-- <i class="fa fa-times-circle text-primary"></i> Status: <span class="text-muted">{{
+                          charger.status
+                          }}</span> -->
+                        <i class="fa fa-times-circle" [ngClass]="{
+                        'text-primary':  charger.status?.toLowerCase() === 'available' || charger.status?.toLowerCase() === 'enable' }" [ngStyle]="{ 'color': getStatusColor(charger.status)}">
+                        </i>
+                        Status:
+                        <span class="text-muted">{{ charger.status }}</span>
+                      </p>
+
+                      <p class="card-subtitle text-muted">ID : {{ charger.ocpp_id }}</p>
+                    </div>
+                    <!-- Button Group for Actions -->
+                    <div *ngIf="isRadXAdmin || isCompanyRole">
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="handleTriggerMessage(charger.ocpp_id)" title="Trigger Message">
+                        <img src="assets/img/icons/actionsStation/icon2.png" style="width: 14px;" alt="Trigger Message">
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="handlegetCompositeSchedule(charger.ocpp_id)" title="Get Composite Schedule">
+                        <img src="assets/img/icons/actionsStation/icon3.png" style="width: 14px;"
+                          alt="Get Composite Schedule">
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="handleDataTransfer(charger.ocpp_id)" title="Data Transfer">
+                        <img src="assets/img/icons/actionsStation/icon4.png" style="width: 14px;" alt="Data Transfer">
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="handleLocalList(charger.ocpp_id)" title="Local List">
+                        <img src="assets/img/icons/actionsStation/icon5.png" style="width: 14px;" alt="Local List">
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="handleClearCache(charger.ocpp_id)" title="Clear Cache">
+                        <img src="assets/img/icons/actionsStation/icon6.png" style="width: 14px;" alt="Clear Cache">
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="handleChangeAvailability(charger.ocpp_id)" title="Change Availibility">
+                        <img src="assets/img/icons/actionsStation/icon7.png" style="width: 14px;"
+                          alt="Change Availibility">
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm" (click)="handleReboot(charger.ocpp_id)"
+                        title="Reboot">
+                        <img src="assets/img/icons/actionsStation/icon1.png" style="width: 14px;" alt="Reboot">
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="handleGetDiagnostics(charger.ocpp_id)" title="Get Diagnostics">
+                        <i class="fas fa-file-medical-alt" style="font-size: 12px;"></i>
+                      </button>
+                      <button class="icon-button btn btn-outline-primary btn-sm"
+                        (click)="viewDiagnosticsHistory(charger.ocpp_id)" title="Diagnostics History">
+                        <i class="fas fa-history" style="font-size: 12px;"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <hr>
+
+                  <!-- Station Status -->
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6 style="font-size: 0.95rem;">Station Status</h6>
+                      <p style="font-size: 0.95rem;"> {{ charger.status }}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <h6 style="font-size: 0.95rem;">Rated Power:</h6>
+                      <p style="font-size: 0.95rem;">{{ charger.rate_power }} kWh</p>
+                    </div>
+                  </div>
+
+
+                  <!-- View More Button -->
+                  <button class="btn btn-primary btn-sm mb-3" (click)="toggleConnectorStatus(charger)">
+                    {{ charger.showConnectorStatus ? 'Hide' : 'View More' }}
+                  </button>
+
+
+                  <!-- Connector Status -->
+                  <div *ngIf="charger.showConnectorStatus">
+                    <div *ngIf="charger.connectors.length > 0">
+                      <h6 style="font-size: 0.95rem;">Connector Status</h6>
+                      <div class="row">
+                        <div class="col-md-6" *ngFor="let connector of charger.connectors">
+                          <div class="border p-3 mb-3"
+                            style=" display: flex;flex-direction: column;flex-wrap: nowrap;align-content: center; justify-content: space-evenly;align-items: center;">
+                            <h6>{{ connector.connector_no }}</h6>
+                            <img src="assets/img/icons/actionsStation/type1.png" alt="Connector Image"
+                              class="img-fluid mb-2" style="max-width: 50px;">
+                            <!-- <img [src]="connector.connector_image" alt="Connector Image" class="img-fluid mb-2" style="max-width: 50px;"> -->
+                            <p style="font-size: 0.95rem;"><strong>Name :</strong> {{ connector.connector_name }}</p>
+                            <p style="font-size: 0.95rem;"><strong>Status:</strong> {{ connector.status }}</p>
+                            <p style="font-size: 0.95rem;"><strong>Connector:</strong> {{ connector.standard }}</p>
+                            <p style="font-size: 0.95rem;"><strong>Rated Power:</strong> {{ connector.rated_power }} kWh
+                            </p>
+                            <!-- <p style="font-size: 0.95rem;"><strong>Current Power:</strong> 0 kWh</p> -->
+                            <div class="row">
+                              <!-- <button type="button"
+                                *ngIf="charger.allow_reservation !== '0' && charger.allow_reservation !== false"
+                                class="btn btn-sm btn-neutral" tooltip="Add Reservation"
+                                [routerLink]="['/monitoring/addreservation', charger.charger_id, connector.connector_id]"
+                                [disabled]="connector.status === 'Reserved'">
+                                <i class="fas fa-calendar-plus"></i>
+                              </button> -->
+                              <button type="button"
+                                *ngIf="charger.allow_reservation !== '0' && charger.allow_reservation !== false"
+                                class="btn btn-sm btn-neutral" tooltip="Add Reservation"
+                                [disabled]="connector.status === 'Reserved' || connector.status === 'Preparing' || connector.status === 'Offline'"
+                                (click)="isUserRole ? addReservation(charger.charger_id,connector.connector_id, charger.ocpp_id) : navigateToReservation(charger.charger_id, connector.connector_id)">
+                                <i class="fas fa-calendar-plus"></i>
+                              </button>
+                              <button class="btn btn-sm btn-neutral"
+                                *ngIf="(connector.status === 'Preparing') && !isPartnerRole"
+                                (click)="handleStartRemoteCharging(charger.ocpp_id, connector.connector_no)"
+                                tooltip="Start Remote Charging">
+                                <i class="fas fa-play-circle"></i>
+                              </button>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <!-- Charger Card End -->
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

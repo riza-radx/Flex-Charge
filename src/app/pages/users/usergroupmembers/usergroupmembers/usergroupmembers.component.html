@@ -1,0 +1,197 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-5 text-right">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">New Member</h3>
+                </div>
+
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #userForm="ngForm">
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="name" [(ngModel)]="user.name" name="name" required />
+                                <small
+                                    *ngIf="userForm.controls.name?.invalid && (userForm.controls.name?.touched || userForm.controls.name?.dirty)"
+                                    class="text-danger">
+                                    Name is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="username">Username</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="username" [(ngModel)]="user.username" name="username"
+                                    required />
+                                <small
+                                    *ngIf="userForm.controls.username?.invalid && (userForm.controls.username?.touched || userForm.controls.username?.dirty)"
+                                    class="text-danger">
+                                    Username is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="email" type="email" [(ngModel)]="user.email"
+                                    name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" />
+                                <small *ngIf="userForm.controls.email?.invalid && 
+                                         (userForm.controls.email?.touched || userForm.controls.email?.dirty)"
+                                    class="text-danger">
+                                    Please enter a valid email address.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone
+                                Number</label>
+
+                            <div class="col-md-3">
+                                <select class="form-control" (change)="onCountryChange($event)">
+                                    <option *ngFor="let country of countries" [value]="country.prefix">
+                                        {{ country.name }} ({{ country.prefix }})
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-7">
+                                <input class="form-control" id="phone_number" type="tel" [(ngModel)]="user.phone_number"
+                                    name="phone_number" required (input)="formatPhoneNumber()" />
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="password">Password</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="password" type="password" [(ngModel)]="user.password"
+                                    name="password" required />
+                                <small
+                                    *ngIf="userForm.controls.password?.invalid && (userForm.controls.password?.touched || userForm.controls.password?.dirty)"
+                                    class="text-danger">
+                                    Password is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="role">Role</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="role" [(ngModel)]="user.role" name="role" required>
+                                    <option value="USER_GROUP_ADMIN">Admin</option>
+                                    <!-- <option value="USER_GROUP_MODERATOR">Moderator</option> -->
+                                    <option value="USER_GROUP_USER">User</option>
+                                </select>
+                                <small
+                                    *ngIf="userForm.controls.role?.invalid && (userForm.controls.role?.touched || userForm.controls.role?.dirty)"
+                                    class="text-danger">
+                                    Role is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="rate_id">Rate</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="rate_id" [value]="rateName" readonly />
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="customer_number">
+                                Customer Number
+                            </label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="customer_number" [(ngModel)]="user.customer_number"
+                                    name="customer_number" placeholder="e.g. CUST-A123" />
+                            </div>
+                        </div> -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="customer_number">
+                                Customer Number
+                            </label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="customer_number" [value]="customer_number"
+                                    name="customer_number" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="dimension_value">
+                                Dimension KLIENT/FURNITOR
+                            </label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="dimension_value" [value]="dimension_value"
+                                    name="dimension_value" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="company">Company</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="company" [value]="companyName"
+                                    [readonly]="true" />
+                            </div>
+                        </div>
+
+                        <!-- Pay As You Go Checkbox -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label">Allow Pay As You Go</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="allowPayAsYouGo"
+                                    [checked]="allowPayAsYouGo === 'true' || allowPayAsYouGo === '1'"
+                                    [disabled]="true" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label">
+                                Send Invoice By Mail
+                            </label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="send_invoice_by_email" [checked]="send_invoice_by_email"
+                                    [disabled]="true" />
+
+
+                            </div>
+                        </div>
+
+
+                        <div *ngIf="isSplitWallet" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="allow_money_transfert">Allow
+                                Money Transfer</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="allow_money_transfert" name="allow_money_transfert"
+                                    [(ngModel)]="user.allow_money_transfert" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Create User</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

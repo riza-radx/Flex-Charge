@@ -1,0 +1,211 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+
+<!-- Tabs Section -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-auto">
+              <h3 class="mb-0">Rate Details</h3>
+            </div>
+            <!-- 🆕 Hequr gate-i !isCompanyAnalyst — COMPANY_ANALYST tashme mund te editoje/fshije rate + rate_per_day. -->
+            <div class="col ml--2 custom-flex-end-center">
+              <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                [routerLink]="['/rates/radxupdaterate/', id]"><i class="fas fa-edit"></i></button>
+              <button type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                [routerLink]="['/rates/radxdeleterate/', id]"> <i class="fas fa-trash-alt"></i></button>
+              <button type="button" class="btn btn-sm btn-neutral" [routerLink]="['/rates/radxcreaterateperdays/', id]"
+                tooltip="Add Rate Per Day"> <i class="fas fa-plus-square"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="container py-4">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">
+                  <i class="fas fa-car text-primary"></i> Rate Name:
+                  <span class="font-weight-normal">{{ rate.rate_name }}</span>
+                  <span *ngIf="rate?.is_default === true || rate?.is_default === 1"
+                        style="display:inline-block;background:#28a745;color:#fff;font-size:11px;font-weight:600;padding:3px 8px;border-radius:3px;margin-left:10px;vertical-align:middle;">
+                    <i class="fas fa-check-circle"></i> DEFAULT RATE
+                  </span>
+                </h4>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <i class="fa fa-calendar-alt text-primary"></i> Company: <span class="text-muted">{{ rate.company
+                      }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <i class="fa fa-star text-primary"></i> Default:
+                    <span class="text-muted">{{ (rate?.is_default === true || rate?.is_default === 1) ? 'Yes' : 'No' }}</span>
+                  </div>
+                  <!-- 🆕 Rate Type dhe (per Purchase) Category -->
+                  <div class="col-md-4">
+                    <i class="fa fa-tag text-primary"></i> Rate Type:
+                    <span class="text-muted">
+                      {{ rate?.rate_type === 'purchase' ? 'Purchase (Blerje)' : 'Sale (Shitje)' }}
+                    </span>
+                    <span *ngIf="rate?.rate_type === 'purchase' && rate?.purchase_category"
+                      class="badge badge-info ml-2">
+                      {{ rate.purchase_category }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="card-body">
+          <tabset #rateTabs>
+            <!-- Rate Per Days Tab -->
+            <tab heading="Rate Per Days">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterRatePerDayTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                  [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                  [limit]="entries != -1 ? entries : undefined" [rows]="tempRatePerDays.length ? tempRatePerDays : []"
+                  [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+                  (select)="onSelect($event)">
+                  <!-- <ngx-datatable-column  name="From Date" prop="from_date"></ngx-datatable-column>
+                  <ngx-datatable-column  name="To Date" prop="to_date"></ngx-datatable-column> -->
+                  <ngx-datatable-column name="Time" prop="from_time"></ngx-datatable-column>
+                  <ngx-datatable-column name="To Time" prop="to_time"></ngx-datatable-column>
+                  <ngx-datatable-column name="Date Created"
+                    prop="date_created"></ngx-datatable-column>
+                  <ngx-datatable-column name="Price" prop="price"></ngx-datatable-column>
+                  <ngx-datatable-column name="Created By" prop="madeBy"></ngx-datatable-column>
+                  <ngx-datatable-column name="Modified By"
+                    prop="modifiedBy"></ngx-datatable-column>
+                  <!-- 🆕 Hequr gate-i !isCompanyAnalyst — COMPANY_ANALYST mund te editoje/fshije rate_per_day. -->
+                  <ngx-datatable-column name="Actions" prop="actions">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                      <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                        [routerLink]="['/rates/updaterateperdays/', row.rate_per_day_id]"><i
+                          class="fas fa-edit"></i></button>
+                      <button type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                        [routerLink]="['/rates/deleterateperdays/', row.rate_per_day_id]">
+                        <i class="fas fa-trash-alt"></i></button>
+                    </ng-template>
+                  </ngx-datatable-column>
+                </ngx-datatable>
+              </div>
+            </div>
+            </tab>
+
+            <!-- 🆕 Tab: Chargers — te dyja rastet (Purchase + Sale). Header dinamik me count.
+                 Klikimi mbi rreshtin hap Charger Detail. -->
+            <tab [heading]="'Chargers (' + (usageChargers?.length || 0) + ')'">
+              <div class="dataTables_wrapper py-4">
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section-chargers" class="bootstrap selection-cell"
+                    [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="usageChargerEntries != -1 ? usageChargerEntries : undefined"
+                    [rows]="usageChargers"
+                    selectionType="multiClick" (activate)="onUsageChargerActivate($event)"
+                    style="cursor: pointer;">
+                    <ngx-datatable-column name="Charger Name" prop="charger_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="OCPP ID" prop="ocpp_id"></ngx-datatable-column>
+                    <ngx-datatable-column name="Type" prop="type"></ngx-datatable-column>
+                    <ngx-datatable-column name="Current Type" prop="current_type"></ngx-datatable-column>
+                    <ngx-datatable-column name="Rate Power (kW)" prop="rate_power"></ngx-datatable-column>
+                  </ngx-datatable>
+                  <div *ngIf="usageLoaded && (!usageChargers || usageChargers.length === 0)"
+                       class="text-center text-muted py-3">
+                    Asnje charger nuk e ka te aplikuar kete rate.
+                  </div>
+                </div>
+              </div>
+            </tab>
+
+            <!-- 🆕 Tabs Users + User Groups — VETEM kur rate_type = 'sale'. Row-click hap detail-in. -->
+            <tab *ngIf="!isPurchaseRate" [heading]="'Users (' + (usageUsers?.length || 0) + ')'">
+              <div class="dataTables_wrapper py-4">
+                <div class="scrollable-table">
+                  <ngx-datatable class="bootstrap selection-cell"
+                    [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="usageUserEntries != -1 ? usageUserEntries : undefined"
+                    [rows]="usageUsers"
+                    selectionType="multiClick" (activate)="onUsageUserActivate($event)"
+                    style="cursor: pointer;">
+                    <ngx-datatable-column name="Name" prop="name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Username" prop="username"></ngx-datatable-column>
+                    <ngx-datatable-column name="Email" prop="email"></ngx-datatable-column>
+                    <ngx-datatable-column name="Phone Number" prop="phone_number"></ngx-datatable-column>
+                  </ngx-datatable>
+                  <div *ngIf="usageLoaded && (!usageUsers || usageUsers.length === 0)"
+                       class="text-center text-muted py-3">
+                    Asnje user nuk e ka te aplikuar kete rate.
+                  </div>
+                </div>
+              </div>
+            </tab>
+
+            <tab *ngIf="!isPurchaseRate" [heading]="'User Groups (' + (usageUserGroups?.length || 0) + ')'">
+              <div class="dataTables_wrapper py-4">
+                <div class="scrollable-table">
+                  <ngx-datatable class="bootstrap selection-cell"
+                    [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="usageUserGroupEntries != -1 ? usageUserGroupEntries : undefined"
+                    [rows]="usageUserGroups"
+                    selectionType="multiClick" (activate)="onUsageUserGroupActivate($event)"
+                    style="cursor: pointer;">
+                    <ngx-datatable-column name="User Group Name" prop="usergr_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Email" prop="usergr_email"></ngx-datatable-column>
+                  </ngx-datatable>
+                  <div *ngIf="usageLoaded && (!usageUserGroups || usageUserGroups.length === 0)"
+                       class="text-center text-muted py-3">
+                    Asnje user group nuk e ka te aplikuar kete rate.
+                  </div>
+                </div>
+              </div>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

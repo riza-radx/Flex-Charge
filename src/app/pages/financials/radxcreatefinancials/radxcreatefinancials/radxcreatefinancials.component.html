@@ -1,0 +1,51 @@
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Create Report</h3>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()">
+
+            <div class="form-group">
+              <label for="userGroupId">User</label>
+              <select class="form-control" id="userId" [(ngModel)]="reportForm.userId" name="userId">
+                <option *ngFor="let users of users" [value]="users.id">{{ users.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="userGroupId">User Group</label>
+              <select class="form-control" id="userGroupId" [(ngModel)]="reportForm.userGroupId" name="userGroupId">
+                <option *ngFor="let group of userGroups" [value]="group.id">{{ group.usergr_name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="partnerId">Partner</label>
+              <select class="form-control" id="partnerId" [(ngModel)]="reportForm.partnerId" name="partnerId">
+                <option *ngFor="let partner of partners" [value]="partner.id">{{ partner.partner_name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="fromDate">From Date</label>
+              <input type="date" class="form-control" id="fromDate" [(ngModel)]="reportForm.fromDate" name="fromDate"
+                required />
+            </div>
+
+            <div class="form-group">
+              <label for="toDate">To Date</label>
+              <input type="date" class="form-control" id="toDate" [(ngModel)]="reportForm.toDate" name="toDate"
+                required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

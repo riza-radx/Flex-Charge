@@ -1,0 +1,281 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update User Group</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="userGroupForm" (ngSubmit)="onSubmit()">
+
+            <!-- User Group Logo -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userGroupLogo">User Group Logo</label>
+              <div class="col-md-10">
+                <input type="file" class="form-control" id="userGroupLogo" (change)="onFileChange($event)" />
+              </div>
+            </div>
+
+            <!-- Name Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_name">Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="usergr_name" formControlName="usergr_name" required />
+                <small
+                  *ngIf="userGroupForm.controls['usergr_name'].invalid && userGroupForm.controls['usergr_name'].touched"
+                  class="text-danger">
+                  Name is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Description Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_description">Description</label>
+              <div class="col-md-10">
+                <input class="form-control" id="usergr_description" formControlName="usergr_description" required />
+                <small
+                  *ngIf="userGroupForm.controls['usergr_description'].invalid && userGroupForm.controls['usergr_description'].touched"
+                  class="text-danger">
+                  Description is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Address Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_addres">Address</label>
+              <div class="col-md-10">
+                <input class="form-control" id="usergr_addres" formControlName="usergr_addres" required />
+                <small
+                  *ngIf="userGroupForm.controls['usergr_addres'].invalid && userGroupForm.controls['usergr_addres'].touched"
+                  class="text-danger">
+                  Address is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- City Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_city">City</label>
+              <div class="col-md-10">
+                <input class="form-control" id="usergr_city" formControlName="usergr_city" required />
+                <small
+                  *ngIf="userGroupForm.controls['usergr_city'].invalid && userGroupForm.controls['usergr_city'].touched"
+                  class="text-danger">
+                  City is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Country Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_country">Country</label>
+              <div class="col-md-10">
+                <input class="form-control" id="usergr_country" formControlName="usergr_country" required />
+                <small
+                  *ngIf="userGroupForm.controls['usergr_country'].invalid && userGroupForm.controls['usergr_country'].touched"
+                  class="text-danger">
+                  Country is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Phone Number Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_phone_no">Phone Number</label>
+              <div class="col-md-3">
+                <select class="form-control" (change)="onCountryChange($event)">
+                  <option *ngFor="let country of countries" [value]="country.prefix">
+                    {{ country.name }} ({{ country.prefix }})
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-7">
+                <input class="form-control" id="usergr_phone_no" formControlName="usergr_phone_no" required
+                  (input)="formatPhoneNumber()" />
+              </div>
+            </div>
+
+
+            <!-- Email Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_email">Email</label>
+              <div class="col-md-10">
+                <input class="form-control" id="usergr_email" formControlName="usergr_email" required
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
+                <small
+                  *ngIf="userGroupForm.controls['usergr_email'].invalid && userGroupForm.controls['usergr_email'].touched"
+                  class="text-danger">
+                  Please enter a valid email address.
+                </small>
+              </div>
+            </div>
+
+            <!-- Rate Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="rate_id">Rate</label>
+              <div class="col-md-10">
+                <select class="form-control" id="rate_id" formControlName="rate_id">
+                  <option [value]="null">Select a Rate</option>
+                  <option *ngFor="let rate of rates" [value]="rate.rate_id">
+                    {{ rate.rate_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 🆕 Partner (opsional) — dropdown me search si tek krijimi i karteles. -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="partner_id">Partner</label>
+              <div class="col-md-10">
+                <input type="text" id="partnerSearch" class="form-control mb-2"
+                  [(ngModel)]="partnerSearchTerm" (input)="filterPartners()"
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="Search partner by name..." />
+                <select class="form-control" id="partner_id" formControlName="partner_id">
+                  <option [ngValue]="null">-- Not linked to a partner --</option>
+                  <option *ngFor="let partner of filteredPartners" [ngValue]="partner.partner_id">
+                    {{ partner.partner_name }}
+                  </option>
+                </select>
+                <small class="text-muted d-block mt-1">
+                  Nese grupi i perket nje partneri, zgjidhe ketu. Perndryshe lere "Not linked".
+                </small>
+              </div>
+            </div>
+            <!-- Customer Number -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="customer_number">
+                Customer Number
+                <span *ngIf="userGroupForm.get('check_fisk').value" class="text-danger">*</span>
+              </label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="customer_number" formControlName="customer_number"
+                  placeholder="e.g. UG-A1023" />
+                <small
+                  *ngIf="userGroupForm.get('customer_number').hasError('required') && userGroupForm.get('customer_number').touched"
+                  class="text-danger">
+                  Customer Number is required when Check Fiscalization is enabled.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="dimension_value">
+                Dimension KLIENT/FURNITOR
+                <span *ngIf="userGroupForm.get('check_fisk').value" class="text-danger">*</span>
+              </label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="dimension_value" formControlName="dimension_value"
+                  placeholder="Shkruaj vlerën e dimensionit" />
+                <small
+                  *ngIf="userGroupForm.get('dimension_value').hasError('required') && userGroupForm.get('dimension_value').touched"
+                  class="text-danger">
+                  Dimension KLIENT/FURNITOR is required when Check Fiscalization is enabled.
+                </small>
+              </div>
+            </div>
+
+
+            <!-- Company Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_id">Company</label>
+              <div class="col-md-10">
+                <select class="form-control" id="company_id" formControlName="company_id" required>
+                  <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}
+                  </option>
+                </select>
+                <small
+                  *ngIf="userGroupForm.controls['company_id'].invalid && userGroupForm.controls['company_id'].touched"
+                  class="text-danger">
+                  Company selection is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="allow_pay_as_you_go">Allow Pay As You
+                Go</label>
+              <div class="col-md-10">
+                <!-- <input 
+                      type="checkbox" 
+                      class="form-control" 
+                      id="allowPayAsYouGo" 
+                      formControlName="allowPayAsYouGo" 
+                      (change)="onAllowPayAsYouGoChange($event.target.checked)"
+                    /> -->
+                <input type="checkbox" id="allow_pay_as_you_go" formControlName="allow_pay_as_you_go"
+                  (change)="onAllowPayAsYouGoChange($event.target.checked)" />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="split_wallet">Split Wallet</label>
+              <div class="col-md-10">
+                <!-- <input 
+                      type="checkbox" 
+                      class="form-control" 
+                      id="allowPayAsYouGo" 
+                      formControlName="allowPayAsYouGo" 
+                      (change)="split_wallet($event.target.checked)"
+                    /> -->
+                <input type="checkbox" id="split_wallet" formControlName="split_wallet"
+                  (change)="onSplitWalletChange($event.target.checked)" />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="send_invoice_by_email">Send Invoice By
+                Mail</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="send_invoice_by_email" formControlName="send_invoice_by_email" />
+              </div>
+            </div>
+
+            <div *ngIf="isAdminUser" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="check_fisk">Check Fisc </label>
+              <div class="col-md-10">
+                <input type="checkbox" id="check_fisk" formControlName="check_fisk" />
+              </div>
+            </div>
+
+            <!-- 🆕 Vega Staff toggle — vetem admin/analyst mund ta shohin/modifikojne. -->
+            <div *ngIf="canManageVegaStaff" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="is_vega_staff">Vega Staff</label>
+              <div class="col-md-10">
+                <label class="custom-toggle">
+                  <input type="checkbox" id="is_vega_staff" formControlName="is_vega_staff" />
+                  <span class="custom-toggle-slider rounded-circle"></span>
+                </label>
+                <small class="text-muted d-block mt-1">
+                  Aktivizoje nese ky grup i perket stafit te Vega .
+                </small>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Update User
+                  Group</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">
+            {{ errorMessage }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

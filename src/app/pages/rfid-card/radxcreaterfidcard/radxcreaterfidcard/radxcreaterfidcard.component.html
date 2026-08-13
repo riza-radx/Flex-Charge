@@ -1,0 +1,550 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create RFID Card</h3>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #cardForm="ngForm" novalidate>
+                        <!-- Create It For Dropdown -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="createFor">Create It
+                                For</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="createFor" [(ngModel)]="createFor" name="createFor"
+                                    (change)="onCreateForChange(createFor)" required>
+                                    <option value="">Select an option</option>
+                                    <option value="user">User</option>
+                                    <option value="userGroup">User Group</option>
+                                </select>
+                                <small
+                                    *ngIf="cardForm.controls.createFor?.invalid && (cardForm.controls.createFor?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    Create It For is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Serial Number -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="serialNo">Serial
+                                Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="serialNo" [(ngModel)]="card.serialNo" name="serialNo"
+                                    required />
+                                <small
+                                    *ngIf="cardForm.controls.serialNo?.invalid && (cardForm.controls.serialNo?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    Serial Number is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Block Number -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="blockNo">Block Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="blockNo" [(ngModel)]="card.blockNo" name="blockNo"
+                                    required />
+                                <small
+                                    *ngIf="cardForm.controls.blockNo?.invalid && (cardForm.controls.blockNo?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    Block Number is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Balance -->
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="balance">Balance</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="balance" type="number" [(ngModel)]="card.balance"
+                                    name="balance" required />
+                                <small
+                                    *ngIf="cardForm.controls.balance?.invalid && (cardForm.controls.balance?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    Balance is required.
+                                </small>
+                            </div>
+                        </div> -->
+
+                        <!-- Expiry Date -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="expiryDate">Expiry
+                                Date</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="expiryDate" type="date" [(ngModel)]="card.expiryDate"
+                                    name="expiryDate" [min]="minDate" required />
+                                <small
+                                    *ngIf="cardForm.controls.expiryDate?.invalid && (cardForm.controls.expiryDate?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    Expiry Date is required.
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <!-- Company Dropdown -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                                    [readonly]="true" />
+                            </div>
+                        </div>
+
+                        <!-- User Dropdown -->
+                        <!-- <div class="form-group row" *ngIf="createFor === 'user'">
+                            <label class="col-md-2 col-form-label form-control-label" for="userId">
+                                Select or Create User
+                            </label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="userId" [(ngModel)]="card.userId" name="userId"
+                                    (change)="onUserSelectChange($event)" required>
+                                    <option value="">Select a user</option>
+                                    <option *ngFor="let user of filteredUsers" [value]="user.id">{{ user.name }}
+                                    </option>
+                                    <option value="create">Create New User</option>
+                                </select>
+                                <small
+                                    *ngIf="cardForm.controls.userId?.invalid && (cardForm.controls.userId?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    User is required.
+                                </small>
+                            </div>
+                        </div> -->
+                        <div class="form-group row" *ngIf="createFor === 'user'">
+                            <label class="col-md-2 col-form-label form-control-label" for="userSearch">
+                                Search User
+                            </label>
+                            <div class="col-md-10">
+                                <input type="text" id="userSearch" class="form-control mb-2"
+                                    [(ngModel)]="userSearchTerm" (input)="filterUsers()"
+                                    placeholder="Type to search users..." />
+
+                                <select class="form-control" id="userId" [(ngModel)]="card.userId" name="userId"
+                                    (change)="onUserSelectChange($event)" required>
+                                    <option value="">Select a user</option>
+                                    <option *ngFor="let user of filteredUsersFiltered" [value]="user.id">
+                                        {{ user.name }}
+                                    </option>
+                                    <option value="create">Create New User</option>
+                                </select>
+
+                                <small
+                                    *ngIf="cardForm.controls.userId?.invalid && (cardForm.controls.userId?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    User is required.
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <!-- User Group Dropdown -->
+                        <div class="form-group row" *ngIf="createFor === 'userGroup'">
+                            <label class="col-md-2 col-form-label form-control-label" for="usergrId"> Select or Create
+                                User Group</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="usergrId" [(ngModel)]="card.usergrId" name="usergrId"
+                                    (change)="onUserGroupSelectChange($event)" required>
+                                    <option value="">Select a user group</option>
+                                    <option *ngFor="let userGroup of filteredUserGroups" [value]="userGroup.usergr_id">
+                                        {{ userGroup.usergr_name }}</option>
+                                    <option value="create">Create New User Group</option>
+                                </select>
+                                <small
+                                    *ngIf="cardForm.controls.usergrId?.invalid && (cardForm.controls.usergrId?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    User Group is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Status Dropdown -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="status" [(ngModel)]="card.status" name="status"
+                                    required>
+                                    <option value="">Select a status</option>
+                                    <option value="active">Active</option>
+                                    <option value="expired">Expired</option>
+                                    <option value="lost">Lost</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                                <small
+                                    *ngIf="cardForm.controls.status?.invalid && (cardForm.controls.status?.touched || cardForm.submitted)"
+                                    class="text-danger">
+                                    Status is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label">Allow multiple charging</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="multiple_charging_session"
+                                    [(ngModel)]="card.multiple_charging_session" name="multiple_charging_session" />
+                            </div>
+                        </div>
+
+                        <!-- 🆕 Distributor Card — vetem COMPANY_ADMIN. -->
+                        <div class="form-group row" *ngIf="isCompanyAdmin">
+                            <label class="col-md-2 col-form-label form-control-label">Kartë Distributori</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="is_distributor_card"
+                                    [(ngModel)]="card.is_distributor_card" name="is_distributor_card"
+                                    (change)="onDistributorToggle()" />
+                                <small class="text-muted ml-2 d-block">
+                                    Nëse zgjidhet, TopUp-i i parë te kjo kartë do njoftojë financën automatikisht.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- 🆕 Dropdown me search per partneret e kompanise. Vetem kur checkbox-i eshte on. -->
+                        <div class="form-group row" *ngIf="isCompanyAdmin && card.is_distributor_card">
+                            <label class="col-md-2 col-form-label form-control-label" for="distributor_id">Emri i Distributorit</label>
+                            <div class="col-md-10">
+                                <input type="text" id="partnerSearch" class="form-control mb-2"
+                                    [(ngModel)]="partnerSearchTerm" (input)="filterPartners()"
+                                    name="partnerSearchTerm"
+                                    placeholder="Type to search partners..." />
+                                <select class="form-control" id="distributor_id"
+                                    [(ngModel)]="card.distributor_id" name="distributor_id"
+                                    (change)="onDistributorSelectChange($event)">
+                                    <option [ngValue]="null">Select a distributor</option>
+                                    <option *ngFor="let p of filteredPartners" [ngValue]="p.partner_id">
+                                        {{ p.partner_name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Create RFID
+                                    Card</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="popup-container" *ngIf="showUserPopup">
+    <div class="popup-content" style="padding:2%; width: 1045px; margin: 106px auto; border-radius: 8px;">
+        <img class="close-btn" src="assets/img/icons/closeX.png" alt="Close" (click)="closeUserPopup()">
+        <h2>Create User</h2>
+        <form (ngSubmit)="onSubmit()" #userForm="ngForm">
+            <!-- Name Input -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="name" [(ngModel)]="user.name" name="name" required />
+                    <small
+                        *ngIf="userForm.controls.name?.invalid && (userForm.controls.name?.touched || userForm.controls.name?.dirty)"
+                        class="text-danger">
+                        Name is required.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Username Input -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="username">Username</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="username" [(ngModel)]="user.username" name="username" required />
+                    <small
+                        *ngIf="userForm.controls.username?.invalid && (userForm.controls.username?.touched || userForm.controls.username?.dirty)"
+                        class="text-danger">
+                        Username is required.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Email Input -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="email" type="email" [(ngModel)]="user.email" name="email" required
+                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" />
+                    <small
+                        *ngIf="userForm.controls.email?.invalid && (userForm.controls.email?.touched || userForm.controls.email?.dirty)"
+                        class="text-danger">
+                        Please enter a valid email address.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Phone Number Input -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone Number</label>
+                <div class="col-md-3">
+                    <select class="form-control" (change)="onCountryChange($event)">
+                        <option *ngFor="let country of countries" [value]="country.prefix">
+                            {{ country.name }} ({{ country.prefix }})
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-7">
+                    <input class="form-control" id="phone_number" type="tel" [(ngModel)]="user.phone_number"
+                        name="phone_number" required (input)="formatPhoneNumber()" />
+                </div>
+            </div>
+
+
+            <!-- Password Input -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="password">Password</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="password" type="password" [(ngModel)]="user.password"
+                        name="password" required />
+                    <small
+                        *ngIf="userForm.controls.password?.invalid && (userForm.controls.password?.touched || userForm.controls.password?.dirty)"
+                        class="text-danger">
+                        Password is required.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Role Select -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="role">Role</label>
+                <div class="col-md-10">
+                    <select class="form-control" id="role" [(ngModel)]="user.role" name="role" required>
+                        <option value="" disabled>Select a role</option>
+                        <option value="COMPANY_ADMIN">Admin</option>
+                        <option value="COMPANY_OPERATOR">Operator</option>
+                        <option value="COMPANY_MODERATOR">Moderator</option>
+                        <option value="COMPANY_TECHNICAL_OPERATOR">Technical Operator</option>
+                        <option value="COMPANY_MAINTENANCE_SPECIALIST">Maintenance Specialist</option>
+                        <option value="COMPANY_CALL_CENTER">Call Center</option>
+                        <option value="COMPANY_ANALYST">Analyst</option>
+                        <option value="COMPANY_USER">User</option>
+                        <option value="COMPANY_SUPER_USER">Super User</option>
+                    </select>
+                    <small
+                        *ngIf="userForm.controls.role?.invalid && (userForm.controls.role?.touched || userForm.controls.role?.dirty)"
+                        class="text-danger">
+                        Role is required.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="rate_id">Select Rate</label>
+                <div class="col-md-10">
+                    <select class="form-control" id="rate_id" [(ngModel)]="user.rate_id" name="rate_id">
+                        <option [value]="null">Select a Rate</option>
+                        <option *ngFor="let rate of rates" [value]="rate.rate_id">
+                            {{ rate.rate_name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Pay As You Go Checkbox -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label">Allow Pay As You Go</label>
+                <div class="col-md-10">
+                    <input type="checkbox" id="allowPayAsYouGo" [(ngModel)]="user.allowPayAsYouGo"
+                        name="allowPayAsYouGo" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label">Send
+                    Invoice By
+                    Mail</label>
+                <div class="col-md-10">
+                    <input type="checkbox" id="send_invoice_by_email" [(ngModel)]="user.send_invoice_by_email"
+                        name="send_invoice_by_email" />
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+                <div class="col-md-10 offset-md-2">
+                    <button type="button" class="btn btn-primary" (click)="onSubmitUser()">Create</button>
+                </div>
+            </div>
+        </form>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">{{
+            errorMessage }}</div>
+        <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+        </div>
+    </div>
+</div>
+
+
+
+<div class="popup-container" *ngIf="showUserGroupPopup">
+    <div class="popup-content" style="padding:2%; width: 1045px; margin: 106px auto; border-radius: 8px;">
+        <img class="close-btn" src="assets/img/icons/closeX.png" alt="Close" (click)="closeUserGroupPopup()">
+        <h2>Create User Group</h2>
+        <form (ngSubmit)="onSubmit()" #userGroupForm="ngForm">
+            <!-- User Group Logo -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="file">Upload Logo</label>
+                <div class="col-md-10">
+                    <input type="file" class="form-control" id="file" (change)="onFileSelected($event)" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="usergr_name">Name</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="usergr_name" [(ngModel)]="userGroup.usergr_name" name="usergr_name"
+                        required />
+                    <small
+                        *ngIf="userGroupForm.controls.usergr_name?.invalid && (userGroupForm.controls.usergr_name?.touched || userGroupForm.controls.usergr_name?.dirty)"
+                        class="text-danger">
+                        Name is required.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="description">Description</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="description" [(ngModel)]="userGroup.usergr_description"
+                        name="usergr_description" required />
+                    <small
+                        *ngIf="userGroupForm.controls.usergr_description?.invalid && (userGroupForm.controls.usergr_description?.touched || userGroupForm.controls.usergr_description?.dirty)"
+                        class="text-danger">
+                        Description is required.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="address">Address</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="address" [(ngModel)]="userGroup.usergr_addres" name="usergr_addres"
+                        required />
+                    <small
+                        *ngIf="userGroupForm.controls.usergr_addres?.invalid && (userGroupForm.controls.usergr_addres?.touched || userGroupForm.controls.usergr_addres?.dirty)"
+                        class="text-danger">
+                        Address is required.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="city">City</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="city" [(ngModel)]="userGroup.usergr_city" name="usergr_city"
+                        required />
+                    <small
+                        *ngIf="userGroupForm.controls.usergr_city?.invalid && (userGroupForm.controls.usergr_city?.touched || userGroupForm.controls.usergr_city?.dirty)"
+                        class="text-danger">
+                        City is required.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="country">Country</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="country" [(ngModel)]="userGroup.usergr_country"
+                        name="usergr_country" required />
+                    <small
+                        *ngIf="userGroupForm.controls.usergr_country?.invalid && (userGroupForm.controls.usergr_country?.touched || userGroupForm.controls.usergr_country?.dirty)"
+                        class="text-danger">
+                        Country is required.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone Number</label>
+                <div class="col-md-3">
+                    <select class="form-control" (change)="onCountryChangeUserGroup($event)">
+                        <option *ngFor="let country of countries" [value]="country.prefix">
+                            {{ country.name }} ({{ country.prefix }})
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-7">
+                    <input class="form-control" id="phone_number" type="tel" [(ngModel)]="userGroup.usergr_phone_no"
+                        name="phone_number" required (input)="formatPhoneNumberUserGroup()" />
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="email" type="email" [(ngModel)]="userGroup.usergr_email"
+                        name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" />
+                    <small *ngIf="userGroupForm.submitted && !userGroupForm.controls.email?.valid" class="text-danger">
+                        A valid email is required.
+                    </small>
+                    <small *ngIf="userGroupForm.controls.email?.invalid && userGroupForm.controls.email?.touched"
+                        class="text-danger">
+                        Please enter a valid email address.
+                    </small>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                        [readonly]="true" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="rate_id">Select Rate</label>
+                <div class="col-md-10">
+                    <select class="form-control" id="rate_id" [(ngModel)]="user.rate_id" name="rate_id">
+                        <option [value]="null">Select a Rate</option>
+                        <option *ngFor="let rate of rates" [value]="rate.rate_id">
+                            {{ rate.rate_name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Pay As You Go Checkbox -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label">Allow Pay As You Go</label>
+                <div class="col-md-10">
+                    <input type="checkbox" id="allow_pay_as_you_go" [(ngModel)]="userGroup.allow_pay_as_you_go"
+                        name="allow_pay_as_you_go" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-10 offset-md-2">
+                    <button class="btn btn-primary" type="button" (click)="onSubmitUserGroup()">Create User
+                        Group</button>
+                </div>
+            </div>
+        </form>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">{{
+            errorMessage }}</div>
+        <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+        </div>
+    </div>
+</div>

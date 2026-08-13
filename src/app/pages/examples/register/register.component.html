@@ -1,0 +1,193 @@
+<div class="login-container" style="background-image: url('assets/flexcharge/login-background.jpeg'); background-size: cover;">
+
+
+  <div *ngIf="!isSmallScreen" class="login-logo" style="background-color: #ffffff00;">
+    <!-- <img src="assets/flexcharge/login-background.jpeg" alt="RADX Logo" class="logo-image" /> -->
+    <img src="assets/flexcharge/logo.png" alt="Flex Charge" class="logo-image" />
+  </div>
+  <div class="login-form">
+    <div class="card bg-gradient-secondary border-0 mb-0">
+      <div class="card-body px-lg-5 py-lg-5">
+        <h2 class="text-center mb-4">Register</h2>
+
+        <form (ngSubmit)="register()" #userForm="ngForm" novalidate>
+          <!-- Name Input -->
+          <div class="form-group row" [ngClass]="{ focused: focus === true }">
+            <div class="input-group input-group-alternative mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+              </div>
+              <input class="form-control" placeholder="Name" type="text" [(ngModel)]="name" name="name" required
+                (focus)="focus = true" (blur)="focus = false" #nameInput="ngModel" />
+            </div>
+            <!-- Validation Message -->
+            <small *ngIf="nameInput.invalid && (nameInput.touched || nameInput.dirty)" class="text-danger">
+              Name is required.
+            </small>
+          </div>
+
+          <!-- Username Input -->
+          <div class="form-group row" [ngClass]="{ focused: focus1 === true }">
+            <div class="input-group input-group-alternative mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+              </div>
+              <input class="form-control" placeholder="Username" type="text" [(ngModel)]="username" name="username"
+                required (focus)="focus1 = true" (blur)="focus1 = false" #usernameInput="ngModel" />
+            </div>
+            <!-- Validation Message -->
+            <small *ngIf="usernameInput.invalid && (usernameInput.touched || usernameInput.dirty)" class="text-danger">
+              Username is required.
+            </small>
+          </div>
+
+          <!-- Email Input -->
+          <div class="form-group row" [ngClass]="{ focused: focus2 === true }">
+            <div class="input-group input-group-alternative mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+              </div>
+              <input class="form-control" placeholder="Email" type="email" [(ngModel)]="email" name="email" required
+                email (focus)="focus2 = true" (blur)="focus2 = false" #emailInput="ngModel" />
+            </div>
+            <!-- Validation Message -->
+            <small *ngIf="emailInput.invalid && (emailInput.touched || emailInput.dirty)" class="text-danger">
+              Please enter a valid email address.
+            </small>
+          </div>
+
+          <!-- Phone Number Input -->
+          <div class="form-group row" [ngClass]="{ focused: focus3 === true }">
+            <div class="input-group input-group-alternative mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
+              </div>
+              <select class="form-control" (change)="onCountryChange($event)">
+                <option *ngFor="let country of countries" [value]="country.prefix">
+                  {{ country.name }} ({{ country.prefix }})
+                </option>
+              </select>
+              <input class="form-control" placeholder="Phone Number" type="tel" [(ngModel)]="phoneNumber"
+                name="phoneNumber" required (focus)="focus3 = true" (blur)="focus3 = false"
+                #phoneInput="ngModel" (input)="formatPhoneNumber()"/>
+            </div>
+          </div>
+
+          <!-- Password Input -->
+          <div class="form-group row" [ngClass]="{ focused: focus4 === true }">
+            <div class="input-group input-group-alternative">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+              </div>
+              <input class="form-control" placeholder="Password" type="password" [(ngModel)]="password" name="password"
+                required minlength="6" (focus)="focus4 = true" (blur)="focus4 = false" #passwordInput="ngModel" />
+            </div>
+            <!-- Validation Message -->
+            <small *ngIf="passwordInput.invalid && (passwordInput.touched || passwordInput.dirty)" class="text-danger">
+              Password must be at least 6 characters long.
+            </small>
+          </div>
+
+          <re-captcha (resolved)="resolved($event)" (errored)="onError($event)" siteKey="6Ld82wIrAAAAAIcPNwMifFkCQO0VbtwXQbzgiBAP" errorMode="handled"></re-captcha>
+          <!-- Submit Button -->
+          <div class="text-center">
+            <!-- <button type="submit" class="btn btn-primary mt-4">
+              Create Account
+            </button> -->
+            <button 
+  type="submit" 
+  class="btn btn-primary mt-4" 
+  [disabled]="userForm.invalid || !isValidRecaptcha">
+  Create Account
+</button>
+
+          </div>
+        </form>
+
+
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">
+          {{ errorMessage }}
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <a [routerLink]="['/login']" class="text-dark">
+          Log in
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<style>
+  /* Container for the login page layout */
+  .login-container {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    background: linear-gradient(to right, #e8f1f6, #ffffff);
+  }
+
+  /* Left column for the logo */
+  .login-logo {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f1f6;
+    padding: 2rem;
+  }
+
+  .logo-image {
+    max-width: 60%;
+  }
+
+  /* Right column for the form */
+  .login-form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #ffffff;
+  }
+
+  h2 {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .form-control {
+    border-radius: 4px;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background-color: #2c3e44;
+    border-color: #2c3e44;
+    font-size: 1rem;
+    font-weight: 500;
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    background-color: #2c3e44;
+    border-color: #2c3e44;
+  }
+
+  .text-dark {
+    color: #333 !important;
+    font-size: 0.9rem;
+  }
+</style>

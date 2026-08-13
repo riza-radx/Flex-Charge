@@ -1,0 +1,106 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h3 class="h2 text-white d-inline-block mb-0">Create Vehicle</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="mb-0">Create Vehicle</h3>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="onSubmit()">
+              <!-- VIN Code -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="vinCode">VIN Code</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="vinCode" [(ngModel)]="vehicle.vinCode" name="vinCode" required />
+                </div>
+              </div>
+  
+              <!-- Vehicle Number -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="vehicleNumber">Vehicle Number</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="vehicleNumber" [(ngModel)]="vehicle.vehicleNumber" name="vehicleNumber" required />
+                </div>
+              </div>
+  
+              <!-- Vehicle Brand -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="vehicleBrand">Vehicle Brand</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="vehicleBrand" [(ngModel)]="vehicle.vehicleBrand" name="vehicleBrand" required />
+                </div>
+              </div>
+  
+              <!-- Vehicle Model -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="vehicleModel">Vehicle Model</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="vehicleModel" [(ngModel)]="vehicle.vehicleModel" name="vehicleModel" required />
+                </div>
+              </div>
+  
+              <!-- Vehicle Year -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="vehicleYear">Vehicle Year</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="vehicleYear" [(ngModel)]="vehicle.vehicleYear" name="vehicleYear" type="number" required />
+                </div>
+              </div>
+  
+              <!-- User ID -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="userId">User ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="userId" [(ngModel)]="vehicle.userId" name="userId" type="number" required />
+                </div>
+              </div>
+  
+              <!-- Company ID -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="companyId" [(ngModel)]="vehicle.companyId" name="companyId" type="number" required />
+                </div>
+              </div>
+  
+              <!-- User Group ID -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="usergrId">User Group ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="usergrId" [(ngModel)]="vehicle.usergrId" name="usergrId" type="number" required />
+                </div>
+              </div>
+  
+              <!-- Created Time -->
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="createdTime">Created Time</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="createdTime" [(ngModel)]="vehicle.createdTime" name="createdTime" type="datetime-local" required />
+                </div>
+              </div>
+  
+              <!-- Submit Button -->
+              <div class="form-group row">
+                <div class="col-md-10 offset-md-2">
+                  <button class="btn btn-primary" type="submit">Create Vehicle</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,198 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Create Report</h3>
+        </div>
+        <div class="card-body">
+          <form #reportForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="reportType">Report Type</label>
+              <div class="col-md-10">
+                <select class="form-control" id="reportType" [(ngModel)]="report.reportType" name="reportType" required>
+                  <option value="">Select an option</option>
+                  <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+                </select>
+                <small
+                  *ngIf="reportForm.controls.reportType?.invalid && (reportForm.controls.reportType?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  Report Type is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Display Company Field if Company_Report is selected -->
+            <div *ngIf="report.reportType === 'Company_Report' || report.reportType === 'Time_Split_Report'"
+              class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="companyId" [value]="companyName" [readonly]="true" />
+              </div>
+            </div>
+
+
+            <!-- Display User Field if User_Report is selected -->
+            <!-- <div *ngIf="report.reportType === 'User_Report'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userId" [(ngModel)]="report.userId" name="userId" required>
+                  <option [value]="null">Select a user</option>
+                  <option *ngFor="let user of users" [ngValue]="user.id">{{ user.name }}</option>
+                </select>
+                <small
+                  *ngIf="reportForm.controls.userId?.invalid && (reportForm.controls.userId?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  User is required.
+                </small>
+              </div>
+            </div> -->
+            <div *ngIf="report.reportType === 'User_Report'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userSearch">Search User</label>
+              <div class="col-md-10">
+                <input type="text" id="userSearch" class="form-control mb-2" [(ngModel)]="userSearchTermReport"
+                  (input)="filterUsersReport()" placeholder="Type to search users..." />
+
+                <select class="form-control" id="userId" [(ngModel)]="report.userId" name="userId" required>
+                  <option [value]="null">Select a user</option>
+                  <option *ngFor="let user of filteredUsersReport" [ngValue]="user.id">
+                    {{ user.name }}
+                  </option>
+                </select>
+
+                <small
+                  *ngIf="reportForm.controls.userId?.invalid && (reportForm.controls.userId?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  User is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Display User Group Field if User_Group_Report is selected -->
+            <div *ngIf="report.reportType === 'User_Group_Report'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userGroupId">User Group</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userGroupId" [(ngModel)]="report.userGroupId" name="userGroupId"
+                  required>
+                  <option [value]="null">Select a user group</option>
+                  <option *ngFor="let userGroup of userGroups" [ngValue]="userGroup.usergr_id">{{ userGroup.usergr_name
+                    }}
+                  </option>
+                </select>
+                <small
+                  *ngIf="reportForm.controls.userGroupId?.invalid && (reportForm.controls.userGroupId?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  User Group is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Display Partner Field if Partner_Report is selected -->
+            <div *ngIf="report.reportType === 'Partner_Report'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="partnerId">Partner</label>
+              <div class="col-md-10">
+                <select class="form-control" id="partnerId" [(ngModel)]="report.partnerId" name="partnerId" required>
+                  <option [value]="null">Select a partner</option>
+                  <option *ngFor="let partner of partners" [ngValue]="partner.partner_id">{{ partner.partner_name }}
+                  </option>
+                </select>
+                <small
+                  *ngIf="reportForm.controls.partnerId?.invalid && (reportForm.controls.partnerId?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  Partner is required.
+                </small>
+              </div>
+            </div>
+
+
+            <div *ngIf="report.reportType === 'RFID_Card_Report'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="cardId">RFID Card</label>
+              <div class="col-md-10">
+                <select class="form-control" id="cardId" [(ngModel)]="report.cardId" name="cardId" required>
+                  <option [value]="null">Select a card</option>
+                  <option *ngFor="let card of cards" [ngValue]="card.card_id">{{ card.serial_no }}</option>
+                </select>
+                <small
+                  *ngIf="reportForm.controls.cardId?.invalid && (reportForm.controls.cardId?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  RFID Card is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="idNo">From Date</label>
+              <div class="col-md-10">
+                <input type="date" class="form-control" id="fromDate" [(ngModel)]="report.fromDate" name="fromDate"
+                  [max]="maxDate" required />
+                <small
+                  *ngIf="reportForm.controls.fromDate?.invalid && (reportForm.controls.fromDate?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  From Date is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="idNo">To Date</label>
+              <div class="col-md-10">
+                <input type="date" class="form-control" id="toDate" [(ngModel)]="report.toDate" name="toDate"
+                  [max]="maxDate" required />
+                <small
+                  *ngIf="reportForm.controls.toDate?.invalid && (reportForm.controls.toDate?.touched || reportForm.submitted)"
+                  class="text-danger">
+                  To Date is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- 🆕 Time window — shown only for Time_Split_Report -->
+            <div *ngIf="report.reportType === 'Time_Split_Report'" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="fromTime">From&nbsp;Time</label>
+              <div class="col-md-4">
+                <input type="time" class="form-control" id="fromTime" [(ngModel)]="report.fromTime" name="fromTime"
+                  required>
+                <small *ngIf="reportForm.controls.fromTime?.invalid
+                     && (reportForm.controls.fromTime?.touched || reportForm.submitted)" class="text-danger">
+                  From&nbsp;Time is required.
+                </small>
+              </div>
+
+              <label class="col-md-2 col-form-label form-control-label" for="toTime">To&nbsp;Time</label>
+              <div class="col-md-4">
+                <input type="time" class="form-control" id="toTime" [(ngModel)]="report.toTime" name="toTime" required>
+                <small *ngIf="reportForm.controls.toTime?.invalid
+                     && (reportForm.controls.toTime?.touched || reportForm.submitted)" class="text-danger">
+                  To&nbsp;Time is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+              </div>
+            </div>
+            <!-- Success and Error Messages -->
+            <div *ngIf="reportSuccessMessage" class="alert alert-success mt-3">{{ reportSuccessMessage }}</div>
+            <div *ngIf="reportErrorMessage" class="alert alert-danger mt-3"
+              style="background-color: #ffcccc; color: #660000;">{{ reportErrorMessage }}</div>
+          </form>
+
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>

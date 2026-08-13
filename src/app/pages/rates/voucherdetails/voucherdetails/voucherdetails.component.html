@@ -1,0 +1,64 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Voucher Details</h3>
+            </div>
+            <div class="col-4" style="display: flex; justify-content: flex-end; gap: 10px;">
+            </div>
+          </div>
+        </div>
+        <div class="card-body mb-3">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="card-bg">
+                <img src="assets/flexcharge/card-background.png" class="card-background" />
+                
+                <div class="card-content">
+                  <!-- Status and Recharge Button at the top -->
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge badge-lg px-3 py-2"
+                      [ngClass]="{'badge-success': voucher?.status === 'active', 'badge-danger': voucher?.status !== 'active'}">
+                      {{ voucher ? (voucher.status | titlecase) : 'No Card Available' }}
+                    </span>
+                    <!-- <button type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                      [routerLink]="['/rfid-cards/recharge']" [queryParams]="{ fromProfile: true }" tooltip="Recharge">
+                      <i class="fas fa-money-bill"></i>
+                    </button> -->
+                  </div>
+                  
+                  <!-- Card Number at Bottom Left -->
+                  <div class="card-bottom-left">
+                    <span *ngIf="voucher" class="h5 text-light mb-1">Card Number</span>
+                    <span class="card-serial-number h1 font-weight-bold text-white">{{ voucher?.serial_no }}</span>
+                  </div>
+              
+                  <!-- Expiry Date on the Right -->
+                  <div class="card-bottom-right">
+                    <span *ngIf="voucher" class="h6 text-light d-block">Expiry Date</span>
+                    <span class="h4 text-white font-weight-bold">{{ voucher?.expiry_date }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>

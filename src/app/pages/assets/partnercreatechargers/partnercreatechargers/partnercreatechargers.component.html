@@ -1,0 +1,309 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h3 class="h2 text-white d-inline-block mb-0">Create Charger</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Create Charger</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="chargerForm" (ngSubmit)="onSubmit()">
+            <!-- Charger Name -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="chargerName">Charger Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="chargerName" formControlName="chargerName" required maxlength="20" />
+                <small
+                  *ngIf="chargerForm.get('chargerName').hasError('required') && (chargerForm.get('chargerName').touched || chargerForm.get('chargerName').dirty)"
+                  class="text-danger">
+                  Charger Name is required.
+                </small>
+                <small
+                  *ngIf="chargerForm.get('chargerName').hasError('maxlength') && (chargerForm.get('chargerName').touched || chargerForm.get('chargerName').dirty)"
+                  class="text-danger">
+                  Charger Name must be 20 characters or fewer.
+                </small>
+              </div>
+            </div>
+
+            <!-- Type -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="type">Type</label>
+              <div class="col-md-10">
+                <!-- <input class="form-control" id="type" formControlName="type" required /> -->
+                <select class="form-control" id="type" formControlName="type" name="type">
+                  <option value="AC">AC</option>
+                  <option value="DC">DC</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Number of Connectors -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="noOfConnectors">Number of
+                Connectors</label>
+              <div class="col-md-10">
+                <input class="form-control" id="noOfConnectors" formControlName="noOfConnectors" type="number"
+                  (change)="onNoOfConnectorsChange()" required />
+              </div>
+            </div>
+
+            <!-- Valid -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="valid">Valid</label>
+              <div class="col-md-10">
+                <input id="valid" formControlName="valid" type="checkbox" />
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+              <div class="col-md-10">
+                <!-- <input class="form-control" id="status" formControlName="status" required /> -->
+                <select class="form-control" id="status" formControlName="status" name="status">
+                  <option value="enable">Enable</option>
+                  <option value="disable">Disable</option>
+                  <option value="demo">Demo</option>
+                  <option value="outOfOrder">Out Of Order</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Location ID -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="locationId">Location ID</label>
+              <div class="col-md-10">
+                <!-- <input class="form-control" id="locationId" formControlName="locationId" type="number" required /> -->
+                <select class="form-control" id="locationId" formControlName="locationId" required>
+                  <option *ngFor="let location of chargerLocations" [value]="location.location_id">
+                    {{ location.addres }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Rated Power -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="ratedPower">Rated Power</label>
+              <div class="col-md-10">
+                <input class="form-control" id="ratedPower" formControlName="ratedPower" type="number" required />
+              </div>
+            </div>
+
+            <!-- Company ID -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company ID</label>
+              <div class="col-md-10">
+                <!-- <input class="form-control" id="companyId" formControlName="companyId" type="number" required /> -->
+                <select class="form-control" id="companyId" formControlName="companyId" required>
+                  <option *ngFor="let company of companies" [value]="company.company_id">
+                    {{ company.company_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- OCPP Protocol -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="ocppProtocol">OCPP Protocol</label>
+              <div class="col-md-10">
+                <input class="form-control" id="ocppProtocol" formControlName="ocppProtocol" required />
+              </div>
+            </div>
+
+            <!-- OCPP ID -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="ocppId">OCPP ID</label>
+              <div class="col-md-10">
+                <input class="form-control" id="ocppId" formControlName="ocppId" required />
+              </div>
+            </div>
+
+            <!-- Current Type -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="currentType">Current Type</label>
+              <div class="col-md-10">
+                <input class="form-control" id="currentType" formControlName="currentType" required />
+              </div>
+            </div>
+
+            <!-- Max Power -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="maxPower">Max Power</label>
+              <div class="col-md-10">
+                <input class="form-control" id="maxPower" formControlName="maxPower" type="number" required />
+              </div>
+            </div>
+
+            <!-- Max Voltage -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="maxVoltage">Max Voltage</label>
+              <div class="col-md-10">
+                <!-- <input class="form-control" id="maxVoltage" formControlName="maxVoltage" type="number" required /> -->
+                <select class="form-control" id="maxVoltage" formControlName="maxVoltage" name="maxVoltage">
+                  <option value="230V">230V</option>
+                  <option value="380V">380V</option>
+                  <option value="400V">400V</option>
+                  <option value="480V">480V</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Max Amperage -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="maxAmperage">Max Amperage</label>
+              <div class="col-md-10">
+                <input class="form-control" id="maxAmperage" formControlName="maxAmperage" type="number" required />
+              </div>
+            </div>
+
+            <!-- Phase -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="phase">Phase</label>
+              <div class="col-md-10">
+                <!-- <input class="form-control" id="phase" formControlName="phase" required /> -->
+                <select class="form-control" id="phase" formControlName="phase" name="phase">
+                  <option value="SinglePhase">Single Phase</option>
+                  <option value="SplitPhase">Split Phase</option>
+                  <option value="ThreePhases">Three Phases</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Phase Rotation -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="phaseRotation">Phase Rotation</label>
+              <div class="col-md-10">
+                <input class="form-control" id="phaseRotation" formControlName="phaseRotation" required />
+                <select class="form-control" id="phaseRotation" formControlName="phaseRotation" name="phaseRotation">
+                  <option value="RST">RST</option>
+                  <option value="RTS">RTS</option>
+                  <option value="SRT">SRT</option>
+                  <option value="STR">STR</option>
+                  <option value="TRS">TRS</option>
+                  <option value="TSR">TSR</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="allowReservation">Allow Reservation</label>
+              <div class="col-md-10">
+                <input id="allowReservation" formControlName="allowReservation" type="checkbox" />
+              </div>
+            </div>
+
+            <!-- Partner ID -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="partnerId">Partner ID</label>
+              <div class="col-md-10">
+                <!-- <input class="form-control" id="partnerId" formControlName="partnerId" type="number" required /> -->
+                <select class="form-control" id="partnerId" formControlName="partnerId" required>
+                  <option *ngFor="let partner of partners" [value]="partner.partner_id">
+                    {{ partner.partner_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dynamically Generated Connector Forms -->
+            <div formArrayName="connectors" *ngIf="connectors.length">
+              <div *ngFor="let connector of connectors.controls; let i = index" [formGroupName]="i">
+                <h4>Connector {{ i + 1 }}</h4>
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="connectorNumber">Connector
+                    Number</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="connectorNumber" formControlName="connectorNumber" required />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="connectorImage">Connector Image</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="connectorImage" formControlName="connectorImage" required />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="connectorName">Connector Name</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="connectorName" formControlName="connectorName" required />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="ratedPower">Rated Power</label>
+                  <div class="col-md-10">
+                    <input class="form-control" id="ratedPower" formControlName="ratedPower" required />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="standard">Standard</label>
+                  <div class="col-md-10">
+                    <!-- <input class="form-control" id="standard" formControlName="standard" required /> -->
+                    <select class="form-control" id="standard" formControlName="standard" name="standard">
+                      <option value="J1772">J1772</option>
+                      <option value="Type2">Type 2</option>
+                      <option value="Type3">Type 3</option>
+                      <option value="CHAdeMO">CHAdeMO</option>
+                      <option value="CCS1">CCS 1</option>
+                      <option value="GB/TDC">GB/T DC</option>
+                      <option value="GB/TAC">GB/T AC</option>
+                      <option value="Schuko">Schuko</option>
+                      <option value="NACS">NACS</option>
+                      <option value="InductivePaddle">Inductive Paddle</option>
+                      <option value="NEMA5-20">NEMA 5-20</option>
+                      <option value="TypeEFrenchStandard">Type E French Standard</option>
+                      <option value="TypeJSwissStandard">Type J Swiss Standard</option>
+                      <option value="AVCON">AVCON</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="valid">Valid</label>
+                  <div class="col-md-10">
+                    <input id="valid" formControlName="valid" type="checkbox" />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+                  <div class="col-md-10">
+                    <!-- <input class="form-control" id="status" formControlName="status" required /> -->
+                    <select class="form-control" id="status" formControlName="status" name="status">
+                      <option value="enable">Enable</option>
+                      <option value="disable">Disable</option>
+                      <option value="outOfOrder">Out Of Order</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Create Charger</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

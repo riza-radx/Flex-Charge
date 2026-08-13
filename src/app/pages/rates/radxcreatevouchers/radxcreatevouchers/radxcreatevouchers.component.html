@@ -1,0 +1,135 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Voucher</h3>
+                </div>
+                <div class="card-body">
+                    <form #voucherForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="amount">Amount</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="amount" type="number" [(ngModel)]="voucher.amount"
+                                    name="amount" required />
+                                <small
+                                    *ngIf="voucherForm.controls.amount?.invalid && (voucherForm.controls.amount?.touched || voucherForm.submitted)"
+                                    class="text-danger">
+                                    Amount is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="serial_no">Serial
+                                Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="serial_no" [(ngModel)]="voucher.serial_no"
+                                    name="serial_no" required />
+                                <small
+                                    *ngIf="voucherForm.controls.serial_no?.invalid && (voucherForm.controls.serial_no?.touched || voucherForm.submitted)"
+                                    class="text-danger">
+                                    Serial Number is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="block_no">Block
+                                Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="block_no" [(ngModel)]="voucher.block_no" name="block_no"
+                                    required />
+                                <small
+                                    *ngIf="voucherForm.controls.block_no?.invalid && (voucherForm.controls.block_no?.touched || voucherForm.submitted)"
+                                    class="text-danger">
+                                    Block Number is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                                    [readonly]="true" />
+                            </div>
+                        </div>
+
+                       
+
+                        <!-- Date -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="date">Expired Date</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="date" type="date" [(ngModel)]="voucher.date" name="date"
+                                    [min]="minDate" required />
+                                <small *ngIf="voucherForm.submitted && voucherForm.controls['date']?.invalid"
+                                    class="text-danger">
+                                    Date is required.
+                                </small>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="userId" [(ngModel)]="voucher.userId" name="userId">
+                                    <option value="" >Select a user</option>
+                                    <option *ngFor="let user of users" [value]="user.id">
+                                        {{ user.name }}
+                                    </option>
+                                </select>
+                                <small class="text-muted">If you want, you can add this voucher to a user.</small>
+                                <small
+                                    *ngIf="voucherForm.controls.userId?.invalid && (voucherForm.controls.userId?.touched || voucherForm.submitted)"
+                                    class="text-danger">
+                                    User is required.
+                                </small>
+                            </div>
+                        </div> -->
+
+                        <!-- 🆕 Distributor Voucher (informacion) -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label">Voucher Distributori</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="is_distributor_card"
+                                    [(ngModel)]="voucher.is_distributor_card" name="is_distributor_card" />
+                                <small class="text-muted ml-2 d-block">
+                                    Shenjo nese voucher-i lëshohet te një distributor. Vetëm informacion — nuk ndryshon logjikën.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row" *ngIf="voucher.is_distributor_card">
+                            <label class="col-md-2 col-form-label form-control-label" for="distributor_name">Emri i Distributorit</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="distributor_name"
+                                    [(ngModel)]="voucher.distributor_name" name="distributor_name"
+                                    placeholder="psh ABC Distribution Ltd" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Create
+                                    Voucher</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,198 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+
+                <div class="col-lg-6 col-5 text-right"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Update Member</h3>
+                </div>
+
+                <div class="card-body">
+                    <form #userForm="ngForm" (ngSubmit)="onSubmit()">
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="name" [(ngModel)]="user.name" name="name" required />
+                                <small
+                                    *ngIf="userForm.controls.name?.invalid && (userForm.controls.name?.touched || userForm.controls.name?.dirty)"
+                                    class="text-danger">
+                                    Name is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="username">Username</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="username" [(ngModel)]="user.username" name="username"
+                                    required />
+                                <small
+                                    *ngIf="userForm.controls.username?.invalid && (userForm.controls.username?.touched || userForm.controls.username?.dirty)"
+                                    class="text-danger">
+                                    Username is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="email" type="email" [(ngModel)]="user.email"
+                                    name="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" />
+                                <small
+                                    *ngIf="userForm.controls.email?.invalid && (userForm.controls.email?.touched || userForm.controls.email?.dirty)"
+                                    class="text-danger">
+                                    Please enter a valid email address.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone
+                                Number</label>
+                            <div class="col-md-3">
+                                <select class="form-control" (change)="onCountryChange($event)">
+                                    <option *ngFor="let country of countries" [value]="country.prefix">
+                                        {{ country.name }} ({{ country.prefix }})
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-7">
+                                <input class="form-control" id="phone_number" type="tel" [(ngModel)]="user.phone_number"
+                                    name="phone_number" required (input)="formatPhoneNumber()" />
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="password">New
+                                Password</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="password" type="password" [(ngModel)]="user.newPassword"
+                                    name="newPassword" minlength="8" />
+                                <small
+                                    *ngIf="userForm.controls.newPassword?.invalid && 
+                                            (userForm.controls.newPassword?.touched || userForm.controls.newPassword?.dirty)"
+                                    class="text-danger">
+                                    Password must be at least 8 characters.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="confirmPassword">Confirm
+                                Password</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="confirmPassword" type="password"
+                                    [(ngModel)]="user.confirmPassword" name="confirmPassword"
+                                    [required]="user.newPassword?.length > 0"
+                                    [ngClass]="{'is-invalid': user.newPassword && user.confirmPassword && user.newPassword !== user.confirmPassword}">
+                                <small
+                                    *ngIf="user.newPassword && user.confirmPassword && user.newPassword !== user.confirmPassword"
+                                    class="text-danger">
+                                    Passwords must match.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="role">Role</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="role" [(ngModel)]="user.role" name="role" required>
+                                    <option value="" disabled>Select Role</option>
+                                    <option value="PARTNER_ADMIN">Admin</option>
+                                    <!-- <option value="PARTNER_MODERATOR">Moderator</option> -->
+                                    <!-- Add more roles as needed -->
+                                </select>
+                                <small
+                                    *ngIf="userForm.controls.role?.invalid && (userForm.controls.role?.touched || userForm.controls.role?.dirty)"
+                                    class="text-danger">
+                                    Role is required.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="rate_id">Rate</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="rate_id" [(ngModel)]="user.rate_id" name="rate_id">
+                                    <option [value]="null">Select a Rate</option>
+                                    <option *ngFor="let rate of rates" [value]="rate.rate_id">
+                                        {{ rate.rate_name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="customer_number">
+                                Customer Number
+                            </label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="customer_number" [(ngModel)]="user.customer_number"
+                                    name="customer_number" placeholder="e.g. CUST-A123" />
+
+                            </div>
+                        </div> -->
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="allowPayAsYouGo">Allow Pay As
+                                You Go</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="allowPayAsYouGo" name="allowPayAsYouGo"
+                                    [(ngModel)]="user.allowPayAsYouGo" (change)="onAllowPayAsYouGoChange($event)" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="send_invoice_by_email">Send
+                                Invoice By Mail</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="send_invoice_by_email" name="send_invoice_by_email"
+                                    [(ngModel)]="user.send_invoice_by_email" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="isPhoneVerified">
+                                Is Phone Verified
+                            </label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="isPhoneVerified" name="isPhoneVerified"
+                                    [(ngModel)]="user.isPhoneVerified" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="resetStatus">
+                                Password Reset Requested
+                            </label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="resetStatus" name="resetStatus"
+                                    [(ngModel)]="user.resetStatus" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Update
+                                    User</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

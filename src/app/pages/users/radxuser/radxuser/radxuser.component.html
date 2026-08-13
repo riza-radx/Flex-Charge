@@ -1,0 +1,309 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="dataTables_wrapper py-4">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-9">
+                <h3 class="mb-0">Users</h3>
+                <!-- <p *ngIf="isRadXRole" class="text-sm mb-0">✓ {{ currentMonthCountEntry }} New User this month</p> -->
+              </div>
+
+              <div class="btn_new col-3 ">
+                <button class="btn-icon-clipboard" *ngIf="isRadXRole" tooltip="Create New RadX User">
+                  <a [routerLink]="['/users/user/create/radx']">
+                    <i class="fas fa-user-plus"></i>
+                  </a>
+                </button>
+                <button class="btn-icon-clipboard" *ngIf="isCompanyRole" tooltip="Create New Company User">
+                  <a [routerLink]="['/companies/addmembers', company_id]">
+                    <i class="fas fa-user-plus"></i>
+                  </a>
+                </button>
+                <!-- <button class="btn-icon-clipboard" *ngIf="isUserGroupRole" tooltip="Create New User Group Member">
+                  <a [routerLink]="['/users/addusergroupmember', userGroupId]">
+                    <i class="fas fa-user-plus"></i>
+                  </a>
+                </button>
+                <button class="btn-icon-clipboard" *ngIf="isPartnerRole" tooltip="Create New Partner User">
+                  <a [routerLink]="['/partners/addmember', partnerId]">
+                    <i class="fas fa-user-plus"></i>
+                  </a>
+                </button> -->
+
+                <!-- Export to PDF and Excel -->
+                <button (click)="exportToPDF()" type="button" class="btn-icon-clipboard" tooltip="Export PDF">
+                  <i class="fas fa-file-pdf"></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn-icon-clipboard" tooltip="Export Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="dataTables_wrapper py-4">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <div class="dataTables_length" id="datatable_length">
+                  <label>
+                    <span *ngIf="!isSmallScreen">Show</span>
+                    <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                      (change)="entriesChange($event)">
+                      <option value="10" [selected]="entries == 10">10</option>
+                      <option value="25" [selected]="entries == 25">25</option>
+                      <option value="50" [selected]="entries == 50">50</option>
+                      <option value="-1" [selected]="entries == -1">All</option>
+                    </select>
+                    <span *ngIf="!isSmallScreen">entries</span>
+                  </label>
+                </div>
+              </div>
+              <div class="col ml--2 custom-flex-end-center">
+                <div id="datatable_filter" class="dataTables_filter">
+                  <label>
+                    <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                      placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+                    <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                  </label>
+                </div>
+
+                <div *ngIf="isRadXRole || isCompanyRole || isPartnerRole || isUserGroupRole || isCompanyAnalyst"
+                  id="datatable_filter" class="dataTables_filter">
+                  <!-- Filter Dropdown Button -->
+                  <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button"
+                      class="btn btn-outline-primary dropdown-toggle" aria-controls="dropdown-basic">
+                      <span *ngIf="!isSmallScreen">Filters</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                      aria-labelledby="button-basic">
+                      <!-- Dropdown for Company -->
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="companySelect" class="dropdown-item">Company</label>
+                        <select id="companySelect" [(ngModel)]="selectedCompany" class="form-control"
+                          (change)="getUsers()" (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                            }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Dropdown for Partner -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole || isCompanyAnalyst">
+                        <label for="partnerSelect" class="dropdown-item">Partner</label>
+
+                        <!-- Dropdown for RadX Roles -->
+                        <select *ngIf="isRadXRole" id="partnerSelect" [(ngModel)]="selectedPartner" class="form-control"
+                          (change)="getUsers()" (click)="$event.stopPropagation()">
+                          <option value="">All Partners</option>
+                          <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name
+                            }}
+                          </option>
+                        </select>
+
+                        <select *ngIf="isCompanyRole || isCompanyAnalyst" id="partnerSelect"
+                          [(ngModel)]="selectedPartner" class="form-control" (change)="getUsersByCompany()"
+                          (click)="$event.stopPropagation()">
+                          <option value="">All Partners</option>
+                          <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name
+                            }}
+                          </option>
+                        </select>
+                      </li>
+
+                      <!-- Dropdown for User Groups -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole || isCompanyAnalyst">
+                        <label for="userGroupSelect" class="dropdown-item">User Group</label>
+
+                        <select *ngIf="isRadXRole" id="userGroupSelect" [(ngModel)]="selectedUserGroup"
+                          class="form-control" (change)="getUsers()" (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+
+                        <select *ngIf="isCompanyRole || isCompanyAnalyst" id="userGroupSelect"
+                          [(ngModel)]="selectedUserGroup" class="form-control" (change)="getUsersByCompany()"
+                          (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+                      </li>
+                      <!-- Dropdown for Role -->
+                      <li role="menuitem"
+                        *ngIf="isRadXRole || isCompanyRole || isPartnerRole || isUserGroupRole || isCompanyAnalyst">
+                        <label for="userGroupSelect" class="dropdown-item">Role</label>
+
+                        <select *ngIf="isRadXRole" id="userGroupSelect" [(ngModel)]="selectedRole" (change)="getUsers()"
+                          class="form-control" (click)="$event.stopPropagation()">
+                          <option value="">All Roles</option>
+                          <option value="COMPANY_ADMIN">COMPANY ADMIN</option>
+                          <option value="COMPANY_OPERATOR">COMPANY OPERATOR</option>
+                          <option value="COMPANY_ANALYST">COMPANY FINANCIAL ANALYST</option>
+                          <option value="COMPANY_USER">COMPANY USER</option>
+                          <option value="PARTNER_ADMIN">PARTNER ADMIN</option>
+                          <option value="USER_GROUP_ADMIN">USER GROUP ADMIN</option>
+                          <option value="USER_GROUP_USER">USER GROUP USER</option>
+                          <option value="USER">USER</option>
+                        </select>
+
+
+
+                        <select *ngIf="isCompanyRole || isCompanyAnalyst" id="userGroupSelect"
+                          [(ngModel)]="selectedRole" (change)="getUsersByCompany()" class="form-control"
+                          (click)="$event.stopPropagation()">
+                          <option value="">All Roles</option>
+                          <option value="COMPANY_ADMIN">COMPANY ADMIN</option>
+                          <option value="COMPANY_OPERATOR">COMPANY OPERATOR</option>
+                          <option value="COMPANY_ANALYST">COMPANY FINANCIAL ANALYST</option>
+                          <option value="COMPANY_USER">COMPANY USER</option>
+                          <option value="PARTNER_ADMIN">PARTNER ADMIN</option>
+                          <option value="USER_GROUP_ADMIN">USER GROUP ADMIN</option>
+                          <option value="USER_GROUP_USER">USER GROUP USER</option>
+
+                        </select>
+                        <select *ngIf="isPartnerRole" id="userGroupSelect" [(ngModel)]="selectedRole"
+                          (change)="getUsersByCompany()" class="form-control" (click)="$event.stopPropagation()">
+                          <option value="">All Roles</option>
+                          <option value="PARTNER_ADMIN">PARTNER ADMIN</option>
+                        </select>
+                        <select *ngIf="isUserGroupRole" id="userGroupSelect" [(ngModel)]="selectedRole"
+                          (change)="getUsersByCompany()" class="form-control" (click)="$event.stopPropagation()">
+                          <option value="">All Roles</option>
+                          <option value="USER_GROUP_ADMIN">USER GROUP ADMIN</option>
+                          <option value="USER_GROUP_USER">USER GROUP USER</option>
+
+                        </select>
+                      </li>
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole || isCompanyAnalyst">
+                        <label for="registeredFromSelect" class="dropdown-item">Registered From</label>
+
+                        <!-- Dropdown for RadX Roles -->
+                        <select *ngIf="isRadXRole" id="registeredFromSelect" [(ngModel)]="selectedRegisteredFrom"
+                          class="form-control" (change)="getUsers()" (click)="$event.stopPropagation()">
+                          <option value="">All</option>
+                          <option value="Mobile">Mobile</option>
+                          <option value="Dashboard">Dashboard</option>
+                        </select>
+
+                        <!-- Dropdown for Company Roles -->
+                        <select *ngIf="isCompanyRole || isCompanyAnalyst" id="registeredFromSelect"
+                          [(ngModel)]="selectedRegisteredFrom" class="form-control" (change)="getUsersByCompany()"
+                          (click)="$event.stopPropagation()">
+                          <option value="">All</option>
+                          <option value="Mobile">Mobile</option>
+                          <option value="Dashboard">Dashboard</option>
+                        </select>
+                      </li>
+
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole || isCompanyAnalyst">
+                        <label for="allowPayAsYouGoSelect" class="dropdown-item">Allow Pay As You Go</label>
+
+                        <!-- Dropdown for RadX Roles -->
+                        <select *ngIf="isRadXRole" id="allowPayAsYouGoSelect" [(ngModel)]="selectedAllowPayAsYouGo"
+                          class="form-control" (change)="getUsers()" (click)="$event.stopPropagation()">
+                          <option [ngValue]="null">All</option>
+                          <option [value]="'true'">Yes</option>
+                          <option [value]="'false'">No</option>
+                        </select>
+
+                        <!-- Dropdown for Company Roles -->
+                        <select *ngIf="isCompanyRole || isCompanyAnalyst" id="allowPayAsYouGoSelect"
+                          [(ngModel)]="selectedAllowPayAsYouGo" class="form-control" (change)="getUsersByCompany()"
+                          (click)="$event.stopPropagation()">
+                          <option [ngValue]="null">All</option>
+                          <option [value]="'true'">Yes</option>
+                          <option [value]="'false'">No</option>
+                        </select>
+                      </li>
+
+
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 
+            <ngx-datatable class="bootstrap selection-cell" [columnMode]="'force'" [headerHeight]="50"
+              [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined" [rows]="temp"
+              [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+              (select)="onSelect($event)">
+              <ngx-datatable-column name="Name" prop="name"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Email" prop="email"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Phone Number"
+                prop="phone_number"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Username" prop="username"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Role" prop="role"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Actions" prop="actions">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                    [routerLink]="['/users/user/update/company', row.id]"><i class="fas fa-edit"></i></button>
+                  <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                    [routerLink]="['/users/user/delete/company', row.id]"><i class="fas fa-trash-alt"></i></button>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable> -->
+          <div class="scrollable-table">
+            <ngx-datatable class="bootstrap selection-cell" [columnMode]="'force'" [headerHeight]="50"
+              [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined" [rows]="temp"
+              [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+              (select)="onSelect($event)" [scrollbarH]="false">
+              <ngx-datatable-column name="Unique ID" prop="id"></ngx-datatable-column>
+              <ngx-datatable-column name="Name" prop="name"></ngx-datatable-column>
+              <ngx-datatable-column name="Email" prop="email"></ngx-datatable-column>
+              <ngx-datatable-column name="Phone Number" prop="phone_number"></ngx-datatable-column>
+              <ngx-datatable-column name="Username" prop="username"></ngx-datatable-column>
+              <ngx-datatable-column name="Role" prop="role"></ngx-datatable-column>
+              <ngx-datatable-column name="Registered From" prop="registered_from"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Customer No"
+                prop="customer_number"></ngx-datatable-column>
+                 <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Dimension"
+                prop="dimension_value"></ngx-datatable-column>
+              <ngx-datatable-column name="Allow Pay-As-You-Go">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.allow_pay_as_you_go === 'true' || row.allow_pay_as_you_go === 1 ? 'Yes' : 'No' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Balance">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ (row.balance | number:'1.2-2') || '0.00' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Debit Balance">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ (row.debit_balance | number:'1.2-2') || '0.00' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="Created At" prop="created_date"></ngx-datatable-column> -->
+              <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Actions" prop="actions">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                    [routerLink]="['/users/user/update/company', row.id]"><i class="fas fa-edit"></i></button>
+                  <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                    [routerLink]="['/users/user/delete/company', row.id]"><i class="fas fa-trash-alt"></i></button>
+                </ng-template>
+              </ngx-datatable-column>
+
+            </ngx-datatable>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

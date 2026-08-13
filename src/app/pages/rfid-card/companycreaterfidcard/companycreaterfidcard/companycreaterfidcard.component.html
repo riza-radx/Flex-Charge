@@ -1,0 +1,101 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h3 class="h2 text-white d-inline-block mb-0">Create RFID Card</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create RFID Card</h3>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()">
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="serialNo">Serial Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="serialNo" [(ngModel)]="card.serialNo" name="serialNo" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="blockNo">Block Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="blockNo" [(ngModel)]="card.blockNo" name="blockNo" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="balance">Balance</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="balance" type="number" [(ngModel)]="card.balance" name="balance" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="userId">User ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="userId" [(ngModel)]="card.userId" name="userId" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="companyId">Company ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="companyId" [(ngModel)]="card.companyId" name="companyId" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="usergrId">User Group ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="usergrId" [(ngModel)]="card.usergrId" name="usergrId" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="status" [(ngModel)]="card.status" name="status" required />
+                            </div>
+                        </div>
+
+                        <!-- 🆕 Distributor Card -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label">Kartë Distributori</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="is_distributor_card"
+                                    [(ngModel)]="card.is_distributor_card" name="is_distributor_card" />
+                                <small class="text-muted ml-2 d-block">
+                                    Nëse zgjidhet, TopUp-i i parë te kjo kartë do njoftojë financën automatikisht.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row" *ngIf="card.is_distributor_card">
+                            <label class="col-md-2 col-form-label form-control-label" for="distributor_name">Emri i Distributorit</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="distributor_name" [(ngModel)]="card.distributor_name"
+                                    name="distributor_name" placeholder="psh ABC Distribution Ltd" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Create RFID Card</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

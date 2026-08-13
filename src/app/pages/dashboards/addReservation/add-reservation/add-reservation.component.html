@@ -1,0 +1,102 @@
+<div class=" header pb-6" style="background-color: #931623!important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Reservation</h3>
+                </div>
+                <div class="card-body">
+                    <form #reservationForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label"
+                                for="connectorId">Connector</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="connectorId"
+                                    [value]=" connector?.connector_name" [readonly]="true" />
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="userId" [(ngModel)]="reservation.userId" name="userId"
+                                    (change)="onUserChange()">
+                                    <option value="">Select a user</option>
+                                    <!-- <option *ngFor="let user of users" [value]="user.id">
+                                        {{ user.name }}
+                                    </option> -->
+                                    <ng-container *ngIf="isUserGroupRole || isPartnerRole; else normalUserTemplate">
+                                        <option *ngFor="let user of users" [value]="user.user.id">
+                                            {{ user.user.name }}
+                                        </option>
+                                    </ng-container>
+
+                                    <ng-template #normalUserTemplate>
+                                        <option *ngFor="let user of users" [value]="user.id">
+                                            {{ user.name }}
+                                        </option>
+                                    </ng-template>
+                                </select>
+                                <small
+                                    *ngIf="reservationForm.controls.userId?.invalid && (reservationForm.controls.userId?.touched || reservationForm.submitted)"
+                                    class="text-danger">
+                                    User is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="date">Date</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="date" type="date" [(ngModel)]="reservation.date"
+                                    name="date" [min]="minDate" required />
+                                <small *ngIf="reservationForm.submitted && reservationForm.controls['date']?.invalid"
+                                    class="text-danger">
+                                    Date is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="time">Time</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="time" type="time" [(ngModel)]="reservation.time"
+                                    name="time" required />
+                                <small *ngIf="reservationForm.submitted && reservationForm.controls['date']?.invalid"
+                                    class="text-danger">
+                                    Date is required.
+                                </small>
+                            </div>
+                        </div> -->
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit" [disabled]="!enableAddReservation">Create
+                                    Reservation</button>
+                                <!-- Conditional message -->
+                                <h5 *ngIf="!enableAddReservation" style="color: rgb(207, 34, 34); margin-top: 8px;">
+                                    There is not enough balance to make this reservation.
+                                </h5>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

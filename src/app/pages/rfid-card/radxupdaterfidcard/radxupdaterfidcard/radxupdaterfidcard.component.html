@@ -1,0 +1,192 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update RFID Card</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="rfidCardForm" (ngSubmit)="onSubmit()">
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="serialNo">Serial Number</label>
+              <div class="col-md-10">
+                <input class="form-control" id="serialNo" formControlName="serialNo" required />
+                <div
+                  *ngIf="rfidCardForm.get('serialNo').invalid && (rfidCardForm.get('serialNo').touched || rfidCardForm.get('serialNo').dirty)">
+                  <small class="text-danger">Serial Number is required.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="blockNo">Block Number</label>
+              <div class="col-md-10">
+                <input class="form-control" id="blockNo" formControlName="blockNo" required />
+                <div
+                  *ngIf="rfidCardForm.get('blockNo').invalid && (rfidCardForm.get('blockNo').touched || rfidCardForm.get('blockNo').dirty)">
+                  <small class="text-danger">Block Number is required.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="expiryDate">Expiry Date</label>
+              <div class="col-md-10">
+                <input class="form-control" id="expiryDate" type="date" formControlName="expiryDate" [min]="minDate"
+                  required />
+                <small
+                  *ngIf="rfidCardForm.get('expiryDate')?.invalid && (rfidCardForm.get('expiryDate')?.touched || rfidCardForm.get('expiryDate')?.dirty)"
+                  class="text-danger">
+                  Expiry Date is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="balance">Balance</label>
+              <div class="col-md-10">
+                <input class="form-control" id="balance" formControlName="balance" required />
+                <div
+                  *ngIf="rfidCardForm.get('balance').invalid && (rfidCardForm.get('balance').touched || rfidCardForm.get('balance').dirty)">
+                  <small class="text-danger">Balance is required.</small>
+                </div>
+              </div>
+            </div> -->
+
+            <!-- User Field -->
+            <!-- <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userId" formControlName="userId">
+                  <option [ngValue]="null">Select User</option>
+                  <option *ngFor="let user of companyUsers" [value]="user.id">{{ user.name }}</option>
+                </select>
+              </div>
+            </div> -->
+            <!-- Search input OUTSIDE the reactive form scope -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userSearch">Search User</label>
+              <div class="col-md-10">
+                <input type="text" id="userSearch" class="form-control mb-2" [formControl]="userSearchControl"
+                  placeholder="Type to search users..." />
+              </div>
+            </div>
+
+            <!-- Inside the form with formControlName -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userId" formControlName="userId">
+                  <option [ngValue]="null">Select User</option>
+                  <option *ngFor="let user of filteredUsersFiltered" [ngValue]="user.id">
+                    {{ user.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+
+            <!-- Company Field -->
+            <div class="form-group row" *ngIf="rfidCardForm.get('companyId').value !== null">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <select class="form-control" id="companyId" formControlName="companyId">
+                  <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- User Group Field -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergrId">User Group</label>
+              <div class="col-md-10">
+                <select class="form-control" id="usergrId" formControlName="usergrId">
+                  <option [ngValue]="null">Select User Group</option>
+                  <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{ userGroup.usergr_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+              <div class="col-md-10">
+                <select class="form-control" id="status" formControlName="status" required>
+                  <option value="active">ACTIVE</option>
+                  <option value="expired">EXPIRED</option>
+                  <option value="lost">LOST</option>
+                  <option value="Pending">PENDING</option>
+                  <option value="Used">USED</option>
+                </select>
+                <div
+                  *ngIf="rfidCardForm.get('status').invalid && (rfidCardForm.get('status').touched || rfidCardForm.get('status').dirty)">
+                  <small class="text-danger">Status is required.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="multiple_charging_session">
+                Allow multiple charging
+              </label>
+              <div class="col-md-10">
+                <input type="checkbox" id="multiple_charging_session" formControlName="multiple_charging_session"
+                  [disabled]="true" />
+              </div>
+            </div>
+
+            <!-- 🆕 Distributor Card — vetem COMPANY_ADMIN. -->
+            <div class="form-group row" *ngIf="isCompanyAdmin">
+              <label class="col-md-2 col-form-label form-control-label">Kartë Distributori</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="is_distributor_card" formControlName="is_distributor_card"
+                  (change)="onDistributorToggle()" />
+                <small class="text-muted ml-2 d-block">
+                  Nëse zgjidhet, TopUp-i i parë te kjo kartë do njoftojë financën automatikisht.
+                </small>
+              </div>
+            </div>
+
+            <!-- 🆕 Dropdown me search per partneret e kompanise. Vetem kur checkbox-i eshte on. -->
+            <div class="form-group row" *ngIf="isCompanyAdmin && rfidCardForm.get('is_distributor_card')?.value">
+              <label class="col-md-2 col-form-label form-control-label" for="distributor_id">Emri i Distributorit</label>
+              <div class="col-md-10">
+                <input type="text" id="partnerSearch" class="form-control mb-2"
+                  [(ngModel)]="partnerSearchTerm" [ngModelOptions]="{standalone: true}"
+                  (input)="filterPartners()" placeholder="Type to search partners..." />
+                <select class="form-control" id="distributor_id" formControlName="distributor_id"
+                  (change)="onDistributorSelectChange($event)">
+                  <option [ngValue]="null">Select a distributor</option>
+                  <option *ngFor="let p of filteredPartners" [ngValue]="p.partner_id">
+                    {{ p.partner_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Update RFID
+                  Card</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">
+            {{ errorMessage }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

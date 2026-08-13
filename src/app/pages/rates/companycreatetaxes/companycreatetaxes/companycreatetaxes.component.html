@@ -1,0 +1,82 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h3 class="h2 text-white d-inline-block mb-0">Create Tax</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="mb-0">Create Tax</h3>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="onSubmit()">
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="taxName">Tax Name</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="taxName" [(ngModel)]="tax.taxName" name="taxName" required />
+                </div>
+              </div>
+  
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="percentage">Percentage</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="percentage" [(ngModel)]="tax.percentage" name="percentage" type="number" required />
+                </div>
+              </div>
+  
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="companyId" [(ngModel)]="tax.companyId" name="companyId" type="number" required />
+                </div>
+              </div>
+  
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="idNo">ID No</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="idNo" [(ngModel)]="tax.idNo" name="idNo" required />
+                </div>
+              </div>
+  
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="userGrId">User Group ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="userGrId" [(ngModel)]="tax.userGrId" name="userGrId" type="number" required />
+                </div>
+              </div>
+  
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="userId">User ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="userId" [(ngModel)]="tax.userId" name="userId" type="number" required />
+                </div>
+              </div>
+  
+              <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="partnerId">Partner ID</label>
+                <div class="col-md-10">
+                  <input class="form-control" id="partnerId" [(ngModel)]="tax.partnerId" name="partnerId" type="number" required />
+                </div>
+              </div>
+  
+              <div class="form-group row">
+                <div class="col-md-10 offset-md-2">
+                  <button class="btn btn-primary" type="submit">Create Tax</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

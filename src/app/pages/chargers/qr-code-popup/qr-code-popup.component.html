@@ -1,0 +1,16 @@
+<!-- qr-code-popup.component.html -->
+<div *ngIf="isPopupVisible" class="popup-container">
+  <div class="popup-content">
+    <h4>QR Code for Connector : <strong>{{connectorName}}</strong></h4>
+    <img *ngIf="qrCodeUrl" [src]="qrCodeUrl" alt="QR Code" class="qr-code-image" />
+    <!-- Close Button -->
+    <img class="close-btn" src="assets/img/icons/closeX.png" alt="Close" (click)="closePopup()" />
+    <div>
+    <!-- Download Button -->
+    <button *ngIf="qrCodeUrl" class="btn btn-sm btn-primary" (click)="downloadQRCode()">
+      Download QR Code
+    </button>
+  </div>
+  </div>
+</div>
+  

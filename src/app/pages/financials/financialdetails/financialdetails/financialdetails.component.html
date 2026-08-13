@@ -1,0 +1,462 @@
+<!-- 🆕 Loading Overlay — shfaqet kur raporti eshte ne fetch nga backend.
+     Raporte te medhenj (6-12 muaj) mund te marrin 15-30 sekonda. Kohematesi
+     ndihmon perdoruesin te dije se sistemi po punon (jo i bllokuar). -->
+<div *ngIf="isLoadingReport"
+     style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(255,255,255,0.92); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;">
+  <div style="width: 72px; height: 72px; border: 6px solid #e0e0e0;
+              border-top-color: #931623; border-radius: 50%;
+              animation: spin 1s linear infinite;"></div>
+  <div style="margin-top: 24px; font-size: 20px; font-weight: 600; color: #333;">
+    Duke ngarkuar raportin...
+  </div>
+  <div style="margin-top: 8px; font-size: 32px; font-weight: 700; color: #931623;
+              font-family: 'Consolas', monospace; letter-spacing: 1px;">
+    {{ loadingElapsedSeconds }} s
+  </div>
+  <div style="margin-top: 12px; font-size: 13px; color: #888; max-width: 480px; text-align: center;">
+    Raportet me periudhe te gjate (6+ muaj) mund te marrin 15–30 sekonda. Ju lutem prisni.
+  </div>
+</div>
+<style>
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+
+<!-- Header Section -->
+<div class=" header pb-6" style="background-color: #931623!important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Tabs Section -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Report Overview</h3>
+
+              </div>
+              <div class="btn_new d-flex align-items-center" style="gap: 10px;">
+                <!-- 🆕 Send Report button — brenda details page, i njejti logic si tek lista.
+                     Shfaqet VETEM per COMPANY_ADMIN / COMPANY_ANALYST. -->
+                <button *ngIf="canSendReport && !reports?.sent_at" (click)="onClickSendReport()"
+                  type="button" class="btn btn-sm btn-primary mb-0">
+                  <i class="fas fa-paper-plane"></i> Send Report
+                </button>
+                <button *ngIf="canSendReport && reports?.sent_at" (click)="onClickSendReport()"
+                  type="button" class="btn btn-sm btn-success mb-0">
+                  <i class="fas fa-paper-plane"></i> Send it again
+                </button>
+
+                <!-- 🆕 Generate PI button — VETEM COMPANY_ANALYST + Partner Report. -->
+                <button *ngIf="canGeneratePI && !reports?.pi_generated_at" (click)="onClickGeneratePI()"
+                  type="button" class="btn btn-sm btn-warning mb-0">
+                  <i class="fas fa-file-invoice-dollar"></i> Generate PI
+                </button>
+                <span *ngIf="canGeneratePI && reports?.pi_generated_at"
+                  class="badge badge-info"
+                  style="font-weight: 500; font-size: 12px; padding: 6px 10px; cursor: help;"
+                  [tooltip]="'PI generated on ' + reports?.pi_generated_at + ' by ' + (reports?.pi_generated_by || 'N/A')"
+                  placement="left" container="body" containerClass="report-tooltip-lg">
+                  <i class="fas fa-file-invoice-dollar"></i> PI generated
+                </span>
+
+                <!-- 🆕 Badge "Email sent" — vetem per Admin / Analyst / RadX; tooltip me audit. -->
+                <span *ngIf="reports?.sent_at && canSeeSendInfo"
+                  class="badge badge-success"
+                  style="font-weight: 500; font-size: 12px; padding: 6px 10px; cursor: help;"
+                  [tooltip]="'Email was sent to ' + (reports?.sent_to_emails || 'unknown')
+                             + ' by ' + (reports?.sent_by || 'unknown')
+                             + ' ' + (reports?.send_count || 1) + ' time'
+                             + ((reports?.send_count || 1) === 1 ? '' : 's')
+                             + ' (last: ' + reports?.sent_at + ')'"
+                  placement="left" container="body" containerClass="report-tooltip-lg">
+                  <i class="fas fa-check-circle"></i> Email sent
+                </span>
+
+                <button (click)="exportToExcel()" type="button" class="btn-icon-clipboard " tooltip="Export Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+                <button (click)="exportToPDF()" type="button" class="btn-icon-clipboard " tooltip="Export PDF">
+                  <i class="fas fa-file-pdf"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="card-body d-flex justify-content-between">
+          <!-- Left Section: Report Details -->
+          <div>
+            <h4><strong>Report Type:</strong> {{ reports?.report_type }}</h4>
+            <h4><strong>Date Range:</strong> {{ reports?.from_date }} - {{ reports?.to_date }}</h4>
+            <h4 *ngIf="isTimeSplitReport"><strong>Time Range:</strong> {{ reports?.from_time }} - {{ reports?.to_time }}</h4>
+            <h4 *ngIf="isPartnerReport"><strong>Monthly Platform Fee:</strong> {{ monthly_platform_fee }}</h4>
+          </div>
+
+          <!-- Right Section: User Details -->
+          <div *ngIf="!isCardReport" class="text-end">
+            <h4><strong>Name:</strong> {{ name }}</h4>
+            <h4><strong>Email:</strong> {{ email }}</h4>
+            <h4><strong>Phone:</strong> {{ phone_number }}</h4>
+          </div>
+
+        </div>
+        <div class="card-body">
+          <div class="scrollable-table">
+            <!-- Dynamic Report Table -->
+            <ngx-datatable id="print-section" class="bootstrap selection-cell" [rows]="tempReports"
+              [headerHeight]="'auto'" [footerHeight]="'auto'" [rowHeight]="'auto'" [columnMode]="'force'" [limit]="20"
+              [footerHeight]="50">
+
+              <!-- User Report Columns -->
+              <ngx-datatable-column *ngIf="isUserReport" name="Charging History ID" prop="Charging History ID"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="User" prop="User"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="ID Tag Labelr" prop="Id Tag"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="RFID Serial No" prop="RFID Serial No">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row['RFID Serial No'] === 'Unknown'">Start remote charging</span>
+                  <span *ngIf="row['RFID Serial No'] !== 'Unknown'">{{ row['RFID Serial No'] }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Charge Point Name"
+                prop="Charge Point Name"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Date" prop="Date"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Start Time" prop="Start Time"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="End Time" prop="End Date"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Energy (Kwh)" prop="Energy (Wh)"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Charging Cost" prop="Charging Cost"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Idle Min" prop="Idle Min"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Fee per Minute" prop="Fee per Minute"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Idle Fee Cost" prop="Idle Fee Cost"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserReport" name="Total Cost" prop="Cost"></ngx-datatable-column>
+
+              <!-- Card Report Columns -->
+
+              <ngx-datatable-column *ngIf="isCardReport" name="Charging History ID" prop="Charging History ID"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="RFID Serial No" prop="RFID Serial No">
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="User" prop="User"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="User Group" prop="UserGroup"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Charge Point Name"
+                prop="Charge Point Name"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Date" prop="Start Date"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Start Time" prop="Start Time"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="End Time" prop="End Time"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Energy (Kwh)" prop="Energy (Kwh)"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Charging Cost" prop="Charging Cost"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Idle Min" prop="Idle Min"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Fee per Minute" prop="Fee per Minute"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Idle Fee Cost" prop="Idle Fee Cost"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCardReport" name="Total Amount" prop="Total Amount"></ngx-datatable-column>
+
+              <!-- User Group Report Columns -->
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Charging History ID" prop="Charging History ID"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="RFID Serial No" prop="RFID Serial No">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row?.['RFID Serial No']?.toString().trim() === 'N/A'">Start remote charging</span>
+                  <span *ngIf="row?.['RFID Serial No']?.toString().trim() !== 'N/A'">{{ row['RFID Serial No'] }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="User" prop="User"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Email" prop="Email"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Phone Number"
+                prop="Phone Number"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="UserGroup" prop="UserGroup"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Start_Date"
+                prop="Start Date"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Start Time"
+                prop="Start Time"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="End Time" prop="End Time"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Total Energy Kwh"
+                prop="Energy (Kwh)"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Charging Cost" prop="Charging Cost"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Idle Min" prop="Idle Min"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Fee per Minute" prop="Fee per Minute"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Idle Fee Cost" prop="Idle Fee Cost"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Total Cost" prop="Total Amount"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isUserGroupReport" name="Charge_Point_Name"
+                prop="Charge Point Name"></ngx-datatable-column>
+
+
+              <!-- Partner and Company Report Columns -->
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport"
+                name="Charging History ID" prop="Charging History ID"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Charger Point"
+                prop="Charge Point"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Capacity"
+                prop="Capacity"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="User"
+                prop="User"></ngx-datatable-column>
+                <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="User Group"
+                prop="UserGroup"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="RFID Serial No">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{
+                  (!row['RFID Serial No'] || row['RFID Serial No'].trim().toLowerCase() === 'unknown')
+                  ? 'Remote Start'
+                  : row['RFID Serial No']
+                  }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Date"
+                prop="Start Date"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Start Time"
+                prop="Start Time"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="End Time"
+                prop="End Time"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Duration (hh:mm:ss)"
+                [prop]="'formattedDuration'">
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Energy (kWh)"
+                prop="Energy (kWh)"></ngx-datatable-column>
+              <!-- 🆕 Emrat e rinj me te qarte per user-in financiar (backend key = emri i shfaqur). -->
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Sale Rate (Lek/kWh)"
+                prop="Sale Rate (Lek/kWh)"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Sale Revenue (Lek)"
+                prop="Sale Revenue (Lek)"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Purchase Rate (Lek/kWh)"
+                prop="Purchase Rate (Lek/kWh)"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Purchase Cost (Lek)"
+                prop="Purchase Cost (Lek)"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Net Profit (Lek)"
+                prop="Net Profit (Lek)"></ngx-datatable-column>
+              <!-- 🆕 Kolona te reja Share % — nga snapshot i partner.split_percentage ne charging_history. -->
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Partner Share %"
+                prop="Partner Share %"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Partner's Earning"
+                prop="Partner's Earning"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Company Share %"
+                prop="Company Share %"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isPartnerReport || isCompanyReport || isTimeSplitReport" name="Company's Earning"
+                prop="Company's Earning"></ngx-datatable-column>
+
+              <!-- 🆕 BC Invoice — vetem per Company Report (backend e kthen kete field vetem aty) -->
+              <ngx-datatable-column *ngIf="isCompanyReport" name="BC Invoice" prop="BC Invoice">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row['BC Invoice']" class="text-success">{{ row['BC Invoice'] }}</span>
+                  <span *ngIf="!row['BC Invoice']" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+
+              <!-- General Report -->
+              <ngx-datatable-column *ngIf="isGeneralpReport" name="Date"
+                prop="report_meta_data_date"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isGeneralpReport" name="Value" prop="total_value"></ngx-datatable-column>
+
+            </ngx-datatable>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🆕 Toast success/error per Send Report -->
+<div *ngIf="sendReportMessage" class="alert mx-4 mt-3" [ngClass]="sendReportMessageClass" role="alert"
+     style="position: fixed; top: 80px; right: 20px; z-index: 1055; min-width: 320px; max-width: 500px;">
+  <strong *ngIf="sendReportMessageClass === 'alert-success'"><i class="fas fa-check-circle"></i> </strong>
+  <strong *ngIf="sendReportMessageClass === 'alert-danger'"><i class="fas fa-exclamation-triangle"></i> </strong>
+  {{ sendReportMessage }}
+</div>
+
+<!-- 🆕 Confirm modal per Send Report -->
+<div *ngIf="showSendConfirm" class="modal fade show d-block" tabindex="-1" role="dialog"
+     style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-paper-plane text-primary"></i>
+          {{ reports?.sent_at ? 'Send Report Again?' : 'Send Report?' }}
+        </h5>
+        <button type="button" class="close" (click)="cancelSendReport()" [disabled]="isSendingReport">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Do te dergohet nje email me raportin bashkangjitur si Excel tek:</p>
+        <div class="alert alert-info py-2 mb-2">
+          <div><strong>{{ getRecipientLabel() }}</strong></div>
+          <div *ngIf="getRecipientEmail()" class="mt-1" style="font-size: 13px;">
+            <i class="fas fa-envelope"></i>
+            <strong>Email:</strong> {{ getRecipientEmail() }}
+          </div>
+          <div *ngIf="!getRecipientEmail()" class="mt-1 text-warning" style="font-size: 12px;">
+            <i class="fas fa-info-circle"></i> Email-i do rezolvohet ne backend gjate dergimit.
+          </div>
+        </div>
+        <ul class="mb-0" style="font-size: 13px;">
+          <li><strong>Report Type:</strong> {{ reports?.report_type }}</li>
+          <li><strong>Period:</strong> {{ reports?.from_date }} → {{ reports?.to_date }}</li>
+          <li *ngIf="reports?.sent_at" class="text-warning">
+            <strong>Note:</strong> Kete raport e ke derguar {{ reports?.send_count || 1 }} here me pare
+            (i fundit: {{ reports?.sent_at }} nga {{ reports?.sent_by || 'unknown' }}).
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelSendReport()" [disabled]="isSendingReport">
+          Anullo
+        </button>
+        <button type="button" class="btn btn-primary" (click)="confirmSendReport()" [disabled]="isSendingReport">
+          <span *ngIf="!isSendingReport"><i class="fas fa-paper-plane"></i> Dergo Tani</span>
+          <span *ngIf="isSendingReport"><i class="fas fa-spinner fa-spin"></i> Duke dërguar...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🆕 Generate PI modal — vetem per Partner Report + COMPANY_ANALYST. -->
+<div *ngIf="showGeneratePIModal" class="modal fade show d-block" tabindex="-1" role="dialog"
+     style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-file-invoice-dollar text-warning mr-1"></i>
+          Generate Purchase Invoices ne BC
+        </h5>
+        <button type="button" class="close" (click)="closeGeneratePIModal()" [disabled]="isGeneratingPI">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- ==== SUCCESS VIEW ==== -->
+        <ng-container *ngIf="generatePIResult; else generatePIFormView">
+          <div class="alert alert-success mb-3" role="alert" style="font-size: 14px;">
+            <i class="fas fa-check-circle mr-2"></i>
+            <strong>Sukses:</strong> u krijuan <strong>{{ generatePIResult.invoicesCreated }}</strong> Purchase Invoices
+            ne BC (Draft) per <strong>{{ generatePIResult.locations }}</strong> location(s).
+          </div>
+          <div *ngIf="generatePIResult.invoices?.length" class="table-responsive">
+            <table class="table table-sm table-bordered" style="font-size: 12px;">
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>Type</th>
+                  <th>BC Invoice ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let inv of generatePIResult.invoices">
+                  <td>{{ inv.location_name || 'N/A' }}</td>
+                  <td>
+                    <span *ngIf="inv.type === 'purchase'" class="badge badge-primary">Purchase Rate</span>
+                    <span *ngIf="inv.type === 'earnings'" class="badge badge-success">Partner Earnings</span>
+                  </td>
+                  <td><code>{{ inv.bc_invoice_id }}</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-muted mb-0" style="font-size: 12px;">
+            <i class="fas fa-info-circle"></i>
+            Faturat jane te ruajtura si <strong>Draft</strong> ne BC. Financa duhet t'i posteroje/fiskalizoje manualisht.
+          </p>
+        </ng-container>
+
+        <!-- ==== FORM VIEW ==== -->
+        <ng-template #generatePIFormView>
+          <div class="alert alert-info" role="alert" style="font-size: 13px;">
+            <i class="fas fa-info-circle mr-1"></i>
+            Do te krijohen draft <strong>Purchase Invoices</strong> ne Business Central per
+            <strong>{{ name }}</strong>, grupuar sipas Location dhe me nje line per çdo Charger.
+            <br>
+            Sistemi krijon 2 PI per çdo Location:
+            <ul class="mb-0 mt-1">
+              <li><strong>Purchase Rate</strong> — kosto e energjise se blere</li>
+              <li><strong>Partner Earnings</strong> — fitimi i partnerit</li>
+            </ul>
+          </div>
+
+          <div class="alert alert-warning" role="alert" style="font-size: 13px;">
+            <i class="fas fa-exclamation-triangle mr-1"></i>
+            Ky veprim <strong>krijon fatura ne Business Central</strong> (si Draft). Nese diçka
+            deshton mes procesit, do dergohet email tek Financa dhe RadX me detajet.
+          </div>
+
+          <div *ngIf="generatePIMessage" class="alert" [ngClass]="generatePIMessageClass" role="alert">
+            {{ generatePIMessage }}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Partner:</strong> {{ name }}</p>
+              <p class="mb-1"><strong>Periudha:</strong> {{ reports?.from_date }} → {{ reports?.to_date }}</p>
+            </div>
+            <div class="col-md-6 text-md-right">
+              <p class="mb-0 text-muted" style="font-size: 12px;">
+                <i class="fas fa-user-shield"></i> Kufizuar per Company Analyst
+              </p>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="modal-footer">
+        <ng-container *ngIf="generatePIResult; else generatePIFormFooter">
+          <button type="button" class="btn btn-success" (click)="closeGeneratePIModal()">
+            <i class="fas fa-check"></i> OK
+          </button>
+        </ng-container>
+        <ng-template #generatePIFormFooter>
+          <button type="button" class="btn btn-secondary" (click)="closeGeneratePIModal()" [disabled]="isGeneratingPI">
+            Anulo
+          </button>
+          <button type="button" class="btn btn-warning" (click)="onGeneratePISubmitClick()" [disabled]="isGeneratingPI">
+            <i class="fas fa-file-invoice-dollar"></i> Generate PI
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🆕 Confirm dialog para submit-it aktual -->
+<div *ngIf="showGeneratePIConfirm" class="modal fade show d-block" tabindex="-1" role="dialog"
+     style="background-color: rgba(0,0,0,0.6); z-index: 1060;">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-exclamation-triangle text-warning mr-1"></i>
+          Konfirmo krijimin e Purchase Invoices
+        </h5>
+      </div>
+      <div class="modal-body">
+        <p>Ky veprim do te <strong>krijoje fatura ne Business Central</strong> (Draft) per partnerin
+          <strong>{{ name }}</strong> per periudhen {{ reports?.from_date }} → {{ reports?.to_date }}.</p>
+        <p class="text-danger mb-0">
+          <strong>Ky veprim s'mund te kthehet mbrapsht nga aplikacioni.</strong>
+          Faturat e krijuara duhet te menaxhohen manualisht ne BC nese ka nevoje.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelGeneratePIConfirm()" [disabled]="isGeneratingPI">
+          Anulo
+        </button>
+        <button type="button" class="btn btn-warning" (click)="confirmGeneratePISubmit()" [disabled]="isGeneratingPI">
+          <i *ngIf="isGeneratingPI" class="fas fa-spinner fa-spin mr-1"></i>
+          <span *ngIf="!isGeneratingPI"><i class="fas fa-check"></i> Konfirmo dhe krijo PI</span>
+          <span *ngIf="isGeneratingPI">Duke krijuar...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

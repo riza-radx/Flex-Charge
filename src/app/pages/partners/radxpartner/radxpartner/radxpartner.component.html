@@ -1,0 +1,163 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <!-- <div class="row"> -->
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Partners</h3>
+                <!-- todo : Adding the function for counting the new entries-->
+                <!-- <p *ngIf="isRadXRole"  class="text-sm mb-0">✓ {{ currentMonthCountEntry }} New Partners this month</p> -->
+              </div>
+              <div class="btn_new">
+                <button *ngIf="!isCompanyAnalyst" btn-icon-clipboard tooltip="Create New Partner">
+                  <a [routerLink]="['/partners/radxcreatepartner']">
+                    <i class="fas fa-handshake"></i>
+                  </a>
+                </button>
+                <button (click)="exportToPDF()" type="button" class="btn-icon-clipboard " tooltip="Export PDF">
+                  <i class="fas fa-file-pdf "></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn-icon-clipboard " tooltip="Export Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="dataTables_wrapper py-4">
+            <div class="row">
+              <div class="col-auto">
+                <div class="dataTables_length" id="datatable_length">
+                  <label>
+                    <span *ngIf="!isSmallScreen">Show</span>
+                    <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                      (change)="entriesChange($event)">
+                      <option value="10" [selected]="entries == 10">10</option>
+                      <option value="25" [selected]="entries == 25">25</option>
+                      <option value="50" [selected]="entries == 50">50</option>
+                      <option value="-1" [selected]="entries == -1">All</option>
+                    </select>
+                    <span *ngIf="!isSmallScreen">entries</span>
+                  </label>
+                </div>
+              </div>
+              <div class="col ml--2  custom-flex-end-center">
+                <!-- Search Input -->
+                <div id="datatable_filter" class="dataTables_filter">
+                  <label>
+                    <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                      placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+                    <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                  </label>
+                </div>
+                <div *ngIf="isRadXRole" id="datatable_filter" class="dataTables_filter mr-2">
+                  <!-- Filter Dropdown Button -->
+                  <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button"
+                      class="btn btn-outline-primary dropdown-toggle" aria-controls="dropdown-basic">
+                      <span *ngIf="!isSmallScreen">Filters</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                      aria-labelledby="button-basic">
+
+                      <!-- Dropdown for Company -->
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="companySelect" class="dropdown-item">Company</label>
+                        <select id="companySelect" class="form-control" (change)="filterByCompany($event.target.value)"
+                          (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                            }}</option>
+                        </select>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+              [rows]="temp" [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+              (select)="onSelect($event)">
+              <ngx-datatable-column name="Name" prop="partner_name"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Address" prop="address"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="City" prop="city"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Phone Number"
+                prop="phone_number"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Email" prop="email"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Nipt" prop="nipt"></ngx-datatable-column>
+              <ngx-datatable-column name="Actions" prop="actions">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                    [routerLink]="['/partners/companyupdatepartner/', row.partner_id]"><i
+                      class="fas fa-edit"></i></button>
+                  <button type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                    [routerLink]="['/partners/companydeletepartner/', row.partner_id]"> <i
+                      class="fas fa-trash-alt"></i></button>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable> -->
+            <div class="scrollable-table">
+              <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [limit]="entries != -1 ? entries : undefined" [rows]="temp" [selected]="selected"
+                [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)"
+                [scrollbarH]="false">
+
+                <ngx-datatable-column name="Name" prop="partner_name"></ngx-datatable-column>
+                <ngx-datatable-column name="Address" prop="address"></ngx-datatable-column>
+                <ngx-datatable-column name="City" prop="city"></ngx-datatable-column>
+                <ngx-datatable-column name="Phone Number" prop="phone_number"></ngx-datatable-column>
+                <ngx-datatable-column name="Email" prop="email"></ngx-datatable-column>
+                <ngx-datatable-column name="Nipt" prop="nipt"></ngx-datatable-column>
+                <!-- 🆕 Kolonat e reja finance: monthly fee, split %-t, energy invoiced by -->
+                <ngx-datatable-column name="Monthly Platform Fee" prop="monthly_platform_fee"></ngx-datatable-column>
+                <ngx-datatable-column name="Split %" prop="split_percentage"></ngx-datatable-column>
+                <ngx-datatable-column name="AC Split %" prop="ac_split_percentage"></ngx-datatable-column>
+                <ngx-datatable-column name="DC Split %" prop="dc_split_percentage"></ngx-datatable-column>
+                <ngx-datatable-column name="Energy Invoiced By">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row?.energy_invoicing_source || '' }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <!-- 🆕 Fushat per BC / financat (te dukshme per te gjithe qe shohin listen).
+                     Partneri = VENDOR ne BC. -->
+                <ngx-datatable-column name="Vendor Number" prop="vendor_number"></ngx-datatable-column>
+                <!-- 🆕 Kolona Actions tashme shfaqet edhe per COMPANY_ANALYST (finance) qe te editojne
+                     Vendor Number + dimensione BC. Butoni Delete mbetet i bllokuar per analyst. -->
+                <ngx-datatable-column name="Actions" prop="actions">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                      [routerLink]="['/partners/companyupdatepartner/', row.partner_id]">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button *ngIf="!isCompanyAnalyst" type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                      [routerLink]="['/partners/companydeletepartner/', row.partner_id]">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

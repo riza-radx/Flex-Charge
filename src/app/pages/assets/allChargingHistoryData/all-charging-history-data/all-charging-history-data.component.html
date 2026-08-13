@@ -1,0 +1,499 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+
+        <div class=" col-lg-6 col-7">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class="col">
+      <div class="card">
+        <div *ngIf="isAble" class="card-header">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Charging History</h3>
+              </div>
+              <div class="btn_new">
+                <button (click)="exportToPDF()" type="button" class="btn-icon-clipboard "
+                  [disabled]="exportingInProgress"
+                  [tooltip]="exportingInProgress ? 'Po ngarkohet…' : 'Export PDF'">
+                  <i class="fas" [ngClass]="exportingInProgress ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn-icon-clipboard "
+                  [disabled]="exportingInProgress"
+                  [tooltip]="exportingInProgress ? 'Po ngarkohet…' : 'Export Excel'">
+                  <i class="fas" [ngClass]="exportingInProgress ? 'fa-spinner fa-spin' : 'fa-file-excel'"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="dataTables_wrapper py-4">
+            <div class="row">
+              <div class="col-auto">
+                <div class="dataTables_length" id="datatable_length">
+                  <label>
+                    <span *ngIf="!isSmallScreen">Show</span>
+                    <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                      (change)="entriesChange($event)">
+                      <option value="100" [selected]="entries == 100">100</option>
+                      <option value="250" [selected]="entries == 250">250</option>
+                      <option value="500" [selected]="entries == 500">500</option>
+                      <option value="-1" [selected]="entries == -1">All</option>
+                    </select>
+                    <span *ngIf="!isSmallScreen">entries</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col ml--2  custom-flex-end-center">
+                <!-- 🆕 Month + Year picker — dy dropdowns te ndara per kontroll te qarte.
+                     Frontend ben thirrje vetem per muajin e zgjedhur (endpoint /bymonth/.../:year/:month) -->
+                <div class="dataTables_filter mr-2 d-flex align-items-center">
+                  <span *ngIf="!isSmallScreen" class="mr-2">Month</span>
+                  <select class="form-control form-control-sm d-inline-block w-auto mr-1"
+                    [(ngModel)]="selectedMonthNum" (change)="onMonthChange()"
+                    aria-label="Month">
+                    <option *ngFor="let m of monthOptions" [ngValue]="m.num">{{ m.name }}</option>
+                  </select>
+                  <select class="form-control form-control-sm d-inline-block w-auto"
+                    [(ngModel)]="selectedYear" (change)="onMonthChange()"
+                    aria-label="Year">
+                    <option *ngFor="let y of yearOptions" [ngValue]="y">{{ y }}</option>
+                  </select>
+                </div>
+                <!-- Search Input -->
+                <div id="datatable_filter" class="dataTables_filter">
+                  <label>
+                    <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                      placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+
+                    <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                  </label>
+                </div>
+                <div id="datatable_filter" class="dataTables_filter mr-2" *ngIf="!isUserRole">
+                  <!-- Filter Dropdown Button -->
+                  <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button"
+                      class="btn btn-outline-primary dropdown-toggle" aria-controls="dropdown-basic">
+                      <span *ngIf="!isSmallScreen">Filters</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                      aria-labelledby="button-basic">
+                      <!-- Dropdown for Company -->
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="companySelect" class="dropdown-item">Company</label>
+                        <select id="companySelect" [(ngModel)]="selectedCompany" class="form-control"
+                          (change)="getChargingHistory()" (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                            }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Dropdown for Partner -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole">
+                        <label for="partnerSelect" class="dropdown-item">Partner</label>
+
+                        <!-- Dropdown for RadX Roles -->
+                        <select *ngIf="isRadXRole" id="partnerSelect" [(ngModel)]="selectedPartner" class="form-control"
+                          (change)="getChargingHistory()" (click)="$event.stopPropagation()">
+                          <option value="" selected>All Partners</option>
+                          <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name
+                            }}</option>
+                        </select>
+
+                        <!-- Dropdown for Company Roles -->
+                        <select *ngIf="isCompanyRole" id="partnerSelect" [(ngModel)]="selectedPartner"
+                          class="form-control" (change)="getChargingHistoryByCompany()"
+                          (click)="$event.stopPropagation()">
+                          <option value="" selected>All Partners</option>
+                          <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name
+                            }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Dropdown for User Groups -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole">
+                        <label for="userGroupSelect" class="dropdown-item">User Group</label>
+
+
+                        <select *ngIf="isRadXRole" id="userGroupSelect" [(ngModel)]="selectedUserGroup"
+                          class="form-control" (change)="getChargingHistory()" (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+
+                        <select *ngIf="isCompanyRole" id="userGroupSelect" [(ngModel)]="selectedUserGroup"
+                          class="form-control" (change)="getChargingHistoryByCompany()"
+                          (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+
+                      </li>
+
+                      <!-- Dropdown for Users -->
+                      <li role="menuitem" *ngIf="!isUserRole">
+                        <label for="userSelect" class="dropdown-item">User</label>
+
+                        <select *ngIf="isRadXRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getChargingHistory()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                        </select>
+
+                        <select *ngIf="isCompanyRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getChargingHistoryByCompany()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                        </select>
+
+                        <select *ngIf="isPartnerRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getChargingHistoryByPartner()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.user.id">{{ user.user.name }}</option>
+                        </select>
+
+                        <select *ngIf="isUserGroupRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getChargingHistoryByUserGroup()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.user.id">{{ user.user.name }}</option>
+                        </select>
+
+                      </li>
+
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="startedTypeSelect" class="dropdown-item">Started Type</label>
+                        <select id="startedTypeSelect" [(ngModel)]="selectedStartedType" class="form-control"
+                          (change)="getChargingHistory()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Scan QR Code">Remote Start</option>
+                          <option value="Card">Card</option>
+                        </select>
+                      </li>
+
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="startedTypeSelect" class="dropdown-item">Started Type</label>
+                        <select id="startedTypeSelect" [(ngModel)]="selectedStartedType" class="form-control"
+                          (change)="getChargingHistoryByCompany()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Scan QR Code">Remote Start</option>
+                          <option value="Card">Card</option>
+                        </select>
+                      </li>
+
+                      <!-- 🆕 Roaming filter — vetem Company role -->
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="roamingTypeSelect" class="dropdown-item">Roaming</label>
+                        <select id="roamingTypeSelect" [(ngModel)]="selectedRoamingType" class="form-control"
+                          (change)="getChargingHistoryByCompany()" (click)="$event.stopPropagation()">
+                          <option value="all">All</option>
+                          <option value="own">Own only</option>
+                          <option value="roaming_in">Roaming IN (klient nga jashte)</option>
+                          <option value="roaming_out">Roaming OUT (klienti ynë jashtë)</option>
+                        </select>
+                      </li>
+
+                      <li role="menuitem" *ngIf="isPartnerRole">
+                        <label for="startedTypeSelect" class="dropdown-item">Started Type</label>
+                        <select id="startedTypeSelect" [(ngModel)]="selectedStartedType" class="form-control"
+                          (change)="getChargingHistoryByPartner()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Scan QR Code">Remote Start</option>
+                          <option value="Card">Card</option>
+                        </select>
+                      </li>
+
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label for="startedTypeSelect" class="dropdown-item">Started Type</label>
+                        <select id="startedTypeSelect" [(ngModel)]="selectedStartedType" class="form-control"
+                          (change)="getChargingHistoryByUserGroup()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Scan QR Code">Remote Start</option>
+                          <option value="Card">Card</option>
+                        </select>
+                      </li>
+
+                      <li role="menuitem" *ngIf="isUserRole">
+                        <label for="startedTypeSelect" class="dropdown-item">Started Type</label>
+                        <select id="startedTypeSelect" [(ngModel)]="selectedStartedType" class="form-control"
+                          (change)="getChargingHistoryByUser()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Scan QR Code">Remote Start</option>
+                          <option value="Card">Card</option>
+                        </select>
+                      </li>
+
+                      <!-- From Date & Time -->
+                      <!-- From Date & Time -->
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          From Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearFromDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedFromDate"
+                          (change)="getChargingHistoryByCompany()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedFromTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByCompany()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <!-- To Date & Time -->
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          To Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearToDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedToDate"
+                          (change)="getChargingHistoryByCompany()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedToTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByCompany()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isPartnerRole">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          From Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearFromDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedFromDate"
+                          (change)="getChargingHistoryByPartner()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedFromTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByPartner()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <!-- To Date & Time -->
+                      <li role="menuitem" *ngIf="isPartnerRole">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          To Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearToDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedToDate"
+                          (change)="getChargingHistoryByPartner()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedToTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByPartner()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          From Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearFromDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedFromDate"
+                          (change)="getChargingHistoryByUserGroup()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedFromTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByUserGroup()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <!-- To Date & Time -->
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          To Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearToDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedToDate"
+                          (change)="getChargingHistoryByUserGroup()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedToTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByUserGroup()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+                      <li role="menuitem" *ngIf="isUser">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          From Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearFromDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedFromDate"
+                          (change)="getChargingHistoryByUser()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedFromTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByUser()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <!-- To Date & Time -->
+                      <li role="menuitem" *ngIf="isUser">
+                        <label class="dropdown-item d-flex justify-content-between align-items-center">
+                          To Date & Time
+                          <button class="btn btn-sm btn-outline-secondary ms-2" type="button"
+                            (click)="clearToDateTime($event)">Clear</button>
+                        </label>
+                        <input type="date" class="form-control mb-1" [(ngModel)]="selectedToDate"
+                          (change)="getChargingHistoryByUser()" (click)="$event.stopPropagation()" />
+                        <input type="text" class="form-control" [(ngModel)]="selectedToTime" placeholder="HH:MM"
+                          pattern="^([01]\d|2[0-3]):[0-5]\d$" (change)="getChargingHistoryByUser()"
+                          (click)="$event.stopPropagation()" />
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div #tableScroll class="scrollable-table" style="overflow-x: auto; overflow-y: hidden;"
+            (scroll)="onTableScroll($event)">
+            <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'standard'"
+              [style.min-width.px]="2900"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+              [limit]="pageSize"
+              [rows]="tempChargingHistory" [selected]="selected" [selectionType]="SelectionType.multiClick"
+              (activate)="onActivate($event)" (select)="onSelect($event)">
+              <ngx-datatable-column name="ID" prop="charging_history_id" [width]="80"></ngx-datatable-column>
+              <ngx-datatable-column name="Charger" prop="Charger.charger_name" [width]="130"></ngx-datatable-column>
+              <ngx-datatable-column name="Connector" prop="Connector.connector_name" [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Date" prop="charging_history_date" [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Started Time" prop="strted_time" [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Ended Time" prop="ended_time" [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Duration" prop="charging_duration" [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Energy (kWh)" prop="total_energy" [width]="110"></ngx-datatable-column>
+              <!-- 🆕 Rate / kWh — vetem per COMPANY_ADMIN + COMPANY_ANALYST.
+                   `ratePerDayPrice` normalizohet ne component nga RatePerDay(s) include. -->
+              <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Rate / kWh" [width]="100">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.ratePerDayPrice != null">{{ (+row.ratePerDayPrice) | number:'1.2-2' }}</span>
+                  <span *ngIf="row.ratePerDayPrice == null" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Charging Cost" [width]="120">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ ((+row.total_cost || 0) - (+row.fullchargefeecost || 0)) | number:'1.2-2' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Idle Min" [width]="80">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ ((+row.fullchargefeeperminute > 0) ? ((+row.fullchargefeecost || 0) / +row.fullchargefeeperminute) : 0) | number:'1.0-0' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Fee / Min" [width]="90">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ (+row.fullchargefeeperminute || 0) | number:'1.2-2' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Idle Fee" [width]="90">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ (+row.fullchargefeecost || 0) | number:'1.2-2' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Total Cost" prop="total_cost" [width]="100"></ngx-datatable-column>
+
+              <!-- 🆕 Kolone BC Invoice (COMPANY_ANALYST + COMPANY_ADMIN) — tregon FISK numrin.
+                   Zhvendosur ketu (pas Total Cost) qe te jete e dukshme pa scroll horizontal. -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="BC Invoice" prop="bc_invoice_number" [width]="140">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.bc_invoice_number" class="text-success">{{ row.bc_invoice_number }}</span>
+                  <span *ngIf="!row.bc_invoice_number" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Status" prop="charging_status" [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Partner" prop="partner" [width]="130"></ngx-datatable-column>
+              <ngx-datatable-column name="User Group" prop="userGroup" [width]="140"></ngx-datatable-column>
+              <ngx-datatable-column name="User" prop="user" [width]="140"></ngx-datatable-column>
+              <ngx-datatable-column name="Card" [prop]="'Card.serial_no'" [width]="150">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.Card?.serial_no || 'Remote Start' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Battery %" prop="socValue" [width]="90"></ngx-datatable-column>
+
+              <!-- 🆕 Snapshot konfigurimi (audit history) — vetem per COMPANY_ANALYST/COMPANY_ADMIN -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="Check Fisk" [width]="110">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.snap_check_fisk === true || row.snap_check_fisk === 1" class="text-success">Yes</span>
+                  <span *ngIf="row.snap_check_fisk === false || row.snap_check_fisk === 0" class="text-danger">No</span>
+                  <span *ngIf="row.snap_check_fisk === null || row.snap_check_fisk === undefined" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="PAYG" prop="snap_allow_payg" [width]="100">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.snap_allow_payg === 'true' || row.snap_allow_payg === '1'" class="text-success">Yes</span>
+                  <span *ngIf="row.snap_allow_payg === 'false' || row.snap_allow_payg === '0'" class="text-muted">No</span>
+                  <span *ngIf="!row.snap_allow_payg" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="Send Email" [width]="120">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.snap_send_email === true || row.snap_send_email === 1" class="text-success">Yes</span>
+                  <span *ngIf="row.snap_send_email === false || row.snap_send_email === 0" class="text-muted">No</span>
+                  <span *ngIf="row.snap_send_email === null || row.snap_send_email === undefined" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <!-- 🆕 Roaming column — perspektiva e karikimit (Own / Roaming In / Roaming Out) + partneri -->
+              <ngx-datatable-column name="Roaming" prop="roaming_perspective" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.roaming_perspective === 'host'" class="text-warning" style="font-size:11px;font-weight:600;" [title]="'Klient nga ' + row.roaming_partner">
+                    🌐 IN ← {{ row.roaming_partner || '?' }}
+                  </span>
+                  <span *ngIf="row.roaming_perspective === 'home'" class="text-info" style="font-size:11px;font-weight:600;" [title]="'Karikim te ' + row.roaming_partner">
+                    🌐 OUT → {{ row.roaming_partner || '?' }}
+                  </span>
+                  <span *ngIf="(row.roaming_perspective === 'own' || !row.is_roaming) && !row.roaming_partner" class="text-muted" style="font-size:11px;">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <!-- 🆕 Retry Invoice (vetem per COMPANY_ANALYST + admin role-t).
+                   Kushtet: charging_status='Finished', pa bc_invoice_number, jo UG check_fisk=false,
+                   dhe vetem per sesionet >= 31 Maj 2026 (go-live). -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isRadXAdmin || isRadXModerator"
+                                    name="Action" [sortable]="false" [width]="110">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <button *ngIf="row.charging_status === 'Finished' && !row.bc_invoice_number && !row.ug_check_fisk_false && row.is_after_golive && !row.in_pending_fiscal && row.total_cost > 0"
+                          class="btn btn-sm btn-outline-primary"
+                          [disabled]="isRetrying(row)"
+                          (click)="retryInvoice(row, $event)"
+                          title="Tento te krijosh/fiskalizosh faturen ne BC">
+                    <span *ngIf="isRetrying(row)">⏳ Po procesoj...</span>
+                    <span *ngIf="!isRetrying(row)">🔁 Retry Invoice</span>
+                  </button>
+                  <span *ngIf="row.bc_invoice_number" class="text-success" title="BC invoice: {{row.bc_invoice_number}}">
+                    ✓ Faturuar
+                  </span>
+                  <span *ngIf="row.ug_check_fisk_false && !row.bc_invoice_number" class="text-muted" title="UG ka check_fisk=false — BC nuk fiskalizon">
+                    — (jo fiskal)
+                  </span>
+                  <span *ngIf="row.in_pending_fiscal && !row.bc_invoice_number && !row.ug_check_fisk_false" class="text-info" title="Fatura eshte ne pending_fiscal_invoices — cron do provoje retry automatik">
+                    ⏳ (pending)
+                  </span>
+                  <span *ngIf="!row.is_after_golive && !row.bc_invoice_number && !row.ug_check_fisk_false && !row.in_pending_fiscal" class="text-muted" title="Pre-go-live (para 1 Qershor 2026 14:00)">
+                    — (pre-live)
+                  </span>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+
+          <!-- Sticky horizontal scrollbar mirrored to the table's scroll position. Stays at viewport bottom. -->
+          <div #stickyScroll
+               *ngIf="tableContentWidth > 0"
+               style="position: fixed !important; bottom: 0; left: 0; right: 0; height: 24px;
+                      overflow-x: scroll; overflow-y: hidden; background: #f8f9fa;
+                      border-top: 2px solid #931623; box-shadow: 0 -3px 8px rgba(0,0,0,0.12);
+                      z-index: 99999;"
+               (scroll)="onStickyScroll($event)">
+            <div [style.width.px]="tableContentWidth" style="height: 1px;"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

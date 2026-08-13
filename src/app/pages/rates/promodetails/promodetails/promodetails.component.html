@@ -1,0 +1,229 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+
+
+<!-- Tabs Section -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Promo Details</h3>
+            </div>
+            <div class="col-4" style="display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="button" class="btn btn-sm btn-neutral"
+                [routerLink]="['/rates/createpromonotification/', id]">Add notifications</button>
+              <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit Promo"
+                [routerLink]="['/rates/radxupdatepromo/', id]"> <i class="fas fa-edit"></i></button>
+              <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete Promo"
+                [routerLink]="['/rates/radxdeletepromo/', id]"> <i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="container py-4">
+
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title"><i class="fas fa-gift text-primary"></i> Promo: <span
+                    class="font-weight-normal">{{ promo.promo_name }}</span></h4>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <i class="fa fa-hashtag text-primary"></i> Code: <span>{{ promo.promo_code }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <i class="fa fa-building text-primary"></i> Company: <span>{{ promo.Company.company_name }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <i class="fa fa-user text-primary"></i> Users: <span>{{ promo.user_role }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <i class="fa fa-dollar-sign text-primary"></i> Rate: <span>{{ promo.Rate.rate_name }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <i class="fa fa-clock text-primary"></i> Time Period: <span>{{ promo.time_period }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <i class="fa fa-hashtag text-primary"></i> Offer Charging count: <span>{{ promo.offer_charging_count
+                      }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <i class="fa fa-bolt text-primary"></i> Offer Charging Energy (kW): <span>{{
+                      promo.offer_charging_energy }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Promo Notifications Table -->
+            <!-- Promo Notifications Table - Full Width -->
+            <div class="promo-notifications-wrapper mt-4 px-0">
+              <div class="card w-100 shadow-sm">
+                <div class="card-header">
+                  <h4 class="mb-0">
+                    <i class="fas fa-bell text-primary"></i> Promo Notifications
+                  </h4>
+                </div>
+
+                <div class="card-body p-0">
+                  <!-- Tabs -->
+                  <ul class="nav nav-tabs px-3 pt-3">
+                    <li class="nav-item">
+                      <a class="nav-link" [class.active]="activeTab === 'notifications'"
+                        (click)="setTab('notifications')">Notifications</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" [class.active]="activeTab === 'userOffers'"
+                        (click)="setTab('userOffers')">User Offers</a>
+                    </li>
+                  </ul>
+
+                  <!-- NOTIFICATIONS TAB -->
+                  <div class="tab-pane fade show p-3" [class.active]="activeTab === 'notifications'"
+                    *ngIf="activeTab === 'notifications'">
+                    <div class="table-responsive">
+                      <div *ngIf="activeTab === 'notifications'" class="dataTables_filter">
+                        <input type="text" class="form-control form-control-sm" placeholder="Search..."
+                          [(ngModel)]="notificationSearchTerm" (input)="filterNotifications()">
+                      </div>
+                      <table class="table table-striped mt-5 ">
+                        <thead class="thead-light">
+                          <tr>
+                            <th scope="col">Step</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Body</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Active</th>
+                            <th scope="col" style="width: 120px;">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let notification of pagedNotifications">
+                            <td>{{ notification.step_count }}</td>
+                            <td>{{ notification.title }}</td>
+                            <td>{{ notification.body }}</td>
+                            <td>{{ notification.notification_type || '-' }}</td>
+                            <td>
+                              <span *ngIf="notification.is_active; else inactive" class="text-success">Yes</span>
+                              <ng-template #inactive><span class="text-danger">No</span></ng-template>
+                            </td>
+                            <td>
+                              <button class="btn btn-sm btn-neutral" tooltip="Edit"
+                                [routerLink]="['/rates/updatepromonotification', notification.promo_notification_id]">
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <button class="btn btn-sm btn-neutral" tooltip="Delete"
+                                [routerLink]="['/rates/deletepromonotification', notification.promo_notification_id]">
+                                <i class="fas fa-trash-alt"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          <tr *ngIf="pagedNotifications.length === 0">
+                            <td colspan="3" class="text-center text-muted">
+                              No notifications found.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div class="pagination-container text-center py-3"
+                      *ngIf="promoNotifications.length > notificationItemsPerPage">
+                      <button class="btn btn-sm btn-light mx-1" [disabled]="currentNotificationPage === 1"
+                        (click)="onNotificationPageChange(currentNotificationPage - 1)">
+                        ‹ Prev
+                      </button>
+
+                      <span class="mx-2">
+                        Page {{ currentNotificationPage }} of {{ totalNotificationPages }}
+                      </span>
+
+                      <button class="btn btn-sm btn-light mx-1"
+                        [disabled]="currentNotificationPage >= totalNotificationPages"
+                        (click)="onNotificationPageChange(currentNotificationPage + 1)">
+                        Next ›
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- USER OFFERS TAB -->
+                  <div class="tab-pane fade show p-3" [class.active]="activeTab === 'userOffers'"
+                    *ngIf="activeTab === 'userOffers'">
+                    <div class="table-responsive">
+                      <div *ngIf="activeTab === 'userOffers'" class="dataTables_filter">
+                        <input type="text" class="form-control form-control-sm" placeholder="Search..."
+                          [(ngModel)]="userOfferSearchTerm" (input)="filterUserOffers()">
+                      </div>
+                      <table class="table table-striped mt-5">
+                        <thead class="thead-light">
+                          <tr>
+                            <th scope="col">User</th>
+                            <th scope="col">Before Rate</th>
+                            <th scope="col">New Rate</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let offer of pagedUserOffers">
+                            <td>{{ offer.User?.username || '-' }}</td>
+                            <td>{{ offer.BeforeRate?.rate_name || '-' }}</td>
+                            <td>{{ offer.NewRate?.rate_name || '-' }}</td>
+                            <td>{{ offer.end_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+                            <td>
+                              <span [ngClass]="{
+                      'text-success': offer.status === 'active',
+                      'text-danger': offer.status === 'expired',
+                      'text-secondary': !offer.status
+                    }">
+                                {{ offer.status || '-' }}
+                              </span>
+                            </td>
+                          </tr>
+                          <tr *ngIf="pagedUserOffers.length === 0">
+                            <td colspan="4" class="text-center text-muted">
+                              No user offers found.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div class="pagination-container text-center py-3"
+                      *ngIf="userOffers.length > userOfferItemsPerPage">
+                      <button class="btn btn-sm btn-light mx-1" [disabled]="currentUserOfferPage === 1"
+                        (click)="onUserOfferPageChange(currentUserOfferPage - 1)">
+                        ‹ Prev
+                      </button>
+
+                      <span class="mx-2">
+                        Page {{ currentUserOfferPage }} of {{ totalUserOfferPages }}
+                      </span>
+
+                      <button class="btn btn-sm btn-light mx-1" [disabled]="currentUserOfferPage >= totalUserOfferPages"
+                        (click)="onUserOfferPageChange(currentUserOfferPage + 1)">
+                        Next ›
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,117 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update Tax</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="taxForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="taxName">Tax Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="taxName" formControlName="taxName" required />
+                <small *ngIf="taxForm.get('taxName')?.invalid && taxForm.get('taxName')?.touched" class="text-danger">
+                  Tax Name is required
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="percentage">Percentage</label>
+              <div class="col-md-10">
+                <input class="form-control" id="percentage" formControlName="percentage" required />
+                <small *ngIf="taxForm.get('percentage')?.invalid && taxForm.get('percentage')?.touched"
+                  class="text-danger">
+                  Percentage is required
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <select class="form-control" id="companyId" formControlName="companyId" required>
+                  <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}
+                  </option>
+                </select>
+                <small *ngIf="taxForm.get('companyId')?.invalid && taxForm.get('companyId')?.touched"
+                  class="text-danger">
+                  Company is required
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="idNo">ID No</label>
+              <div class="col-md-10">
+                <input class="form-control" id="idNo" formControlName="idNo" required />
+                <small *ngIf="taxForm.get('idNo')?.invalid && taxForm.get('idNo')?.touched" class="text-danger">
+                  ID Number is required
+                </small>
+              </div>
+            </div>
+
+            <!-- <div *ngIf="taxForm.get('userGrId')?.value !== null" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userGrId">User Group</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userGrId" formControlName="userGrId">
+                  <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{ userGroup.usergr_name }}
+                  </option>
+                </select>
+                <small *ngIf="taxForm.get('userGrId')?.invalid && taxForm.get('userGrId')?.touched" class="text-danger">
+                  User Group is required
+                </small>
+              </div>
+            </div>
+
+            <div *ngIf="taxForm.get('userId')?.value !== null" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userId" formControlName="userId">
+                  <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                </select>
+                <small *ngIf="taxForm.get('userId')?.invalid && taxForm.get('userId')?.touched" class="text-danger">
+                  User is required
+                </small>
+              </div>
+            </div>
+
+            <div *ngIf="taxForm.get('partnerId')?.value !== null" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="partnerId">Partner</label>
+              <div class="col-md-10">
+                <select class="form-control" id="partnerId" formControlName="partnerId">
+                  <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name }}
+                  </option>
+                </select>
+                <small *ngIf="taxForm.get('partnerId')?.invalid && taxForm.get('partnerId')?.touched"
+                  class="text-danger">
+                  Partner is required
+                </small>
+              </div>
+            </div> -->
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Update Tax</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

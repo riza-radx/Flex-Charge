@@ -1,0 +1,113 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update Voucher</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="voucherForm" (ngSubmit)="onSubmit()">
+
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="amount">Amount</label>
+              <div class="col-md-10">
+                <input class="form-control" id="amount" formControlName="amount" required />
+                <div
+                  *ngIf="voucherForm.get('amount').invalid && (voucherForm.get('amount').dirty || voucherForm.get('amount').touched)">
+                  <small class="text-danger" *ngIf="voucherForm.get('amount').errors?.required">Amount is
+                    required.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="serial_no">Serial Number</label>
+              <div class="col-md-10">
+                <input class="form-control" id="serial_no" formControlName="serial_no" required />
+                <div
+                  *ngIf="voucherForm.get('serial_no').invalid && (voucherForm.get('serial_no').dirty || voucherForm.get('serial_no').touched)">
+                  <small class="text-danger" *ngIf="voucherForm.get('serial_no').errors?.required">Serial Number is
+                    required.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="block_no">Block Number</label>
+              <div class="col-md-10">
+                <input class="form-control" id="block_no" formControlName="block_no" required />
+                <div
+                  *ngIf="voucherForm.get('block_no').invalid && (voucherForm.get('block_no').dirty || voucherForm.get('block_no').touched)">
+                  <small class="text-danger" *ngIf="voucherForm.get('block_no').errors?.required">Block Number is
+                    required.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <select class="form-control" id="companyId" formControlName="companyId" required>
+                  <option value="" disabled>Select a Company</option>
+                  <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="voucherForm.get('companyId').invalid && (voucherForm.get('companyId').dirty || voucherForm.get('companyId').touched)">
+                  <small class="text-danger" *ngIf="voucherForm.get('companyId').errors?.required">Company selection is
+                    required.</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="date">Date</label>
+              <div class="col-md-10">
+                <span class="form-control bg-light" id="date">{{ formatDate(voucherForm.get('date').value) }}</span>
+              </div>
+            </div>
+
+            <!-- 🆕 Distributor Voucher (informacion) -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label">Voucher Distributori</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="is_distributor_card" formControlName="is_distributor_card" />
+                <small class="text-muted ml-2 d-block">
+                  Shenjo nese voucher-i lëshohet te një distributor. Vetëm informacion — nuk ndryshon logjikën.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row" *ngIf="voucherForm.get('is_distributor_card')?.value">
+              <label class="col-md-2 col-form-label form-control-label" for="distributor_name">Emri i Distributorit</label>
+              <div class="col-md-10">
+                <input class="form-control" id="distributor_name" formControlName="distributor_name"
+                  placeholder="psh ABC Distribution Ltd" />
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Update Voucher</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

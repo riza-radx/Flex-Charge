@@ -1,0 +1,121 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update Rate</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="rateForm" (ngSubmit)="onSubmit()">
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="name" formControlName="name" required />
+                <small
+                  *ngIf="rateForm.get('name').invalid && (rateForm.get('name').touched || rateForm.get('name').dirty)"
+                  class="text-danger">
+                  Name is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <select class="form-control" id="companyId" formControlName="companyId" required>
+                  <option value="" disabled>Select a company</option>
+                  <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}
+                  </option>
+                </select>
+                <small
+                  *ngIf="rateForm.get('companyId').invalid && (rateForm.get('companyId').touched || rateForm.get('companyId').dirty)"
+                  class="text-danger">
+                  Company is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="defaultPrice">Default Price</label>
+              <div class="col-md-10">
+                <input class="form-control" id="defaultPrice" formControlName="defaultPrice" required />
+                <small
+                  *ngIf="rateForm.get('defaultPrice').invalid && (rateForm.get('defaultPrice').touched || rateForm.get('defaultPrice').dirty)"
+                  class="text-danger">
+                  Default Price is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="percentage">Percentage</label>
+              <div class="col-md-10">
+                <input class="form-control" id="percentage" formControlName="percentage" required />
+                <small
+                  *ngIf="rateForm.get('percentage').invalid && (rateForm.get('percentage').touched || rateForm.get('percentage').dirty)"
+                  class="text-danger">
+                  Percentage is required.
+                </small>
+              </div>
+            </div> -->
+
+            <!-- 🆕 Rate Type: Sale (default) ose Purchase (Blerje) -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="rate_type">Rate Type</label>
+              <div class="col-md-10">
+                <select class="form-control" id="rate_type" formControlName="rate_type"
+                  (change)="onRateTypeChange()">
+                  <option value="sale">Sale (Rate Shitje)</option>
+                  <option value="purchase">Purchase (Rate Blerje)</option>
+                </select>
+                <small class="text-muted d-block mt-1">
+                  Sale: rate qe u aplikohet karikimeve (cmimi i shitjes).
+                  Purchase: rate i blerjes se energjise per set te charger-ave.
+                </small>
+              </div>
+            </div>
+
+            <!-- 🆕 Purchase Category (vetem per Purchase) -->
+            <div class="form-group row" *ngIf="rateForm.get('rate_type')?.value === 'purchase'">
+              <label class="col-md-2 col-form-label form-control-label" for="purchase_category">Purchase Category</label>
+              <div class="col-md-10">
+                <select class="form-control" id="purchase_category"
+                  formControlName="purchase_category" required>
+                  <option value="ACTIVE">ACTIVE (jashte pikut)</option>
+                  <option value="PIK">PIK (ne oraret pik)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 🆕 Set as Default — kur ka shume rate per kompani, ky perdoret si fallback -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="isDefault">Set as Default</label>
+              <div class="col-md-10 d-flex align-items-center">
+                <input class="form-check-input" id="isDefault" type="checkbox" formControlName="isDefault" style="margin-right:8px;" />
+                <small class="text-muted">Duhet te jete vetem 1 default per kompani.</small>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Update Rate</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

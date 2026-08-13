@@ -1,0 +1,83 @@
+<div *ngIf="isRadXAdmin">
+  <!-- Content for RadX Admin -->
+   <app-radxrecharges></app-radxrecharges>
+</div>
+
+<div *ngIf="isRadXModerator">
+  <!-- Content for RadX Moderator -->
+   <app-radxrecharges></app-radxrecharges>
+</div>
+
+<div *ngIf="isCompanyAdmin">
+  <!-- Content for Company Admin -->
+   <app-companyrecharges></app-companyrecharges>
+</div>
+
+<div *ngIf="isSuperUser">
+  <!-- Content for Super User -->
+  <app-radxrecharges></app-radxrecharges>
+</div>
+
+<div *ngIf="isCompanyOperator">
+  <!-- Content for Company Operator -->
+   <app-companyrecharges></app-companyrecharges>
+</div>
+
+<div *ngIf="isCompanyModerator">
+  <!-- Content for Company Moderator -->
+   <app-companyrecharges></app-companyrecharges>
+</div>
+
+<div *ngIf="isCompanyTechnicalOperator">
+  <!-- Content for Company Technical Operator -->
+   <app-companyrecharges></app-companyrecharges>
+</div>
+
+<div *ngIf="isCompanyMaintenanceSpecialist">
+  <!-- Content for Company Maintenance Specialist -->
+   <app-companyrecharges></app-companyrecharges>
+</div>
+
+<div *ngIf="isCompanyCallCenter">
+  <!-- Content for Company Call Center -->
+   <app-companyrecharges></app-companyrecharges>
+</div>
+
+<div *ngIf="isCompanyAnalyst">
+  <!-- Content for Company Analyst -->
+   <app-companyrecharges></app-companyrecharges>
+</div>
+
+<div *ngIf="isUserGroupAdmin">
+  <!-- Content for User Group Admin -->
+   <app-usergroupadmindashboard></app-usergroupadmindashboard>
+</div>
+
+<div *ngIf="isUserGroupModerator">
+  <!-- Content for User Group Moderator -->
+   <app-usergrouprfidcard></app-usergrouprfidcard>
+</div>
+
+<div *ngIf="isUserGroupUser">
+  <!-- Content for User Group User -->
+   <app-usergrouprfidcard></app-usergrouprfidcard>
+</div>
+
+<div *ngIf="isPartnerAdmin">
+  <!-- Content for Partner Admin -->
+   <app-partnerrfidcard></app-partnerrfidcard>
+</div>
+
+<div *ngIf="isPartnerModerator">
+  <!-- Content for Partner Moderator -->
+   <app-partnerrfidcard></app-partnerrfidcard>
+</div>
+
+<div *ngIf="isUser">
+  <!-- Content for User -->
+   <app-userrfidcard></app-userrfidcard>
+</div>
+
+<!-- <div *ngIf="!isRadXAdmin && !isRadXModerator && !isCompanyAdmin && !isSuperUser && !isCompanyOperator && !isCompanyModerator && !isCompanyTechnicalOperator && !isCompanyMaintenanceSpecialist && !isCompanyCallCenter && !isCompanyAnalyst && !isUserGroupAdmin && !isUserGroupModerator && !isUserGroupUser && !isPartnerAdmin && !isPartnerModerator && !isUser"> -->
+  <!-- Content for unknown or unauthenticated users -->
+<!-- </div> -->

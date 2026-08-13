@@ -1,0 +1,52 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class=" container-fluid">
+      <div class=" header-body">
+        <div class=" row align-items-center py-4">
+
+          <div class=" col-lg-6 col-7">
+            <h3 class=" h2 text-white d-inline-block mb-0">Charging Status</h3>
+
+        </div>
+    
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  <div class="charging-container-wrapper">
+    <div class="charging-container" *ngFor="let charging of chargings; let i = index">
+      <div class="charging-header">
+        <h1> Card serial  <strong>{{ cardSerial[i] }}</strong>  is charging</h1>
+      </div>
+      
+      <div class="charging-status-circle">
+        <div class="charging-animation">
+          <div class="charging-progress"></div>
+          <div class="charging-battery">
+            <img src="assets/img/icons/charger/battery.png" alt="Battery Icon" class="battery" />
+          </div>
+          <img src="assets/img/icons/charger/flash-white.png" alt="Flash Icon" class="charging-flash" />
+        </div>
+      </div>
+      
+      <div class="charging-time">
+        <div>
+          <img src="assets/img/icons/charger/flash.png" alt="Battery Icon" />
+          <h2>Charging</h2>
+        </div>
+        <h2>{{ calculateTimeDifference(charging.strted_time)}}</h2> <!-- Adjust with actual charging time data -->
+      </div>
+    
+      <div class="charging-details">
+        <p>{{ getChargerName(charging.charging_id) }} {{ getLocationCity(charging.charging_id) }}</p>
+        <p>{{ getConnectorName(charging.charging_id) }}</p>
+        <h3>{{ charging.cost }} ALL</h3>
+        <button class="stop-button">Stop</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  

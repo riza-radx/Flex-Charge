@@ -1,0 +1,587 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 200px;background-size: cover;background-position: center top; background-color:#931623  !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col-xl-12 order-xl-1">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class=" card card-profile">
+
+            <div class=" row justify-content-center">
+              <div class=" col-lg-3 order-lg-2">
+                <div *ngIf="userDetails " class=" card-profile-image">
+                  <a href="javascript:void(0)">
+                    <img class="rounded-circle" [src]="userDetails.user_image || 'assets/img/default-avatar.png'"
+                      alt="User Profile Image" />
+
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class=" card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+              <div class="d-flex justify-content-between" *ngIf="userDetails?.id">
+                <div>
+                  <!-- <button *ngIf="isRadXRole" type="button" class="btn btn-sm btn-neutral"
+                    [routerLink]="['/users/user/update/company', userDetails.id]" tooltip="Edit Profile"><i
+                      class="fas fa-user-edit"></i></button> -->
+                  <!-- <button *ngIf="isUserRole" type="button" class="btn btn-sm btn-neutral"
+                    [routerLink]="['/users/user/update/company', userDetails.id]" tooltip="Edit Profile">
+                    <i class="fas fa-user-edit"></i>
+                  </button> -->
+
+                  <button *ngIf="isAble && isCompanyRole" type="button" class="btn btn-sm btn-neutral"
+                    [routerLink]="['/companies/updatemember', userDetails.id]" tooltip="Edit Profile">
+                    <i class="fas fa-user-edit"></i>
+                  </button>
+
+                  <button *ngIf="isPartnerRole && isAble" type="button" class="btn btn-sm btn-neutral"
+                    [routerLink]="['/partners/updatemember', userDetails.id]" tooltip="Edit Profile">
+                    <i class="fas fa-user-edit"></i>
+                  </button>
+
+                  <button *ngIf="isUserGroupRole && isAble" type="button" class="btn btn-sm btn-neutral"
+                    [routerLink]="['/users/updateusergroupmember', userDetails.id]" tooltip="Edit Profile">
+                    <i class="fas fa-user-edit"></i>
+                  </button>
+
+                  <button *ngIf="userDetails && !isCompanyAnalyst" type="button" class="btn btn-sm btn-neutral"
+                    [routerLink]="['/users/user/delete/company', userDetails.id]" tooltip="Delete Profile">
+                    <i class="fas fa-user-minus"></i>
+                  </button>
+
+                  <button *ngIf="!userDetails && !isCompanyAnalyst" type="button" class="btn btn-sm btn-neutral"
+                    [routerLink]="['/users/user/delete/company', userDetails.id]" tooltip="Delete Profile">
+                    <i class="fas fa-user-minus"></i>
+                  </button>
+                </div>
+
+                <div>
+                  <button *ngIf="isSplitWallet" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                    tooltip="Use Voucher">
+                    <a [routerLink]="['/rates/userusevoucher', userDetails.id]">
+                      <i class="fas fa-credit-card"></i>
+                    </a>
+                  </button>
+                  <button *ngIf="isCompanyAdmin" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                    [routerLink]="['/rfid-cards/addrecharges',userDetails.id]" tooltip="Recharge Top-Up">
+                    <i class="fas fa-money-bill"></i>
+                  </button>
+                  <button *ngIf="isPartnerAdmin || (isUserGroupAdmin && isSplitWallet)" type="button"
+                    class="btn btn-icon-clipboard btn-outline-primary" [routerLink]="['/rfid-cards/recharge']"
+                    [queryParams]="{ fromUserDetail: true, userId: userDetails.id }" tooltip="Recharge">
+                    <i class="fas fa-money-bill"></i>
+                  </button>
+                  <button *ngIf="isUserGroupAdmin && isSplitWallet && allowTransfer && +id !== +logedInUserId" type="button"
+                    class="btn btn-icon-clipboard btn-outline-primary" [routerLink]="['/rfid-cards/transfer-money']"
+                    [queryParams]="{ fromUserDetail: true, userId: id }" tooltip="Transfer Money">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+
+                </div>
+              </div>
+            </div>
+            <!-- Profil User -->
+            <div class=" card-body pt-0">
+              <div *ngIf="userDetails " class="user-profile text-center p-4">
+                <h3 class="font-weight-bold mb-3">
+                  {{ userDetails.name }} <small class="text-muted">{{ userDetails.username }}</small>
+                </h3>
+                <div class="h5 text-primary mb-4 font-weight-normal">{{ userDetails.role }}</div>
+
+                <!-- 🆕 Badge Karte Distributori — vetem per Company Admin / Company Analyst -->
+                <div *ngIf="isDistributorCard && (isCompanyAdmin || isCompanyAnalyst)"
+                     class="mb-3"
+                     style="display:inline-block; padding:6px 14px; background:#fff3cd; color:#664d03;
+                            border:1px solid #ffe69c; border-radius:20px; font-size:13px; font-weight:600;">
+                  🏷️ Kartë Distributori<span *ngIf="distributorName"> — {{ distributorName }}</span>
+                </div>
+
+
+                <div class="row p-4">
+                  <div class="col-md-6 mb-4">
+                    <h5 class="text-muted font-weight-normal mb-3">Part of:</h5>
+                    <!-- <div *ngIf="userGroupName" class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">User Group:</span> {{ userGroupName }}
+                    </div>
+                    <div *ngIf="partnerName" class="text-darkfont-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">Partner:</span> {{ partnerName }}
+                    </div> -->
+                    <div *ngIf="userGroupName" class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">User Group:</span>
+                      <a [routerLink]="['/users/usergroup', userDetails.usergr_id]" class="text-primary">
+                        {{ userGroupName }}
+                      </a>
+                    </div>
+
+                    <div *ngIf="partnerName" class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">Partner:</span>
+                      <a [routerLink]="['/partners/partner', userDetails.partner_id]" class="text-primary">
+                        {{ partnerName }}
+                      </a>
+                    </div>
+                    <div *ngIf="companyName" class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">Company:</span> {{ companyName }}
+                    </div>
+                    <div class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">Registered from:</span> {{ userDetails.registered_from }}
+                    </div>
+                    <div class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">Created At:</span> {{ userDetails.created_date }}
+                    </div>
+                    <div *ngIf="userDetails.madeBy" class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">Created By:</span> {{ userDetails.madeBy }}
+                    </div>
+                    <div *ngIf="modifiedBy" class="text-dark font-weight-light mb-2">
+                      <i class="ni education_hat mr-2"></i>
+                      <span class="font-weight-bold">Modified By:</span> {{ modifiedBy }}
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <h5 class="text-muted font-weight-normal mb-3">Contact Information</h5>
+                    <div class="text-dark font-weight-light mb-2">
+                      <i class="ni business_briefcase-24 mr-2"></i>
+                      <span class="font-weight-bold">Email:</span> {{ userDetails.email }}
+                    </div>
+                    <div class="text-dark font-weight-light">
+                      <i class="ni phone mr-2"></i>
+                      <span class="font-weight-bold">Phone:</span> {{ userDetails.phone_number }}
+                    </div>
+                    <div *ngIf="isCompanyAdmin || isCompanyAnalyst" class="text-dark font-weight-light">
+                      <i class="ni phone mr-2"></i>
+                      <span class="font-weight-bold">Customer Number:</span> {{ userDetails.customer_number }}
+                    </div>
+                      <div *ngIf="isCompanyAdmin || isCompanyAnalyst" class="text-dark font-weight-light">
+                      <i class="ni phone mr-2"></i>
+                      <span class="font-weight-bold">Dimension KLIENT/FURNITOR :</span> {{ userDetails.dimension_value }}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- Don't have data-->
+              <div *ngIf="!userDetails">
+                <p>No User details available.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- Client Card Section-->
+        <div class="col-lg-6">
+          <div class="row">
+            <div class=" col-lg-6">
+              <div class=" card bg-gradient-info border-0">
+                <div class=" card-body">
+                  <div class=" row">
+                    <div class=" col">
+                      <h5 class=" card-title text-uppercase text-muted mb-0 text-white">
+                        Balance
+                      </h5>
+
+                      <span *ngIf="userDetails" class=" h2 font-weight-bold mb-0 text-white">
+                        {{userDetails.balance | number:'1.2-2'}}
+                      </span>
+                    </div>
+
+                    <div class=" col-auto">
+                      <div class=" icon icon-shape bg-white text-dark rounded-circle shadow">
+                        <i class=" fas fa-wallet"> </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class=" col-lg-6">
+              <div class=" card bg-gradient-success border-0">
+                <div class=" card-body">
+                  <div class=" row">
+                    <div class=" col">
+                      <h5 class=" card-title text-uppercase text-muted mb-0 text-white">
+                        Debit Balance
+                      </h5>
+
+                      <span *ngIf="userDetails" class=" h2 font-weight-bold mb-0 text-white">
+                        {{ userDetails.debit_balance | number:'1.2-2' }}
+                      </span>
+                    </div>
+
+                    <div class=" col-auto">
+                      <div class=" icon icon-shape bg-white text-dark rounded-circle shadow">
+                        <i class=" fas fa-credit-card"> </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-bg">
+            <img src="assets/flexcharge/card-background.png" class="card-background" />
+
+            <div class="card-content">
+              <!-- Status and Recharge Button at the top -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge badge-lg px-3 py-2"
+                  [ngClass]="{'badge-success': card?.status === 'active', 'badge-danger': card?.status !== 'active'}">
+                  {{ card ? (card.status | titlecase) : 'No Card Available' }}
+                </span>
+                <!-- <button *ngIf="isCompanyRole" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                  [routerLink]="['/rfid-cards/recharge']" [queryParams]="{ fromProfile: true }" tooltip="Recharge">
+                  <i class="fas fa-money-bill"></i>
+                </button> -->
+
+              </div>
+
+              <!-- Card Number at Bottom Left -->
+              <div class="card-bottom-left">
+                <span *ngIf="card" class="h5 text-light mb-1">Card Number</span>
+                <a [routerLink]="['/rfid-cards/rfidcard', card?.card_id]"
+                  class="card-serial-number h1 font-weight-bold text-white">
+                  {{ card?.serial_no }}
+                </a>
+              </div>
+
+              <!-- Expiry Date on the Right -->
+              <div class="card-bottom-right">
+                <span *ngIf="card" class="h5 text-light mb-1">Expiry Date</span>
+                <span class="card-serial-number h1 font-weight-bold text-white">{{ card?.expiry_date }}</span>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <tabset #userTabs>
+          <tab heading="Charging History">
+            <div class="dataTables_wrapper py-4">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="dataTables_length" id="datatable_length">
+                    <label>
+                      <span *ngIf="!isSmallScreen">Show</span>
+                      <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                        (change)="entriesChange($event)">
+                        <option value="10" [selected]="entries == 10">10</option>
+                        <option value="25" [selected]="entries == 25">25</option>
+                        <option value="50" [selected]="entries == 50">50</option>
+                        <option value="-1" [selected]="entries == -1">All</option>
+                      </select>
+                      <span *ngIf="!isSmallScreen">entries</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col ml--2">
+                  <!-- Search Input -->
+                  <div id="datatable_filter" class="dataTables_filter">
+                    <label>
+                      <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                        placeholder="Search records" aria-controls="datatable"
+                        (input)="filterChargingHistoryTable($event)" />
+                      <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                        (click)="toggleSearchInput()"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="scrollable-table">
+                <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                  [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                  [limit]="entries != -1 ? entries : undefined" [rows]="tempChargingHistory" [selected]="selected"
+                  [selectionType]="'multiClick'" (select)="onRowSelect($event)">
+                  <ngx-datatable-column name="ID" prop="charging_history_id"></ngx-datatable-column>
+                  <ngx-datatable-column name="Charger" prop="Charger.charger_name"></ngx-datatable-column>
+                  <ngx-datatable-column name="Connector" prop="Connector.connector_name"></ngx-datatable-column>
+                  <ngx-datatable-column name="Card" [prop]="'Card.serial_no'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.Card?.serial_no || 'Remote Start' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Date" prop="charging_history_date"></ngx-datatable-column>
+
+                  <!-- <ngx-datatable-column name="Started Type" prop="started_type"></ngx-datatable-column> -->
+                  <ngx-datatable-column name="Strted Time" prop="strted_time"></ngx-datatable-column>
+                  <ngx-datatable-column name="Ended Time" prop="ended_time"></ngx-datatable-column>
+                  <ngx-datatable-column name="Total Energy" prop="total_energy"></ngx-datatable-column>
+                  <ngx-datatable-column name="Charging Cost">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ ((+row.total_cost || 0) - (+row.fullchargefeecost || 0)) | number:'1.2-2' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Idle Min">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ ((+row.fullchargefeeperminute > 0) ? ((+row.fullchargefeecost || 0) / +row.fullchargefeeperminute) : 0) | number:'1.0-0' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Fee per Minute">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ (+row.fullchargefeeperminute || 0) | number:'1.2-2' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Idle Fee Cost">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ (+row.fullchargefeecost || 0) | number:'1.2-2' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Total Cost" prop="total_cost"></ngx-datatable-column>
+                  <ngx-datatable-column name="Charging Status" prop="charging_status"></ngx-datatable-column>
+                  <ngx-datatable-column name="Battery %" prop="socValue"></ngx-datatable-column>
+                  <!-- 🆕 Roaming column — useri karikon te kompani te tjera = OUT -->
+                  <ngx-datatable-column name="Roaming" [width]="180">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.is_roaming" class="badge" style="background:#ff9800;color:#fff;">
+                        🌐 OUT
+                      </span>
+                      <small *ngIf="row.is_roaming" class="text-muted d-block" style="font-size:11px;">
+                        @ {{ row.HostCompany?.company_name || row.Company?.company_name || '?' }}
+                      </small>
+                      <span *ngIf="!row.is_roaming" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Check Fisk" [width]="110">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.snap_check_fisk === true || row.snap_check_fisk === 1" class="text-success">Yes</span>
+                      <span *ngIf="row.snap_check_fisk === false || row.snap_check_fisk === 0" class="text-danger">No</span>
+                      <span *ngIf="row.snap_check_fisk === null || row.snap_check_fisk === undefined" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="PAYG" prop="snap_allow_payg" [width]="100">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.snap_allow_payg === 'true' || row.snap_allow_payg === '1'" class="text-success">Yes</span>
+                      <span *ngIf="row.snap_allow_payg === 'false' || row.snap_allow_payg === '0'" class="text-muted">No</span>
+                      <span *ngIf="!row.snap_allow_payg" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Send Email" [width]="120">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.snap_send_email === true || row.snap_send_email === 1" class="text-success">Yes</span>
+                      <span *ngIf="row.snap_send_email === false || row.snap_send_email === 0" class="text-muted">No</span>
+                      <span *ngIf="row.snap_send_email === null || row.snap_send_email === undefined" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="BC Invoice" [width]="140">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row?.Charging?.bc_invoice_number || row?.bc_invoice_number"
+                        class="text-success">{{ row?.Charging?.bc_invoice_number || row?.bc_invoice_number }}</span>
+                      <span *ngIf="!(row?.Charging?.bc_invoice_number || row?.bc_invoice_number)"
+                        class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                </ngx-datatable>
+              </div>
+            </div>
+          </tab>
+
+          <tab heading="Documents">
+            <div class="dataTables_wrapper py-4">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="dataTables_length" id="datatable_length">
+                    <label>
+                      <span *ngIf="!isSmallScreen">Show</span>
+                      <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                        (change)="entriesChange($event)">
+                        <option value="10" [selected]="entries == 10">10</option>
+                        <option value="25" [selected]="entries == 25">25</option>
+                        <option value="50" [selected]="entries == 50">50</option>
+                        <option value="-1" [selected]="entries == -1">All</option>
+                      </select>
+                      <span *ngIf="!isSmallScreen">entries</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col ml--2 ">
+                  <div id="datatable_filter" class="dataTables_filter">
+                    <label>
+                      <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                        placeholder="Search records" aria-controls="datatable" (input)="filterDocumentsTable($event)" />
+                      <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                        (click)="toggleSearchInput()"></i>
+                    </label>
+                    <button type="button" class="btn btn-sm btn-neutral" tooltip="Upload"
+                      [routerLink]="['/assets/documents/import']" [queryParams]="{ user_id: id }">
+                      <i class="fas fa-upload"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="scrollable-table">
+                <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                  [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                  [limit]="entries != -1 ? entries : undefined" [rows]="tempDocuments" [selected]="selected"
+                  [selectionType]="'multiClick'" (activate)="onActivateDoc($event)" (select)="onSelect($event)">
+                  <ngx-datatable-column name="Name" prop="file_name"></ngx-datatable-column>
+                  <ngx-datatable-column name="Date" prop="uploaded_date"></ngx-datatable-column>
+                  <ngx-datatable-column name="Added By" prop="madeBy"></ngx-datatable-column>
+                  <ngx-datatable-column name="Actions" prop="actions">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                      <button type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                        [routerLink]="['/assets/documents/delete/', row.document_id]">
+                        <i class="fas fa-trash-alt"></i></button>
+                    </ng-template>
+                  </ngx-datatable-column>
+                </ngx-datatable>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Recharges">
+            <div class="dataTables_wrapper py-4">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="dataTables_length" id="datatable_length">
+                    <label>
+                      <span *ngIf="!isSmallScreen">Show</span>
+                      <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                        (change)="entriesChange($event)">
+                        <option value="10" [selected]="entries == 10">10</option>
+                        <option value="25" [selected]="entries == 25">25</option>
+                        <option value="50" [selected]="entries == 50">50</option>
+                        <option value="-1" [selected]="entries == -1">All</option>
+                      </select>
+                      <span *ngIf="!isSmallScreen">entries</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col ml--2  custom-flex-end-center">
+                  <div id="datatable_filter" class="dataTables_filter">
+                    <label>
+                      <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                        placeholder="Search records" aria-controls="datatable"
+                        (input)="filterRechargersTable($event)" />
+                      <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                        (click)="toggleSearchInput()"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="scrollable-table">
+                <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                  [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                  [limit]="entries != -1 ? entries : undefined" [rows]="tempRecharges" [selected]="selected"
+                  [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                  <ngx-datatable-column name="No.">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                      {{ rowIndex + 1 }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Order / Recharge ID">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row?.recharge_from === 'Online' ? (row?.pokOrderId || row?.recharge_id) : row?.recharge_id }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Amount" prop="amount"></ngx-datatable-column>
+                  <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+                  <ngx-datatable-column name="Time" prop="time"></ngx-datatable-column>
+                  <ngx-datatable-column name="Made By" prop="madeBy"></ngx-datatable-column>
+                  <ngx-datatable-column name="Previous Balance" prop="previous_balance"></ngx-datatable-column>
+                  <ngx-datatable-column name="Previous Debit Balance"
+                    prop="previous_debit_balance"></ngx-datatable-column>
+                  <ngx-datatable-column name="Recharge Type" prop="recharge_from"></ngx-datatable-column>
+                  <!-- 🆕 TopUp Note — arsyeja e TopUp-it (vetem admin/analyst) -->
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="TopUp Note" prop="topup_note" [width]="200">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.topup_note" [title]="row.topup_note" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:200px;">{{ row.topup_note }}</span>
+                      <span *ngIf="!row.topup_note" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Check Fisk" [width]="110">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.snap_check_fisk === true || row.snap_check_fisk === 1" class="text-success">Yes</span>
+                      <span *ngIf="row.snap_check_fisk === false || row.snap_check_fisk === 0" class="text-danger">No</span>
+                      <span *ngIf="row.snap_check_fisk === null || row.snap_check_fisk === undefined" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="PAYG" prop="snap_allow_payg" [width]="100">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.snap_allow_payg === 'true' || row.snap_allow_payg === '1'" class="text-success">Yes</span>
+                      <span *ngIf="row.snap_allow_payg === 'false' || row.snap_allow_payg === '0'" class="text-muted">No</span>
+                      <span *ngIf="!row.snap_allow_payg" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Send Email" [width]="120">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row.snap_send_email === true || row.snap_send_email === 1" class="text-success">Yes</span>
+                      <span *ngIf="row.snap_send_email === false || row.snap_send_email === 0" class="text-muted">No</span>
+                      <span *ngIf="row.snap_send_email === null || row.snap_send_email === undefined" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="BC Invoice" [width]="140">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <span *ngIf="row?.bc_invoice_number" class="text-success">{{ row.bc_invoice_number }}</span>
+                      <span *ngIf="!row?.bc_invoice_number" class="text-muted">—</span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                </ngx-datatable>
+              </div>
+            </div>
+          </tab>
+
+          <tab heading="Money Transfers" *ngIf="transactions && transactions.length > 0">
+            <div class="dataTables_wrapper py-4">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="dataTables_length" id="datatable_length">
+                    <label>
+                      <span *ngIf="!isSmallScreen">Show</span>
+                      <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                        (change)="entriesChange($event)">
+                        <option value="10" [selected]="entries == 10">10</option>
+                        <option value="25" [selected]="entries == 25">25</option>
+                        <option value="50" [selected]="entries == 50">50</option>
+                        <option value="-1" [selected]="entries == -1">All</option>
+                      </select>
+                      <span *ngIf="!isSmallScreen">entries</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col ml--2  custom-flex-end-center">
+                  <div id="datatable_filter" class="dataTables_filter">
+                    <label>
+                      <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                        placeholder="Search records" aria-controls="datatable"
+                        (input)="filterRechargersTable($event)" />
+                      <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                        (click)="toggleSearchInput()"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="scrollable-table">
+                <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                  [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                  [limit]="entries != -1 ? entries : undefined" [rows]="tempTransactions" [selected]="selected"
+                  [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                  <ngx-datatable-column name="Amount" prop="summary"></ngx-datatable-column>
+                  <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+                  <ngx-datatable-column name="Time" prop="time"></ngx-datatable-column>
+                  <ngx-datatable-column name="Transfer Description" prop="transaction_description"></ngx-datatable-column>
+                </ngx-datatable>
+              </div>
+            </div>
+          </tab>
+
+        </tabset>
+      </div>
+    </div>
+  </div>
+</div>

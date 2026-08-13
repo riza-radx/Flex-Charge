@@ -1,0 +1,83 @@
+<div class="modal-header">
+  <h2 class="modal-title">{{ title }}</h2>
+</div>
+<div class="modal-body">
+  <p>{{ message }}</p>
+
+  <div *ngIf="title === 'Confirm Start Remote Charging' && choices.length > 0">
+    <input type="text" class="form-control mb-2" placeholder="Search and select..." [(ngModel)]="searchTerm"
+      (input)="filterChoices()" />
+
+    <select id="options" [(ngModel)]="selectedChoice" class="form-control mb-2">
+      <option *ngFor="let choice of filteredChoices" [ngValue]="choice.value">
+        {{ choice.label }}
+      </option>
+    </select>
+
+    <!-- Reason Input Field -->
+    <div class="form-group mt-3">
+      <label for="remoteReason"><strong>Reason for Remote Start</strong> <span class="text-danger">*</span></label>
+      <input id="remoteReason" type="text" class="form-control" [(ngModel)]="remoteStartReason"
+        placeholder="Enter reason" />
+      <div *ngIf="showValidationError && !remoteStartReason" class="text-danger mt-1">
+        Reason is required.
+      </div>
+    </div>
+  </div>
+
+  <!-- Trigger Message Dropdown (Unchanged) -->
+  <div *ngIf="title === 'Confirm Trigger Message' && choices.length > 0">
+    <select id="options" [(ngModel)]="selectedChoice" class="form-control">
+      <option *ngFor="let choice of choices" [value]="choice">
+        {{ choice }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Get Diagnostics form -->
+  <div *ngIf="title === 'Confirm Get Diagnostics'">
+    <div class="form-group">
+      <label for="gdLocation"><strong>Location (URI)</strong> <span class="text-danger">*</span></label>
+      <input id="gdLocation" type="text" class="form-control" [(ngModel)]="gdLocation"
+        placeholder="ftp://u615576-sub1:&lt;password&gt;@u615576.your-storagebox.de:21/" />
+      <small class="form-text text-muted">
+        URI ku charger-i do ngarkojë file-in e diagnostikës. Përdorim FTP te Hetzner Storage Box
+        (charger-at nuk arritën të bënin HTTPS, por FTP-ja punon).
+      </small>
+      <div *ngIf="showGdValidation && !gdLocation" class="text-danger mt-1">
+        Location is required.
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="gdStartTime"><strong>Start Time</strong> <small class="text-muted">(opsionale)</small></label>
+      <input id="gdStartTime" type="datetime-local" class="form-control" [(ngModel)]="gdStartTime" />
+      <small class="form-text text-muted">Përfshi vetëm log-et më të reja se kjo datë.</small>
+    </div>
+    <div class="form-group">
+      <label for="gdStopTime"><strong>Stop Time</strong> <small class="text-muted">(opsionale)</small></label>
+      <input id="gdStopTime" type="datetime-local" class="form-control" [(ngModel)]="gdStopTime" />
+      <small class="form-text text-muted">Përfshi vetëm log-et më të vjetra se kjo datë.</small>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="gdRetries"><strong>Retries</strong> <small class="text-muted">(opsionale)</small></label>
+        <input id="gdRetries" type="number" min="0" class="form-control" [(ngModel)]="gdRetries"
+          placeholder="p.sh. 3" />
+      </div>
+      <div class="form-group col-md-6">
+        <label for="gdRetryInterval"><strong>Retry Interval (s)</strong> <small class="text-muted">(opsionale)</small></label>
+        <input id="gdRetryInterval" type="number" min="0" class="form-control" [(ngModel)]="gdRetryInterval"
+          placeholder="p.sh. 60" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary"
+    [disabled]="(title === 'Confirm Start Remote Charging' && !selectedChoice) || (title === 'Confirm Get Diagnostics' && !gdLocation)"
+    (click)="onConfirm()">
+    Confirm
+  </button>
+</div>

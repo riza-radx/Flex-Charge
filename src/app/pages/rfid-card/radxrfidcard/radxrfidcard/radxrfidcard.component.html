@@ -1,0 +1,279 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="card-header">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Cards</h3>
+                <!-- todo : Adding the function for counting the new entries-->
+                <!-- <p *ngIf="isRadXRole" class="text-sm mb-0">✓ {{ currentMonthCountEntry }} New Cards this month</p> -->
+              </div>
+              <div class="btn_new">
+                <button *ngIf="isRadXRole || isCompanyRole && !isCompanyAnalyst" class="btn-icon-clipboard"
+                  tooltip="Create New Card">
+                  <a [routerLink]="['/rfid-cards/radxcreaterfidcard']">
+                    <i class="fas fa-folder-plus"></i>
+                  </a>
+                </button>
+                <button (click)="exportToPDF()" type="button" class="btn-icon-clipboard " tooltip="Export PDF">
+                  <i class="fas fa-file-pdf "></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn-icon-clipboard " tooltip="Export Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="dataTables_wrapper py-4">
+            <div class="row">
+              <div class="col-auto">
+                <div class="dataTables_length" id="datatable_length">
+                  <label>
+                    <span *ngIf="!isSmallScreen">Show</span>
+                    <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                      (change)="entriesChange($event)">
+                      <option value="10" [selected]="entries == 10">10</option>
+                      <option value="25" [selected]="entries == 25">25</option>
+                      <option value="50" [selected]="entries == 50">50</option>
+                      <option value="-1" [selected]="entries == -1">All</option>
+                    </select>
+                    <span *ngIf="!isSmallScreen">entries</span>
+                  </label>
+                </div>
+              </div>
+              <div class="col ml--2 custom-flex-end-center">
+                <!-- Search Input -->
+                <div id="datatable_filter" class="dataTables_filter">
+                  <label>
+                    <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                      placeholder="Search records" aria-controls="datatable" (input)="onSearchInput($event)" />
+                    <!-- Bind to the debounced search function -->
+                    <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                  </label>
+                </div>
+
+                <div *ngIf="isRadXRole || isCompanyRole || isUserGroupAdmin " id="datatable_filter"
+                  class="dataTables_filter mr-2">
+                  <!-- Filter Dropdown Button -->
+                  <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button"
+                      class="btn btn-outline-primary dropdown-toggle" aria-controls="dropdown-basic">
+                      <span *ngIf="!isSmallScreen">Filters</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                      aria-labelledby="button-basic">
+
+                      <!-- Dropdown for Company -->
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="companyFilter" class="dropdown-item">Company</label>
+                        <select id="companyFilter" [(ngModel)]="selectedCompany" class="form-control"
+                          (change)="getRFIDCards()" (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                            }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Dropdown for User Group -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole">
+                        <label for="userGroupFilter" class="dropdown-item">User Group</label>
+
+                        <!-- Dropdown for RadX Roles -->
+                        <select *ngIf="isRadXRole" id="userGroupFilter" [(ngModel)]="selectedUserGroup"
+                          class="form-control" (change)="getRFIDCards()" (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+
+                        <!-- Dropdown for Company Roles -->
+                        <select *ngIf="isCompanyRole" id="userGroupFilter" [(ngModel)]="selectedUserGroup"
+                          class="form-control" (change)="getRFIDCardsByCompany()" (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Dropdown for User -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole || isPartnerRole || isUserGroupRole">
+                        <label for="userFilter" class="dropdown-item">User</label>
+
+                        <!-- Dropdown for RadX Roles -->
+                        <select *ngIf="isRadXRole" id="userFilter" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getRFIDCards()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.username }}</option>
+                        </select>
+
+                        <!-- Dropdown for Company Roles -->
+                        <select *ngIf="isCompanyRole" id="userFilter" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getRFIDCardsByCompany()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.username }}</option>
+                        </select>
+
+                        <!-- Dropdown for User Group Roles -->
+                        <select *ngIf="isUserGroupRole" id="userFilter" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getRFIDCardsByUserGroup()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.username }}</option>
+                        </select>
+
+                        <!-- Dropdown for USer Roles -->
+                        <select *ngIf="isUser" id="userFilter" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getRFIDCardsByUser()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.username }}</option>
+                        </select>
+                      </li>
+
+                      <!-- Card Status Filter (multi-select) -->
+                      <li role="menuitem">
+                        <label for="statusFilter" class="dropdown-item">Card Status</label>
+                        <select id="statusFilter" [(ngModel)]="selectedCardStatus" class="form-control"
+                          (change)="getRFIDCardsByCompany()" (click)="$event.stopPropagation()">
+                          <option [ngValue]="null">All</option>
+                          <option value="active">Active</option>
+                          <option value="expired">Expired</option>
+                          <option value="lost">Lost</option>
+                          <option value="pending">Pending</option>
+                        </select>
+                      </li>
+
+
+                      <!-- Divider -->
+                      <li class="dropdown-divider"></li>
+
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+              [rows]="temp" [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+              (select)="onSelect($event)">
+              <ngx-datatable-column name="Block Number" prop="block_no"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Serial Number" prop="serial_no"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Status" prop="status"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Company" prop="company_name"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="User Group" prop="usergr_name"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="User" prop="username"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen && !isPartnerRole && !isUserGroupRole" name="Created By" prop="madeBy"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen && !isPartnerRole && !isUserGroupRole" name="Modified By" prop="modifiedBy"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isAble" name="Actions" prop="actions">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <button *ngIf="!isUser" type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                    [routerLink]="['/rfid-cards/updateradxrfidcard/', row.card_id]"><i class="fas fa-edit"></i>
+                  </button>
+                  <button *ngIf="!isUser" type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                    [routerLink]="['/rfid-cards/deleteradxrfidcard/', row.card_id]"> <i
+                      class="fas fa-trash-alt"></i></button>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable> -->
+            <div class="scrollable-table">
+              <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [limit]="entries != -1 ? entries : undefined" [rows]="temp" [selected]="selected"
+                [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+
+                <ngx-datatable-column *ngIf="isCompanyAdmin" name="Block Number" prop="block_no"></ngx-datatable-column>
+                <!-- All columns are now always shown -->
+                <ngx-datatable-column name="Serial Number" prop="serial_no"></ngx-datatable-column>
+                <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
+                <ngx-datatable-column name="Multiple Session" prop="multiple_charging_session"
+                  [cellTemplate]="multipleSessionTpl">
+                </ngx-datatable-column>
+
+                <ng-template #multipleSessionTpl let-row="row">
+                  {{ row.multiple_charging_session === 'true' ? 'Yes' : 'No' }}
+                </ng-template>
+                <ngx-datatable-column name="Company" prop="company_name"></ngx-datatable-column>
+                <ngx-datatable-column name="User Group" prop="usergr_name"></ngx-datatable-column>
+                <ngx-datatable-column name="User" prop="username"></ngx-datatable-column>
+                <ngx-datatable-column *ngIf="!isPartnerRole && !isUserGroupRole" name="Created By"
+                  prop="madeBy"></ngx-datatable-column>
+                <ngx-datatable-column *ngIf="!isPartnerRole && !isUserGroupRole" name="Modified By"
+                  prop="modifiedBy"></ngx-datatable-column>
+                <ngx-datatable-column name="Expiry Date" prop="expiry_date"></ngx-datatable-column>
+                <ngx-datatable-column name="Created At" prop="created_time"></ngx-datatable-column>
+
+                <!-- 🆕 Distributor Name — COMPANY_ADMIN / COMPANY_ANALYST / RadX -->
+                <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst || isRadXRole" name="Distributor Name">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <span *ngIf="row.is_distributor_card && row.distributor_name" class="text-warning font-weight-bold">
+                      🏷️ {{ row.distributor_name }}
+                    </span>
+                    <span *ngIf="row.is_distributor_card && !row.distributor_name" class="text-muted">
+                      🏷️ (pa emer)
+                    </span>
+                    <span *ngIf="!row.is_distributor_card" class="text-muted">—</span>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- 🆕 Sale Status — TRUE kur karta e distributorit u shit -->
+                <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst || isRadXRole" name="Sale Status">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <span *ngIf="!row.is_distributor_card" class="text-muted">—</span>
+                    <span *ngIf="row.is_distributor_card && row.is_sold" class="badge badge-success">Sold</span>
+                    <span *ngIf="row.is_distributor_card && !row.is_sold" class="badge badge-secondary">Not Sold</span>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- 🆕 Sold At — data kur u shit -->
+                <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst || isRadXRole" name="Sold At">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <span *ngIf="row.is_sold && row.sold_at">
+                      {{ row.sold_at | date:'dd/MM/yyyy HH:mm' }}
+                    </span>
+                    <span *ngIf="!row.is_sold" class="text-muted">—</span>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- 🆕 Sold To — emri i klientit final -->
+                <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst || isRadXRole" name="Sold To" prop="sold_to_user_name"></ngx-datatable-column>
+
+                <!-- 🆕 Sold Amount — vlera e topup-it te pare -->
+                <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst || isRadXRole" name="Sold Amount (ALL)">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <span *ngIf="row.sold_amount">{{ row.sold_amount | number:'1.2-2' }}</span>
+                    <span *ngIf="!row.sold_amount" class="text-muted">—</span>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- Actions column with conditions based on user role -->
+                <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole && !isCompanyAnalyst" name="Actions"
+                  prop="actions">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <button *ngIf="!isUser" type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                      [routerLink]="['/rfid-cards/updateradxrfidcard/', row.card_id]"><i class="fas fa-edit"></i>
+                    </button>
+                    <button *ngIf="!isUser" type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                      [routerLink]="['/rfid-cards/deleteradxrfidcard/', row.card_id]"><i
+                        class="fas fa-trash-alt"></i></button>
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,488 @@
+<div class="content">
+  <div class="container-fluid">
+
+    <!-- Header -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="card-title" style="margin-bottom: 0">🌊 Bursa Prices — ALPEX Day-Ahead Market</h4>
+              <p class="card-category" style="margin-top: 4px">
+                Dynamic energy purchase prices for chargers with Bursa pricing
+              </p>
+            </div>
+            <div *ngIf="fees && fees.length > 0" style="font-size: 12px; text-align: right; color: #666">
+              <div><strong>Active fees:</strong> {{ fees.length }} • Select the "Bursa Fees" tab to manage</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs: Prices + Bursa Fees -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <tabset [justified]="false">
+
+              <!-- ═══════════════════════════════════════════════════════════ -->
+              <!-- Tab 1: Prices (calendar + day details) -->
+              <!-- ═══════════════════════════════════════════════════════════ -->
+              <tab heading="Prices">
+
+                <div class="row mt-3">
+                  <!-- Calendar (left) -->
+                  <div class="col-md-6">
+                    <div class="card">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <button class="btn btn-sm btn-outline-primary" (click)="prevMonth()">&laquo; Previous Month</button>
+                        <h5 style="margin: 0">{{ monthNames[currentMonth - 1] }} {{ currentYear }}</h5>
+                        <button class="btn btn-sm btn-outline-primary" (click)="nextMonth()">Next Month &raquo;</button>
+                      </div>
+                      <div class="card-body">
+                        <div style="margin-bottom: 12px; font-size: 12px">
+                          <span class="legend-box source-alpex"></span> ALPEX
+                          &nbsp;<span class="legend-box source-fallback"></span> Fallback
+                          &nbsp;<span class="legend-box source-manual"></span> Manual
+                          &nbsp;<span class="legend-box no-data"></span> No data
+                        </div>
+
+                        <table class="calendar-table" *ngIf="!monthLoading">
+                          <thead>
+                            <tr>
+                              <th *ngFor="let d of weekDays">{{ d }}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let week of calendarCells">
+                              <td *ngFor="let cell of week" [ngClass]="cellCssClass(cell)" (click)="selectDay(cell)">
+                                <div *ngIf="cell.inMonth">
+                                  <div class="cal-day-num">{{ cell.day }}</div>
+                                  <div class="cal-day-info" *ngIf="cell.info"
+                                       [tooltip]="'ALPEX average: ' + cell.info.avg_eur_mwh + ' EUR/MWh'">
+                                    <small><strong>{{ cell.info.avg_buy_price_all_kwh }}</strong> ALL/kWh</small>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div *ngIf="monthLoading" style="text-align: center; padding: 40px">
+                          <div class="spinner-border" role="status"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Day details (right) -->
+                  <div class="col-md-6">
+                    <div class="card">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 style="margin: 0" *ngIf="selectedDate">{{ selectedDate }} — 24 hours</h5>
+                        <h5 style="margin: 0; color: #999" *ngIf="!selectedDate">Select a date from the calendar</h5>
+                        <div *ngIf="selectedDate">
+                          <button *ngIf="canRefetch" class="btn btn-sm btn-success mr-2" (click)="refetchFromAlpex()">
+                            🔄 Refetch from ALPEX
+                          </button>
+                          <button *ngIf="canManualEntry" class="btn btn-sm btn-info" (click)="openManualForm()">
+                            ✏️ Manual
+                          </button>
+                        </div>
+                      </div>
+                      <div class="card-body" *ngIf="selectedDate">
+                        <div *ngIf="dayLoading" style="text-align: center; padding: 20px">
+                          <div class="spinner-border spinner-border-sm"></div>
+                        </div>
+
+                        <div *ngIf="!dayLoading && dayPrices.length === 0" style="text-align: center; padding: 20px; color: #999">
+                          No data for this date.
+                          <div *ngIf="canRefetch" style="margin-top: 10px">
+                            <button class="btn btn-sm btn-primary" (click)="refetchFromAlpex()">🔄 Download from ALPEX</button>
+                          </div>
+                        </div>
+
+                        <!-- 🆕 Renditje kolonash (nga info me e rendesishme per user):
+                             1. Hour: ora e dites (0-23)
+                             2. Total Energy Cost (ALL/kWh): cmimi FINAL i blerjes — vjen menjehere pas Hour
+                             3. ALPEX Market Price (EUR/MWh): cmimi bruto nga tregu
+                             4. EUR→ALL Rate: kursi i kembimit
+                             5. Source: origjina e te dhenave -->
+                        <table class="table table-sm" *ngIf="!dayLoading && dayPrices.length > 0">
+                          <thead>
+                            <tr>
+                              <th>Hour</th>
+                              <th>Total Energy Cost<br /><small style="color: #999; font-weight: 400">(ALL/kWh, incl. fees)</small></th>
+                              <th>ALPEX Market Price<br /><small style="color: #999; font-weight: 400">(EUR/MWh)</small></th>
+                              <th>EUR→ALL Rate</th>
+                              <th>Source</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let p of dayPrices">
+                              <td>{{ p.hour }}:00</td>
+                              <td><strong>{{ p.buy_price_all_kwh }}</strong></td>
+                              <td>{{ p.price_eur_mwh }}</td>
+                              <td>{{ p.exchange_rate_eur_all }}</td>
+                              <td>
+                                <span class="badge" [ngClass]="sourceBadgeClass(p.source)">
+                                  {{ sourceLabel(p.source) }}
+                                </span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Corrections history -->
+                    <div class="card" *ngIf="selectedDate && corrections.length > 0">
+                      <div class="card-header">
+                        <h5 style="margin: 0">📝 Corrections History</h5>
+                        <p class="card-category" style="margin-top: 4px">Audit log for this date</p>
+                      </div>
+                      <div class="card-body">
+                        <table class="table table-sm" style="font-size: 12px">
+                          <thead>
+                            <tr>
+                              <th>Hour</th>
+                              <th>Old</th>
+                              <th>New</th>
+                              <th>Sessions</th>
+                              <th>Diff ALL</th>
+                              <th>Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let c of corrections">
+                              <td>{{ c.hour }}:00</td>
+                              <td>{{ c.buy_price_all_kwh_old }} <small>({{ sourceLabel(c.source_old) }})</small></td>
+                              <td>{{ c.buy_price_all_kwh_new }} <small>({{ sourceLabel(c.source_new) }})</small></td>
+                              <td>{{ c.affected_sessions_count }}</td>
+                              <td [ngStyle]="{ color: c.total_cost_diff_all >= 0 ? '#dc3545' : '#28a745' }">
+                                {{ c.total_cost_diff_all > 0 ? '+' : '' }}{{ c.total_cost_diff_all }}
+                              </td>
+                              <td>{{ c.corrected_at | date:'dd/MM HH:mm' }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Manual entry (inline card) -->
+                <div class="row" *ngIf="showManualForm && selectedDate">
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-header d-flex justify-content-between">
+                        <h5 style="margin: 0">✏️ Manually enter prices for {{ selectedDate }}</h5>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="closeManualForm()">✕ Close</button>
+                      </div>
+                      <div class="card-body">
+                        <div class="form-group">
+                          <label>Bulk paste (24 values, one per line/tab/comma):</label>
+                          <textarea class="form-control" rows="4" [(ngModel)]="manualBulkPaste"
+                                    placeholder="181&#10;125&#10;125.87&#10;..."></textarea>
+                          <button class="btn btn-sm btn-outline-primary mt-2" (click)="parseBulkPaste()">Apply to fields</button>
+                        </div>
+
+                        <div class="row" style="margin-top: 20px">
+                          <div class="col-md-3 col-sm-4 col-6" *ngFor="let p of manualPrices; let h = index" style="margin-bottom: 10px">
+                            <label style="font-size: 12px; margin-bottom: 2px">Hour {{ h }}:00</label>
+                            <input type="number" class="form-control form-control-sm" step="0.01"
+                                   [(ngModel)]="manualPrices[h]" placeholder="EUR/MWh" />
+                          </div>
+                        </div>
+
+                        <div style="margin-top: 20px; text-align: right">
+                          <button class="btn btn-outline-secondary mr-2" (click)="closeManualForm()">Cancel</button>
+                          <button class="btn btn-primary" (click)="submitManualPrices()">💾 Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </tab>
+
+              <!-- ═══════════════════════════════════════════════════════════ -->
+              <!-- Tab 2: Bursa Fees (CRUD) -->
+              <!-- ═══════════════════════════════════════════════════════════ -->
+              <tab heading="Bursa Fees">
+
+                <div class="row mt-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                      <div>
+                        <h3 class="mb-0">Bursa Fees</h3>
+                        <p class="text-sm mb-0 text-muted">
+                          Fees included in the buy price formula. Changes apply immediately to the 14:00 cron and new calculations.
+                        </p>
+                      </div>
+                      <button *ngIf="canRefetch" class="btn btn-outline-primary" (click)="openFeeForm()">
+                        ➕ Add New Fee
+                      </button>
+                    </div>
+
+                    <div *ngIf="feesLoading" style="text-align: center; padding: 40px">
+                      <div class="spinner-border"></div>
+                    </div>
+
+                    <div class="table-responsive" *ngIf="!feesLoading">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Currency</th>
+                            <th>Value / MWh</th>
+                            <th>Effective From</th>
+                            <th>Effective To</th>
+                            <th>Active</th>
+                            <th *ngIf="canRefetch">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let f of fees; let i = index" [ngStyle]="{ opacity: f.is_active ? 1 : 0.5 }">
+                            <td>{{ i + 1 }}</td>
+                            <td>
+                              <span style="display: inline-block; padding: 4px 10px; background: #e8f5e9; color: #2e7d32; border-radius: 4px; font-family: 'Courier New', monospace; font-weight: 600; font-size: 13px;">
+                                {{ f.code }}
+                              </span>
+                            </td>
+                            <td>
+                              <strong>{{ f.name }}</strong>
+                              <div *ngIf="f.description" style="font-size: 11px; color: #999">{{ f.description }}</div>
+                            </td>
+                            <td>
+                              <span class="badge" [ngClass]="f.currency === 'EUR' ? 'badge-primary' : 'badge-info'">
+                                {{ f.currency }}
+                              </span>
+                            </td>
+                            <td><strong>{{ f.value_per_mwh }}</strong></td>
+                            <td>{{ f.effective_from | date:'yyyy-MM-dd' }}</td>
+                            <td>{{ f.effective_to ? (f.effective_to | date:'yyyy-MM-dd') : '—' }}</td>
+                            <td>
+                              <span class="badge" [ngClass]="f.is_active ? 'badge-success' : 'badge-secondary'">
+                                {{ f.is_active ? 'Active' : 'Inactive' }}
+                              </span>
+                            </td>
+                            <td *ngIf="canRefetch">
+                              <button class="btn btn-sm btn-neutral" tooltip="Edit" (click)="openFeeForm(f)">
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <button *ngIf="f.is_active" class="btn btn-sm btn-neutral" tooltip="Deactivate" (click)="deactivateFee(f)">
+                                <i class="fas fa-ban"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          <tr *ngIf="fees.length === 0">
+                            <td colspan="9" style="text-align: center; color: #999; padding: 20px">
+                              No fees saved. Click "Add New Fee" to start.
+                            </td>
+                          </tr>
+                          <!-- 🆕 Totals at the bottom — includes ALL 4 fees with EUR↔ALL conversion. -->
+                          <tr *ngIf="fees.length > 0"
+                              style="background: #fcf0f2; border-top: 2px solid #931623; font-weight: 600;">
+                            <td colspan="3" style="text-align: right; color: #5c0f18;">
+                              Total Energy Cost (EUR/MWh)
+                              <span style="color: #999; font-weight: 400; font-size: 11px; display: block;">
+                                (all 4 fees, rate = {{ currentExchangeRate | number:'1.2-4' }})
+                              </span>
+                            </td>
+                            <td>
+                              <span class="badge badge-primary">EUR</span>
+                            </td>
+                            <td colspan="5" style="color: #5c0f18;">
+                              <strong>{{ totalEurFeePerMWh | number:'1.4-4' }}</strong>
+                              <span style="color: #666; font-weight: 400; font-size: 12px; margin-left: 6px;">EUR/MWh</span>
+                            </td>
+                          </tr>
+                          <tr *ngIf="fees.length > 0"
+                              style="background: #fcf0f2; font-weight: 600;">
+                            <td colspan="3" style="text-align: right; color: #5c0f18;">
+                              Total Energy Cost (ALL/kWh)
+                              <span style="color: #999; font-weight: 400; font-size: 11px; display: block;">
+                                (all 4 fees, rate = {{ currentExchangeRate | number:'1.2-4' }})
+                              </span>
+                            </td>
+                            <td>
+                              <span class="badge badge-info">ALL</span>
+                            </td>
+                            <td colspan="5" style="color: #5c0f18;">
+                              <strong>{{ totalAllFeePerKWh | number:'1.4-4' }}</strong>
+                              <span style="color: #666; font-weight: 400; font-size: 12px; margin-left: 6px;">ALL/kWh</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Formula preview -->
+                    <div class="mt-4" *ngIf="fees.length > 0"
+                         style="background: #fff; border: 2px solid #931623; border-radius: 8px; padding: 20px;">
+                      <h5 style="color: #333; margin: 0 0 12px 0; font-weight: 600;">
+                        📐 Current Formula (per hour)
+                      </h5>
+                      <div style="background: #f8f9fa; padding: 16px 20px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 15px; color: #212529; line-height: 1.8;">
+                        <strong style="color: #931623;">buy_price</strong>
+                        <span style="color: #666">(ALL/kWh)</span>
+                        =
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <strong>(</strong>
+                        <span style="color: #007bff">ALPEX_EUR_MWh</span>
+                        <strong> + </strong>
+                        <span style="color: #007bff">Σ EUR_fees</span>
+                        <strong>)</strong>
+                        <strong> × </strong>
+                        <span style="color: #dc3545">rate</span>
+                        <strong> ÷ 1000</strong>
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <strong> + </strong>
+                        <span style="color: #17a2b8">Σ ALL_fees</span>
+                        <strong> ÷ 1000</strong>
+                      </div>
+                      <div style="margin-top: 12px; font-size: 13px; color: #555;">
+                        <span style="display: inline-block; padding: 2px 8px; background: #cce5ff; color: #004085; border-radius: 4px; margin-right: 6px;">EUR_fees</span>
+                        = sum of all fees with EUR currency (e.g. AET + Imbalance)
+                        <br />
+                        <span style="display: inline-block; padding: 2px 8px; background: #d1ecf1; color: #0c5460; border-radius: 4px; margin-right: 6px; margin-top: 6px;">ALL_fees</span>
+                        = sum of all fees with ALL currency (e.g. OST + OSSH)
+                        <br />
+                        <span style="display: inline-block; padding: 2px 8px; background: #f8d7da; color: #721c24; border-radius: 4px; margin-right: 6px; margin-top: 6px;">rate</span>
+                        = EUR→ALL rate from the <code>exchange_rate</code> table for the charging date
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fee Add/Edit form (inline card modal) -->
+                <div class="row" *ngIf="showFeeForm">
+                  <div class="col-md-12">
+                    <div class="card border-primary mt-3">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 style="margin: 0">{{ editingFee ? 'Edit Fee: ' + editingFee.name : '➕ New Fee' }}</h5>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="closeFeeForm()">✕ Close</button>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-4 form-group">
+                            <label>Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" [(ngModel)]="feeFormModel.code"
+                                   placeholder="e.g. aet, capacity_fee" [disabled]="!!editingFee" />
+                            <small class="text-muted">Unique code, lowercase, cannot be changed after creation.</small>
+                          </div>
+                          <div class="col-md-4 form-group">
+                            <label>Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" [(ngModel)]="feeFormModel.name"
+                                   placeholder="e.g. AET Fee" />
+                          </div>
+                          <div class="col-md-2 form-group">
+                            <label>Currency <span class="text-danger">*</span></label>
+                            <select class="form-control" [(ngModel)]="feeFormModel.currency">
+                              <option value="EUR">EUR</option>
+                              <option value="ALL">ALL</option>
+                            </select>
+                          </div>
+                          <div class="col-md-2 form-group">
+                            <label>Value / MWh <span class="text-danger">*</span></label>
+                            <input type="number" step="0.0001" class="form-control" [(ngModel)]="feeFormModel.value_per_mwh" />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 form-group">
+                            <label>Effective From <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" [(ngModel)]="feeFormModel.effective_from" />
+                          </div>
+                          <div class="col-md-3 form-group">
+                            <label>Effective To</label>
+                            <input type="date" class="form-control" [(ngModel)]="feeFormModel.effective_to" />
+                            <small class="text-muted">Empty = still active</small>
+                          </div>
+                          <div class="col-md-2 form-group">
+                            <label>Sort Order</label>
+                            <input type="number" class="form-control" [(ngModel)]="feeFormModel.sort_order" />
+                          </div>
+                          <div class="col-md-2 form-group">
+                            <label>Active</label>
+                            <div style="padding-top: 8px">
+                              <input type="checkbox" [(ngModel)]="feeFormModel.is_active" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label>Description</label>
+                          <textarea class="form-control" rows="2" [(ngModel)]="feeFormModel.description"
+                                    placeholder="Optional explanation for this fee..."></textarea>
+                        </div>
+                        <div style="text-align: right">
+                          <button class="btn btn-outline-secondary mr-2" (click)="closeFeeForm()">Cancel</button>
+                          <button class="btn btn-primary" (click)="saveFee()">💾 Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </tab>
+
+            </tabset>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .calendar-table th {
+    text-align: center;
+    padding: 6px;
+    background: #f5f5f5;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .cal-day, .cal-empty, .no-data {
+    width: 14.28%;
+    height: 60px;
+    border: 1px solid #eee;
+    text-align: center;
+    vertical-align: top;
+    padding: 4px;
+  }
+  .cal-day { cursor: pointer; }
+  .cal-day:hover { background: #f0f8ff; }
+  .cal-day-num { font-weight: 600; font-size: 14px; }
+  .cal-day-info { font-size: 11px; color: #666; }
+
+  .cal-day.source-alpex { background: #d4edda; }
+  .cal-day.source-fallback { background: #fff3cd; }
+  .cal-day.source-manual { background: #d1ecf1; }
+  .cal-day.no-data { background: #f8f9fa; color: #ccc; }
+
+  .cal-day.selected { border: 2px solid #007bff; box-shadow: 0 0 6px rgba(0,123,255,0.3); }
+  .cal-empty { background: transparent; border: 1px solid transparent; }
+
+  .legend-box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    margin-right: 2px;
+  }
+  .legend-box.source-alpex { background: #d4edda; }
+  .legend-box.source-fallback { background: #fff3cd; }
+  .legend-box.source-manual { background: #d1ecf1; }
+  .legend-box.no-data { background: #f8f9fa; }
+</style>

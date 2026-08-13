@@ -1,0 +1,138 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+        <div class=" col-lg-6 col-7">
+        </div>
+
+        <div class=" col-lg-6 col-5 text-right">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="dataTables_wrapper py-4">
+          <div class="card-header">
+            <h3 class="mb-0">Reservations</h3>
+            <!-- <p *ngIf="isRadXRole" class="text-sm mb-0">
+              ✓ {{ reservationCountCurrentMonth }} New Reservations this month
+            </p> -->
+          </div>
+          <!-- Show this table only if the user is a User Group Member -->
+          <div *ngIf="isUserGroupRole || isPartnerRole; else normalUserTemplate">
+            <div class="table-responsive">
+              <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                [rowHeight]="'auto'" [footerHeight]="50" [limit]="10" [rows]="rows" [selected]="selected"
+                [selectionType]="'multiClick'" (select)="onSelect($event)">
+
+                <!-- Only one column with custom content -->
+                <ngx-datatable-column [sortable]="false">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="card-body" style="padding: 5px; font-size: 12px; line-height: 1.2;">
+                      <h4 class="card-title text-truncate-header">
+                        <i class="fas fa-user text-primary"></i> User Info:
+                        <span class="font-weight-normal">{{ row.User.username }}</span>
+                      </h4>
+                      <div class="row" style="margin: 0;">
+                        <div class="col-md d-flex">
+                          <i class="fa fa-charging-station text-primary"></i>&nbsp;Charger:
+                          <span class="ml-1">{{ row.Charger.charger_name }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-plug text-primary"></i>&nbsp;Connector:
+                          <span class="ml-1">{{ row.Connector.connector_name }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-calendar text-primary"></i>&nbsp;Date:
+                          <span class="ml-1 text-muted">{{ row.date | date:'shortDate' }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-clock text-primary"></i>&nbsp;Time:
+                          <span class="ml-1 text-muted">{{ row.time }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-circle-notch text-primary"></i>&nbsp;Status:
+                          <span class="ml-1 text-muted">{{ row.reservation_status }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-coins text-primary"></i>&nbsp;Reservation Fee:
+                          <span class="ml-1 text-muted">{{ row.reservation_fee }}</span>
+                        </div>
+                        <div  class="col-md d-flex justify-content-end">
+                          <button *ngIf="isReservationActive(row)"type="button" class="btn btn-sm btn-neutral" tooltip="Cancel Reservation"
+                            [routerLink]="['/monitoring/reservation/deletereservation', row.Charger.ocpp_id, row.reservation_id]">
+                            <i class="fas fa-calendar-minus"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+            </div>
+          </div>
+          <ng-template #normalUserTemplate>
+            <div class="table-responsive">
+              <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                [rowHeight]="'auto'" [footerHeight]="50" [limit]="10" [rows]="rows" [selected]="selected"
+                [selectionType]="'multiClick'" (select)="onSelect($event)">
+
+                <!-- Custom Column with Full Row HTML -->
+                <ngx-datatable-column [sortable]="false">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="card-body" style="padding: 5px; font-size: 12px; line-height: 1.2;">
+                      <h4 class="card-title text-truncate-header">
+                        <i class="fas fa-user text-primary"></i> User Info:
+                        <span class="font-weight-normal">{{ row.User.username }}</span>
+                      </h4>
+                      <div class="row" style="margin: 0;">
+                        <div class="col-md d-flex">
+                          <i class="fa fa-charging-station text-primary"></i> Charger:
+                          <span>{{ row.Charger.charger_name }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-plug text-primary"></i> Connector:
+                          <span>{{ row.Connector.connector_name }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-calendar text-primary"></i> Date:
+                          <span class="text-muted">{{ row.date | date:'shortDate' }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-clock text-primary"></i> Time:
+                          <span class="text-muted">{{ row.time}}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-circle-notch text-primary"></i> Status:
+                          <span class="text-muted">{{ row.reservation_status }}</span>
+                        </div>
+                        <div class="col-md d-flex">
+                          <i class="fa fa-coins text-primary"></i>&nbsp;Reservation Fee:
+                          <span class="ml-1 text-muted">{{ row.reservation_fee }}</span>
+                        </div>
+                        <div class="col-md d-flex" style="text-align: right;">
+                          <button *ngIf="isReservationActive(row)"  type="button" class="btn btn-sm btn-neutral" tooltip="Cancel Reservation"
+                            [routerLink]="['/monitoring/reservation/deletereservation', row.Charger.ocpp_id, row.reservation_id]"><i
+                              class="fas fa-calendar-minus"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+            </div>
+
+          </ng-template>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

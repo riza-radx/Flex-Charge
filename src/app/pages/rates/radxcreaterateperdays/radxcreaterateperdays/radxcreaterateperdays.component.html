@@ -1,0 +1,95 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Rate Per Days</h3>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #rateperdayForm="ngForm">
+
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="time">From Time</label>
+                            <div class="col-md-10">
+                                <input type="time" class="form-control" id="time" [(ngModel)]="ratePerDays.time"
+                                    name="time" required />
+                                <small *ngIf="rateperdayForm.submitted && !rateperdayForm.controls.time?.valid"
+                                    class="text-danger">
+                                    From Time is required.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="to_time">To Time</label>
+                            <div class="col-md-10">
+                                <input type="time" class="form-control" id="to_time" [(ngModel)]="ratePerDays.to_time"
+                                    name="to_time" required />
+                                <small *ngIf="rateperdayForm.submitted && !rateperdayForm.controls.to_time?.valid"
+                                    class="text-danger">
+                                    To Time is required.
+                                </small>
+                            </div>
+                        </div> -->
+                        <div class="form-group row" *ngFor="let rate of ratePerDays.hourlyRates; let i = index">
+                            <label class="col-md-2 col-form-label form-control-label" [for]="'from_time' + i">{{ rate.from_time }} - {{ rate.to_time }}</label>
+                            <div class="col-md-4">
+                              <input type="number" class="form-control" [id]="'from_time' + i" [(ngModel)]="rate.price" name="price{{ i }}" required />
+                              <small *ngIf="rateperdayForm.submitted && !rate.price" class="text-danger">
+                                Price is required for {{ rate.from_time }} - {{ rate.to_time }}.
+                              </small>
+                            </div>
+                          </div>
+
+                      
+
+                        <!-- Day Created -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="dayCreated">Day
+                                Created</label>
+                            <div class="col-md-10">
+                                <input type="date" class="form-control" id="dayCreated"
+                                    [(ngModel)]="ratePerDays.dayCreated" name="dayCreated" [value]="currentDate"
+                                    readonly />
+                                <small *ngIf="rateperdayForm.submitted && !rateperdayForm.controls.dayCreated?.valid"
+                                    class="text-danger">
+                                    Day Created is required.
+                                </small>
+                            </div>
+                        </div>
+                        <!-- Rate Type -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="rateType">Rate Type</label>
+                            <div class="col-md-10">
+                                <!-- Displaying the default value in a box styled like a form field -->
+                                <input type="text" class="form-control" id="rateType" value="Default" readonly />
+                        
+                                <!-- Setting the value for backend submission -->
+                                <input type="hidden" [(ngModel)]="ratePerDays.rateType" name="rateType" value="default" />
+                            </div>
+                        </div>
+                    
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Create
+                                    Rate Per Days</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

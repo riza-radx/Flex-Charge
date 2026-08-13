@@ -1,0 +1,68 @@
+/* Custom dropdown styles */
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.dropdown-btn {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 5px;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.arrow-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.connector-image {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Make sure the name comes after the image */
+.dropdown-item span {
+  margin-left: 10px; /* Adds some space between the image and the name */
+}
+
+.ngx-datatable .datatable-body .datatable-row-wrapper :hover {
+  background-color: #e9ecef;
+  }

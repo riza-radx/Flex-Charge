@@ -1,0 +1,687 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Charger</h3>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="chargerForm" (ngSubmit)="onSubmit()">
+                        <!-- Charger Name -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="chargerName">Charger
+                                Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="chargerName" formControlName="chargerName" required maxlength="20" />
+                                <small
+                                    *ngIf="chargerForm.get('chargerName').hasError('required') && (chargerForm.get('chargerName').touched || chargerForm.get('chargerName').dirty)"
+                                    class="text-danger">
+                                    Charger Name is required.
+                                </small>
+                                <small
+                                    *ngIf="chargerForm.get('chargerName').hasError('maxlength') && (chargerForm.get('chargerName').touched || chargerForm.get('chargerName').dirty)"
+                                    class="text-danger">
+                                    Charger Name must be 20 characters or fewer.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Type -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="type">Type</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="type" formControlName="type" name="type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="AC">AC</option>
+                                    <option value="DC">DC</option>
+                                </select>
+                                <small
+                                    *ngIf="chargerForm.get('type').invalid && (chargerForm.get('type').touched || chargerForm.get('type').dirty)"
+                                    class="text-danger">
+                                    Type is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Number of Connectors -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="noOfConnectors">Number of
+                                Connectors</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="noOfConnectors" formControlName="noOfConnectors"
+                                    type="number" (change)="onNoOfConnectorsChange()" required />
+                                <small
+                                    *ngIf="chargerForm.get('noOfConnectors').invalid && (chargerForm.get('noOfConnectors').touched || chargerForm.get('noOfConnectors').dirty)"
+                                    class="text-danger">
+                                    Number of Connectors is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Valid -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="valid">Valid</label>
+                            <div class="col-md-10">
+                                <input id="valid" formControlName="valid" type="checkbox" />
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="status" formControlName="status" name="status"
+                                    required>
+                                    <option value="">Select Status</option>
+                                    <option value="enable">Enable</option>
+                                    <option value="disable">Disable</option>
+                                    <option value="demo">Demo</option>
+                                    <option value="outOfOrder">Out Of Order</option>
+                                </select>
+                                <small
+                                    *ngIf="chargerForm.get('status').invalid && (chargerForm.get('status').touched || chargerForm.get('status').dirty)"
+                                    class="text-danger">
+                                    Status is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Location ID -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="locationId">Select or
+                                Create Location</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="locationId" formControlName="locationId"
+                                    (change)="onLocationSelectChange($event)" required>
+                                    <option value="">Select a Location</option>
+                                    <!-- Existing locations from chargerLocations array -->
+                                    <option *ngFor="let location of chargerLocations" [value]="location.location_id">
+                                        {{ location.location_name }} / {{ location.addres }}
+                                    </option>
+                                    <!-- Create New Location option -->
+                                    <option value="create">Create New Location</option>
+                                </select>
+                                <small
+                                    *ngIf="chargerForm.get('locationId').invalid && (chargerForm.get('locationId').touched || chargerForm.get('locationId').dirty)"
+                                    class="text-danger">
+                                    Location is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Rated Power -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="ratedPower">Rated
+                                Power</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="ratedPower" formControlName="ratedPower" type="number"
+                                    required />
+                                <small
+                                    *ngIf="chargerForm.get('ratedPower').invalid && (chargerForm.get('ratedPower').touched || chargerForm.get('ratedPower').dirty)"
+                                    class="text-danger">
+                                    Rated Power is required.
+                                </small>
+                            </div>
+                        </div>
+
+
+
+                        <!-- OCPP Protocol -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="ocppProtocol">OCPP
+                                Protocol</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="ocppProtocol" formControlName="ocppProtocol" required />
+                                <small
+                                    *ngIf="chargerForm.get('ocppProtocol').invalid && (chargerForm.get('ocppProtocol').touched || chargerForm.get('ocppProtocol').dirty)"
+                                    class="text-danger">
+                                    OCPP Protocol is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- OCPP ID -->
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="ocppId">OCPP ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="ocppId" formControlName="ocppId" required />
+                                <small
+                                    *ngIf="chargerForm.get('ocppId').invalid && (chargerForm.get('ocppId').touched || chargerForm.get('ocppId').dirty)"
+                                    class="text-danger">
+                                    OCPP ID is required.
+                                </small>
+                            </div>
+                        </div> -->
+                        <!-- OCPP ID -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="ocppId">
+                                OCPP ID
+                            </label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="ocppId" formControlName="ocppId" required
+                                    pattern="^[A-Za-z0-9]+$" title="Only letters and numbers are allowed" />
+                                <small *ngIf="
+        chargerForm.get('ocppId')?.invalid &&
+        (chargerForm.get('ocppId')?.touched || chargerForm.get('ocppId')?.dirty)
+      " class="text-danger">
+                                    <ng-container *ngIf="chargerForm.get('ocppId')?.errors?.['required']">
+                                        OCPP ID is required.
+                                    </ng-container>
+                                    <ng-container *ngIf="chargerForm.get('ocppId')?.errors?.['pattern']">
+                                        Only letters and numbers are allowed (no spaces or symbols).
+                                    </ng-container>
+                                </small>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Current Type -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="currentType">Current
+                                Type</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="currentType" formControlName="currentType" required />
+                                <small
+                                    *ngIf="chargerForm.get('currentType').invalid && (chargerForm.get('currentType').touched || chargerForm.get('currentType').dirty)"
+                                    class="text-danger">
+                                    Current Type is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Max Power -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="maxPower">Max Power</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="maxPower" formControlName="maxPower" type="number"
+                                    required />
+                                <small
+                                    *ngIf="chargerForm.get('maxPower').invalid && (chargerForm.get('maxPower').touched || chargerForm.get('maxPower').dirty)"
+                                    class="text-danger">
+                                    Max Power is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Max Voltage -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="maxVoltage">Max
+                                Voltage</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="maxVoltage" formControlName="maxVoltage" required>
+                                    <option value="">Select Max Voltage</option>
+                                    <option value="230V">230V</option>
+                                    <option value="380V">380V</option>
+                                    <option value="400V">400V</option>
+                                    <option value="480V">480V</option>
+                                </select>
+                                <small
+                                    *ngIf="chargerForm.get('maxVoltage').invalid && (chargerForm.get('maxVoltage').touched || chargerForm.get('maxVoltage').dirty)"
+                                    class="text-danger">
+                                    Max Voltage is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Max Amperage -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="maxAmperage">Max
+                                Amperage</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="maxAmperage" formControlName="maxAmperage" type="number"
+                                    required />
+                                <small
+                                    *ngIf="chargerForm.get('maxAmperage').invalid && (chargerForm.get('maxAmperage').touched || chargerForm.get('maxAmperage').dirty)"
+                                    class="text-danger">
+                                    Max Amperage is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Phase -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="phase">Phase</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="phase" formControlName="phase" required>
+                                    <option value="">Select Phase</option>
+                                    <option value="SinglePhase">Single Phase</option>
+                                    <option value="SplitPhase">Split Phase</option>
+                                    <option value="ThreePhases">Three Phases</option>
+                                </select>
+                                <small
+                                    *ngIf="chargerForm.get('phase').invalid && (chargerForm.get('phase').touched || chargerForm.get('phase').dirty)"
+                                    class="text-danger">
+                                    Phase is required.
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <!-- Phase Rotation -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="phaseRotation">Phase
+                                Rotation</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="phaseRotation" formControlName="phaseRotation"
+                                    required>
+                                    <option value="">Select Phase Rotation</option>
+                                    <option value="RST">RST</option>
+                                    <option value="RTS">RTS</option>
+                                    <option value="SRT">SRT</option>
+                                    <option value="STR">STR</option>
+                                    <option value="TRS">TRS</option>
+                                    <option value="TSR">TSR</option>
+                                </select>
+                                <small
+                                    *ngIf="chargerForm.get('phaseRotation').invalid && (chargerForm.get('phaseRotation').touched || chargerForm.get('phaseRotation').dirty)"
+                                    class="text-danger">
+                                    Phase Rotation is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Reservation Fee -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="reservation_fee">Reservation
+                                Fee</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="reservation_fee" formControlName="reservation_fee"
+                                    type="number" min="0" required />
+                                <small
+                                    *ngIf="chargerForm.get('reservation_fee').invalid && (chargerForm.get('reservation_fee').touched || chargerForm.get('reservation_fee').dirty)"
+                                    class="text-danger">
+                                    Reservation Fee is required.
+                                </small>
+                            </div>
+                        </div>
+                        <!-- fullchargefeeperminute  -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="fullchargefeeperminute">Full
+                                Charge Fee (per minutes)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="fullchargefeeperminute"
+                                    formControlName="fullchargefeeperminute" type="number" step="0.01" min="0" />
+                            </div>
+                        </div>
+
+
+                        <!-- Reservation Wait -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="reservation_wait">Reservation
+                                Wait (minutes)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="reservation_wait" formControlName="reservation_wait"
+                                    type="number" min="0" required />
+                                <small
+                                    *ngIf="chargerForm.get('reservation_wait').invalid && (chargerForm.get('reservation_wait').touched || chargerForm.get('reservation_wait').dirty)"
+                                    class="text-danger">
+                                    Reservation Wait is required.
+                                </small>
+                            </div>
+                        </div>
+                        <!-- 🆕 Energy Tariff (Rate i blerjes) — dropdown me rate-t e kompanise -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="energy_tariff_rate_id">Energy Tariff Rate</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="energy_tariff_rate_id"
+                                    formControlName="energy_tariff_rate_id" required>
+                                    <option [ngValue]="null">Select an Energy Tariff Rate</option>
+                                    <option *ngFor="let rate of rates" [ngValue]="rate.rate_id">
+                                        {{ rate.rate_name }}
+                                    </option>
+                                </select>
+                                <small
+                                    *ngIf="chargerForm.get('energy_tariff_rate_id')?.invalid && (chargerForm.get('energy_tariff_rate_id')?.touched || chargerForm.get('energy_tariff_rate_id')?.dirty)"
+                                    class="text-danger">
+                                    Energy Tariff Rate is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- 🆕 Eficenca ne % — fushe e fshehur nga UI me kerkese te userit; mbetet ne DB me default 100.
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="efficiency_percentage">Efficiency (%)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="efficiency_percentage"
+                                    formControlName="efficiency_percentage"
+                                    type="number" min="0" max="100" step="0.01" required />
+                                <small class="text-muted d-block">
+                                    100 = pa humbje. Vlera 97 do te thote 3% humbje ne rrjet.
+                                </small>
+                                <small
+                                    *ngIf="chargerForm.get('efficiency_percentage')?.invalid && (chargerForm.get('efficiency_percentage')?.touched || chargerForm.get('efficiency_percentage')?.dirty)"
+                                    class="text-danger">
+                                    Efficiency must be a number between 0 and 100.
+                                </small>
+                            </div>
+                        </div>
+                        -->
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="rate_id">Rate</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="rate_id" formControlName="rate_id">
+                                    <option [value]="null">Select a Rate</option>
+                                    <option *ngFor="let rate of rates" [value]="rate.rate_id">
+                                        {{ rate.rate_name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="allowReservation">Allow
+                                Reservation</label>
+                            <div class="col-md-10">
+                                <input id="allowReservation" formControlName="allowReservation" type="checkbox" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="isPublic">Is Public</label>
+                            <div class="col-md-10">
+                                <input id="isPublic" type="checkbox" formControlName="is_public"
+                                    [checked]="chargerForm.get('is_public')?.value" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="isHexReverse">Is Card Auth.
+                                Hex Reverse</label>
+                            <div class="col-md-10">
+                                <input id="isHexReverse" type="checkbox" formControlName="isHexReverse"
+                                    [checked]="chargerForm.get('isHexReverse')?.value" />
+                            </div>
+                        </div>
+
+                        <!-- 🆕 G/L accounts (BC) — vetem COMPANY_ADMIN + COMPANY_ANALYST i shohin/redaktojne. -->
+                        <div class="form-group row" *ngIf="isCompanyAdmin || isCompanyAnalyst">
+                            <label class="col-md-2 col-form-label form-control-label" for="g_l_purchase">G/L Purchase</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="g_l_purchase" formControlName="g_l_purchase"
+                                    placeholder="p.sh. 6011-01" />
+                            </div>
+                        </div>
+                        <div class="form-group row" *ngIf="isCompanyAdmin || isCompanyAnalyst">
+                            <label class="col-md-2 col-form-label form-control-label" for="g_l_earnings">G/L Earnings</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="g_l_earnings" formControlName="g_l_earnings"
+                                    placeholder="p.sh. 7011-01" />
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                                    [readonly]="true" />
+                            </div>
+                        </div>
+                        <!-- Partner ID -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="partnerId">Partner</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="partnerId" formControlName="partnerId">
+                                    <option [ngValue]="null" disabled>Select Partner</option>
+                                    <option *ngFor="let partner of partners" [value]="partner.partner_id">
+                                        {{ partner.partner_name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Dynamically Generated Connector Forms -->
+                        <div formArrayName="connectors" *ngIf="connectors.length">
+                            <div *ngFor="let connector of connectors.controls; let i = index" [formGroupName]="i">
+                                <h4>Connector {{ i + 1 }}</h4>
+
+                                <!-- Connector Number -->
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label"
+                                        for="connectorNumber">Connector Number</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" id="connectorNumber"
+                                            formControlName="connectorNumber" required />
+                                        <small
+                                            *ngIf="connector.get('connectorNumber').invalid && (connector.get('connectorNumber').touched || connector.get('connectorNumber').dirty)"
+                                            class="text-danger">
+                                            Connector Number is required.
+                                        </small>
+                                    </div>
+                                </div>
+
+
+                                <!-- Connector Name -->
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label"
+                                        for="connectorName">Connector Name</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" id="connectorName" formControlName="connectorName"
+                                            required />
+                                        <small
+                                            *ngIf="connector.get('connectorName').invalid && (connector.get('connectorName').touched || connector.get('connectorName').dirty)"
+                                            class="text-danger">
+                                            Connector Name is required.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <!-- Rated Power -->
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label" for="ratedPower">Rated
+                                        Power</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" id="ratedPower" formControlName="ratedPower"
+                                            required />
+                                        <small
+                                            *ngIf="connector.get('ratedPower').invalid && (connector.get('ratedPower').touched || connector.get('ratedPower').dirty)"
+                                            class="text-danger">
+                                            Rated Power is required.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <!-- Standard -->
+                                <!-- Standard -->
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label"
+                                        for="standard">Standard</label>
+                                    <div class="col-md-10">
+                                        <div class="custom-dropdown">
+                                            <!-- Dropdown button to display the selected option -->
+                                            <div class="dropdown-btn" (click)="toggleDropdown(i)">
+                                                <img *ngIf="connectors.controls[i].value.standard"
+                                                    [src]="imageMap[connectors.controls[i].value.standard]"
+                                                    alt="{{ connectors.controls[i].value.standard }}"
+                                                    class="connector-image">
+                                                <span *ngIf="connectors.controls[i].value.standard">
+                                                    {{ connectors.controls[i].value.standard }}
+                                                </span>
+                                                <span *ngIf="!connectors.controls[i].value.standard">Select
+                                                    Standard</span>
+                                            </div>
+
+                                            <!-- Dropdown list with dynamic visibility -->
+                                            <div *ngIf="dropdownOpen[i]" class="dropdown-list">
+                                                <div *ngFor="let option of getStandardOptions()"
+                                                    (click)="selectOption(option, i)" class="dropdown-item">
+                                                    <img [src]="imageMap[option]" alt="{{ option }}"
+                                                        class="connector-image">
+                                                    <span>{{ option }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Validation error -->
+                                        <small
+                                            *ngIf="connector.get('standard').invalid && 
+                                                      (connector.get('standard').touched || connector.get('standard').dirty)"
+                                            class="text-danger">
+                                            Standard is required.
+                                        </small>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- Valid -->
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label" for="valid">Valid</label>
+                                    <div class="col-md-10">
+                                        <input id="valid" formControlName="valid" type="checkbox" />
+                                    </div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label"
+                                        for="status">Status</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" id="status" formControlName="status" required>
+                                            <option value="">Select Status</option>
+                                            <option value="enable">Enable</option>
+                                            <option value="disable">Disable</option>
+                                            <option value="outOfOrder">Out Of Order</option>
+                                        </select>
+                                        <div *ngIf="connector.get('status').invalid && (connector.get('status').touched || connector.get('status').dirty)"
+                                            class="text-danger">
+                                            Status is required.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button type="submit" class="btn btn-primary">Create Charger</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{
+                        errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="popup-container" *ngIf="showPopup">
+    <div class="popup-content">
+        <img class="close-btn" src="assets/img/icons/closeX.png" alt="Close" (click)="closePopup()">
+        <h2 class="text-center">Create Location</h2>
+        <form (ngSubmit)="onSubmit()" #locationForm="ngForm">
+
+            <!-- Location Name -->
+            <div class="form-group">
+                <label for="locationName">Location Name</label>
+                <input class="form-control" id="locationName" [(ngModel)]="location.locationName" name="locationName"
+                    required #locationName="ngModel" />
+                <small *ngIf="locationName.invalid && locationName.touched" class="text-danger">
+                    Location Name is required.
+                </small>
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input class="form-control" id="address" [(ngModel)]="location.address" name="address" required
+                    #address="ngModel" />
+                <small *ngIf="address.invalid && address.touched" class="text-danger">
+                    Address is required.
+                </small>
+            </div>
+
+            <!-- City -->
+            <div class="form-group">
+                <label for="city">City</label>
+                <input class="form-control" id="city" [(ngModel)]="location.city" name="city" required
+                    #city="ngModel" />
+                <small *ngIf="city.invalid && city.touched" class="text-danger">
+                    City is required.
+                </small>
+            </div>
+
+            <!-- Country -->
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input class="form-control" id="country" [(ngModel)]="location.country" name="country" required
+                    #country="ngModel" />
+                <small *ngIf="country.invalid && country.touched" class="text-danger">
+                    Country is required.
+                </small>
+            </div>
+
+            <!-- Company -->
+            <!-- <div class="form-group">
+                <label for="companyId">Company</label>
+                <select class="form-control" id="companyId" [(ngModel)]="location.companyId" name="companyId"
+                    required #companyId="ngModel">
+                    <option *ngFor="let company of companies" [value]="company.company_id">
+                        {{ company.company_name }}
+                    </option>
+                </select>
+                <small *ngIf="companyId.invalid && companyId.touched" class="text-danger">
+                    Please select a company.
+                </small>
+            </div> -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                        [readonly]="true" />
+                </div>
+            </div>
+
+            <!-- Partner -->
+            <div class="form-group">
+                <label for="partnerId">Partner</label>
+                <select class="form-control" id="partnerId" [(ngModel)]="location.partnerId" name="partnerId"
+                    #partnerId="ngModel">
+                    <option *ngFor="let partner of partners" [value]="partner.partner_id">
+                        {{ partner.partner_name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Latitude -->
+            <div class="form-group">
+                <label for="latitude">Latitude</label>
+                <input class="form-control" id="latitude" [(ngModel)]="location.latitude" name="latitude" type="number"
+                    step="any" required #latitude="ngModel" />
+                <small *ngIf="latitude.invalid && latitude.touched" class="text-danger">
+                    Latitude is required.
+                </small>
+            </div>
+
+            <!-- Longitude -->
+            <div class="form-group">
+                <label for="longitude">Longitude</label>
+                <input class="form-control" id="longitude" [(ngModel)]="location.longitude" name="longitude"
+                    type="number" step="any" required #longitude="ngModel" />
+                <small *ngIf="longitude.invalid && longitude.touched" class="text-danger">
+                    Longitude is required.
+                </small>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button class="btn btn-primary" type="button" (click)="onSubmitLocation()">Create Location</button>
+            </div>
+        </form>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">{{
+            errorMessage }}</div>
+    </div>
+</div>

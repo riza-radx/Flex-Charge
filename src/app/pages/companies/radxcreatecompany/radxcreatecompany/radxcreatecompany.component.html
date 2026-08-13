@@ -1,0 +1,143 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Create Company</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+
+            <!-- Company Logo -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_logo">Company Logo</label>
+              <div class="col-md-10">
+                <input type="file" class="form-control" id="company_logo" (change)="onFileSelected($event)" />
+                <!-- Display selected file name -->
+                <small *ngIf="selectedFile" class="text-muted">Selected file: {{ selectedFile?.name }}</small>
+              </div>
+            </div>
+
+
+            <!-- Name -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_name">Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="company_name" formControlName="company_name" required />
+                <small *ngIf="companyForm.get('company_name').invalid && companyForm.get('company_name').touched"
+                  class="text-danger">
+                  Name is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_description">Description</label>
+              <div class="col-md-10">
+                <input class="form-control" id="company_description" formControlName="company_description" required />
+                <small
+                  *ngIf="companyForm.get('company_description').invalid && companyForm.get('company_description').touched"
+                  class="text-danger">
+                  Description is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_address">Address</label>
+              <div class="col-md-10">
+                <input class="form-control" id="company_address" formControlName="company_address" required />
+                <small *ngIf="companyForm.get('company_address').invalid && companyForm.get('company_address').touched"
+                  class="text-danger">
+                  Address is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- City -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_city">City</label>
+              <div class="col-md-10">
+                <input class="form-control" id="company_city" formControlName="company_city" required />
+                <small *ngIf="companyForm.get('company_city').invalid && companyForm.get('company_city').touched"
+                  class="text-danger">
+                  City is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Country -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_country">Country</label>
+              <div class="col-md-10">
+                <input class="form-control" id="company_country" formControlName="company_country" required />
+                <small *ngIf="companyForm.get('company_country').invalid && companyForm.get('company_country').touched"
+                  class="text-danger">
+                  Country is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_phone">Phone Number</label>
+              <div class="col-md-3">
+                <select class="form-control" (change)="onCountryChange($event)">
+                  <option *ngFor="let country of countries" [value]="country.prefix">
+                    {{ country.name }} ({{ country.prefix }})
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-7">
+                <input class="form-control" id="company_phone" formControlName="company_phone" required
+                  (input)="formatPhoneNumber()" />
+              </div>
+            </div>
+
+
+            <!-- Email -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="company_email">Email</label>
+              <div class="col-md-10">
+                <input class="form-control" id="company_email" type="email" formControlName="company_email" required
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
+                <small *ngIf="companyForm.get('company_email').invalid && companyForm.get('company_email').touched"
+                  class="text-danger">
+                  Please enter a valid email address.
+                </small>
+              </div>
+            </div>
+            <!-- Is WhiteLabel -->
+            <div class="form-group row">
+              <!-- <div class="form-group row"> -->
+              <label class="col-md-2 col-form-label form-control-label" for="is_whitelabel">Is Whitelabel</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="is_whitelabel" formControlName="is_whitelabel" name="is_whitelabel" />
+              </div>
+              <!-- </div> -->
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Create Company</button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

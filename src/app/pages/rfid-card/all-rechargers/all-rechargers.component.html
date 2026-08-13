@@ -1,0 +1,350 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+
+        <div class=" col-lg-6 col-7">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class="col">
+      <div class="card">
+        <div *ngIf="isAble" class="card-header">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">All Rechargers</h3>
+              </div>
+              <div class="btn_new">
+                <button (click)="exportToPDF()" type="button" class="btn-icon-clipboard " tooltip="Export PDF">
+                  <i class="fas fa-file-pdf "></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn-icon-clipboard " tooltip="Export Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="dataTables_wrapper py-4">
+            <div class="row">
+              <div class="col-auto">
+                <div class="dataTables_length" id="datatable_length">
+                  <label>
+                    <span *ngIf="!isSmallScreen">Show</span>
+                    <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                      (change)="entriesChange($event)">
+                      <option value="10" [selected]="entries == 10">10</option>
+                      <option value="25" [selected]="entries == 25">25</option>
+                      <option value="50" [selected]="entries == 50">50</option>
+                      <option value="-1" [selected]="entries == -1">All</option>
+                    </select>
+                    <span *ngIf="!isSmallScreen">entries</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col ml--2  custom-flex-end-center">
+                <!-- Search Input -->
+                <div id="datatable_filter" class="dataTables_filter">
+                  <label>
+                    <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                      placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+
+                    <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                  </label>
+                </div>
+                <div id="datatable_filter" class="dataTables_filter mr-2" *ngIf="!isUserRole">
+                  <!-- Filter Dropdown Button -->
+                  <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button"
+                      class="btn btn-outline-primary dropdown-toggle" aria-controls="dropdown-basic">
+                      <span *ngIf="!isSmallScreen">Filters</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                      aria-labelledby="button-basic">
+                      <!-- Dropdown for Company -->
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="companySelect" class="dropdown-item">Company</label>
+                        <select id="companySelect" [(ngModel)]="selectedCompany" class="form-control"
+                          (change)="getRecharges()" (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                            }}</option>
+                        </select>
+                      </li>
+                      <!-- Dropdown for User Groups -->
+                      <li role="menuitem" *ngIf="isRadXRole || isCompanyRole">
+                        <label for="userGroupSelect" class="dropdown-item">User Group</label>
+
+
+                        <select *ngIf="isRadXRole" id="userGroupSelect" [(ngModel)]="selectedUserGroup"
+                          class="form-control" (change)="getRecharges()" (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+
+                        <select *ngIf="isCompanyRole" id="userGroupSelect" [(ngModel)]="selectedUserGroup"
+                          class="form-control" (change)="getRechargesByCompany()" (click)="$event.stopPropagation()">
+                          <option value="">All User Groups</option>
+                          <option *ngFor="let userGroup of userGroups" [value]="userGroup.usergr_id">{{
+                            userGroup.usergr_name }}</option>
+                        </select>
+
+                      </li>
+
+                      <!-- Dropdown for Users -->
+                      <li role="menuitem" *ngIf="!isUserRole">
+                        <label for="userSelect" class="dropdown-item">User</label>
+
+                        <select *ngIf="isRadXRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getRecharges()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                        </select>
+
+                        <select *ngIf="isCompanyRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getRechargesByCompany()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                        </select>
+
+                        <select *ngIf="isUserGroupRole" id="userSelect" [(ngModel)]="selectedUser" class="form-control"
+                          (change)="getRechargesByUserGroup()" (click)="$event.stopPropagation()">
+                          <option value="">All Users</option>
+                          <option *ngFor="let user of users" [value]="user.user.id">{{ user.user.name }}</option>
+                        </select>
+
+                      </li>
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="rechargeFromSelect" class="dropdown-item">Recharge Type</label>
+                        <select id="rechargeFromSelect" [(ngModel)]="selectedRechargeFrom" class="form-control"
+                          (change)="getRechargesByCompany()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Online">Online</option>
+                          <option value="Top-Up">Top-Up</option>
+                          <option value="Voucher">Voucher</option>
+                        </select>
+                      </li>
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label for="rechargeFromSelect" class="dropdown-item">Recharge Type</label>
+                        <select id="rechargeFromSelect" [(ngModel)]="selectedRechargeFrom" class="form-control"
+                          (change)="getRechargesByUserGroup()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Online">Online</option>
+                          <option value="Top-Up">Top-Up</option>
+                          <option value="Voucher">Voucher</option>
+                        </select>
+                      </li>
+                      <li role="menuitem" *ngIf="isUser">
+                        <label for="rechargeFromSelect" class="dropdown-item">Recharge Type</label>
+                        <select id="rechargeFromSelect" [(ngModel)]="selectedRechargeFrom" class="form-control"
+                          (change)="getRechargesByUser()" (click)="$event.stopPropagation()">
+                          <option value="">All Types</option>
+                          <option value="Online">Online</option>
+                          <option value="Top-Up">Top-Up</option>
+                          <option value="Voucher">Voucher</option>
+                        </select>
+                      </li>
+
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="dateMinSelect" class="dropdown-item">Start Date</label>
+                        <input type="date" id="dateMinSelect" class="form-control" [(ngModel)]="selectedDateMin"
+                          (change)="getRechargesByCompany()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="dateMaxSelect" class="dropdown-item">End Date</label>
+                        <input type="date" id="dateMaxSelect" class="form-control" [(ngModel)]="selectedDateMax"
+                          (change)="getRechargesByCompany()" (click)="$event.stopPropagation()" />
+                      </li>
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label for="dateMinSelect" class="dropdown-item">Start Date</label>
+                        <input type="date" id="dateMinSelect" class="form-control" [(ngModel)]="selectedDateMin"
+                          (change)="getRechargesByUserGroup()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label for="dateMaxSelect" class="dropdown-item">End Date</label>
+                        <input type="date" id="dateMaxSelect" class="form-control" [(ngModel)]="selectedDateMax"
+                          (change)="getRechargesByUserGroup()" (click)="$event.stopPropagation()" />
+                      </li>
+                      <li role="menuitem" *ngIf="isUser">
+                        <label for="dateMinSelect" class="dropdown-item">Start Date</label>
+                        <input type="date" id="dateMinSelect" class="form-control" [(ngModel)]="selectedDateMin"
+                          (change)="getRechargesByUser()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isUser">
+                        <label for="dateMaxSelect" class="dropdown-item">End Date</label>
+                        <input type="date" id="dateMaxSelect" class="form-control" [(ngModel)]="selectedDateMax"
+                          (change)="getRechargesByUser()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="amountMinInput" class="dropdown-item">Min Amount</label>
+                        <input type="number" id="amountMinInput" class="form-control" [(ngModel)]="selectedAmountMin"
+                          (change)="getRechargesByCompany()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isCompanyRole">
+                        <label for="amountMaxInput" class="dropdown-item">Max Amount</label>
+                        <input type="number" id="amountMaxInput" class="form-control" [(ngModel)]="selectedAmountMax"
+                          (change)="getRechargesByCompany()" (click)="$event.stopPropagation()" />
+                      </li>
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label for="amountMinInput" class="dropdown-item">Min Amount</label>
+                        <input type="number" id="amountMinInput" class="form-control" [(ngModel)]="selectedAmountMin"
+                          (change)="getRechargesByUserGroup()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isUserGroupAdmin">
+                        <label for="amountMaxInput" class="dropdown-item">Max Amount</label>
+                        <input type="number" id="amountMaxInput" class="form-control" [(ngModel)]="selectedAmountMax"
+                          (change)="getRechargesByUserGroup()" (click)="$event.stopPropagation()" />
+                      </li>
+                      <li role="menuitem" *ngIf="isUser">
+                        <label for="amountMinInput" class="dropdown-item">Min Amount</label>
+                        <input type="number" id="amountMinInput" class="form-control" [(ngModel)]="selectedAmountMin"
+                          (change)="getRechargesByUser()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                      <li role="menuitem" *ngIf="isUser">
+                        <label for="amountMaxInput" class="dropdown-item">Max Amount</label>
+                        <input type="number" id="amountMaxInput" class="form-control" [(ngModel)]="selectedAmountMax"
+                          (change)="getRechargesByUser()" (click)="$event.stopPropagation()" />
+                      </li>
+
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'" [headerHeight]="50"
+              [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+              [rows]="tempRechargers" [selected]="selected" [selectionType]="'multiClick'">
+              <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Time" prop="time"></ngx-datatable-column>
+              <ngx-datatable-column  name="Amount" prop="amount"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Previous Balance" prop="previous_balance"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Recharge Type" prop="recharge_from"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Order Id" prop="display_order_id"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="User Group" prop="userGroup"></ngx-datatable-column>
+              <ngx-datatable-column  name="User" prop="user"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Made By" prop="madeBy"></ngx-datatable-column>
+            </ngx-datatable> -->
+          <div class="scrollable-table">
+            <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+              [rows]="tempRechargers" [scrollbarH]="false" [selectionType]="null">
+
+              <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+              <ngx-datatable-column name="Time" prop="time"></ngx-datatable-column>
+              <ngx-datatable-column name="Amount" prop="amount"></ngx-datatable-column>
+              <!-- 🆕 Amount + %POK (vetem COMPANY_ANALYST) — shfaqet total_amount qe perfshin pokFee -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst" name="Amount + %POK" prop="total_amount"></ngx-datatable-column>
+              <ngx-datatable-column name="Previous Balance" prop="previous_balance"></ngx-datatable-column>
+              <ngx-datatable-column name="Previous Debit Balance" prop="previous_debit_balance"></ngx-datatable-column>
+              <ngx-datatable-column name="Recharge Type" prop="recharge_from"></ngx-datatable-column>
+              <ngx-datatable-column name="Order Id" prop="display_order_id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.display_order_id }}
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="User Group" prop="userGroup"></ngx-datatable-column>
+              <ngx-datatable-column name="User" prop="user"></ngx-datatable-column> -->
+              <ngx-datatable-column name="User Group">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <a [routerLink]="['/users/usergroup', row.usergr_id]">{{ row.userGroup }}</a>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="User">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <a [routerLink]="['/users/user', row.user_id]">{{ row.user }}</a>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Made By" prop="madeBy"></ngx-datatable-column>
+
+              <!-- 🆕 TopUp Note — arsyeja e TopUp-it (vetem admin/analyst) -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="TopUp Note" prop="topup_note" [width]="200">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.topup_note" [title]="row.topup_note" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:200px;">{{ row.topup_note }}</span>
+                  <span *ngIf="!row.topup_note" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <!-- 🆕 Snapshot konfigurimi ne momentin e Recharge — audit history -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="Check Fisk" [width]="110">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.snap_check_fisk === true || row.snap_check_fisk === 1" class="text-success">Yes</span>
+                  <span *ngIf="row.snap_check_fisk === false || row.snap_check_fisk === 0" class="text-danger">No</span>
+                  <span *ngIf="row.snap_check_fisk === null || row.snap_check_fisk === undefined" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="PAYG" prop="snap_allow_payg" [width]="100">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.snap_allow_payg === 'true' || row.snap_allow_payg === '1'" class="text-success">Yes</span>
+                  <span *ngIf="row.snap_allow_payg === 'false' || row.snap_allow_payg === '0'" class="text-muted">No</span>
+                  <span *ngIf="!row.snap_allow_payg" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="Send Email" [width]="120">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.snap_send_email === true || row.snap_send_email === 1" class="text-success">Yes</span>
+                  <span *ngIf="row.snap_send_email === false || row.snap_send_email === 0" class="text-muted">No</span>
+                  <span *ngIf="row.snap_send_email === null || row.snap_send_email === undefined" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <!-- 🆕 Kolone BC Invoice (COMPANY_ANALYST + COMPANY_ADMIN) — tregon FISK numrin -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isCompanyAdmin" name="BC Invoice" prop="bc_invoice_number" [width]="140">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span *ngIf="row.bc_invoice_number" class="text-success">{{ row.bc_invoice_number }}</span>
+                  <span *ngIf="!row.bc_invoice_number" class="text-muted">—</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <!-- 🆕 Retry Invoice (vetem per COMPANY_ANALYST + admin role-t).
+                   Kushtet: pa bc_invoice_number, jo UG check_fisk=false, vetem >= 31 Maj 2026. -->
+              <ngx-datatable-column *ngIf="isCompanyAnalyst || isRadXAdmin || isRadXModerator"
+                                    name="Action" [sortable]="false" [width]="110">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <button *ngIf="!row.bc_invoice_number && !row.ug_check_fisk_false && row.is_after_golive && !row.in_pending_fiscal"
+                          class="btn btn-sm btn-outline-primary"
+                          [disabled]="isRetrying(row)"
+                          (click)="retryInvoice(row, $event)"
+                          title="Tento te krijosh/fiskalizosh faturen ne BC">
+                    <span *ngIf="isRetrying(row)">⏳ Po procesoj...</span>
+                    <span *ngIf="!isRetrying(row)">🔁 Retry Invoice</span>
+                  </button>
+                  <span *ngIf="row.bc_invoice_number" class="text-success" title="BC invoice: {{row.bc_invoice_number}}">
+                    ✓ Faturuar
+                  </span>
+                  <span *ngIf="row.ug_check_fisk_false && !row.bc_invoice_number" class="text-muted" title="UG ka check_fisk=false — BC nuk fiskalizon">
+                    — (jo fiskal)
+                  </span>
+                  <span *ngIf="row.in_pending_fiscal && !row.bc_invoice_number && !row.ug_check_fisk_false" class="text-info" title="Fatura eshte ne pending_fiscal_invoices — cron do provoje retry automatik">
+                    ⏳ (pending)
+                  </span>
+                  <span *ngIf="!row.is_after_golive && !row.bc_invoice_number && !row.ug_check_fisk_false && !row.in_pending_fiscal" class="text-muted" title="Pre-go-live (para 1 Qershor 2026 14:00)">
+                    — (pre-live)
+                  </span>
+                </ng-template>
+              </ngx-datatable-column>
+
+            </ngx-datatable>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

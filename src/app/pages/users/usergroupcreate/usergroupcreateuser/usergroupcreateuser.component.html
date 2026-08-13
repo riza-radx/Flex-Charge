@@ -1,0 +1,135 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class=" container-fluid">
+      <div class=" header-body">
+        <div class=" row align-items-center py-4">
+          <div class=" col-lg-6 col-7">
+            <h3 class=" h2 text-white d-inline-block mb-0">User</h3>
+  
+            <!-- <nav
+              aria-label="breadcrumb"
+              class=" d-none d-md-inline-block ml-md-4"
+            >
+              <ol class=" breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class=" breadcrumb-item">
+                  <a href="javascript:void(0)"> <i class=" fas fa-home"> </i> </a>
+                </li>
+  
+                <li class=" breadcrumb-item">
+                  <a href="javascript:void(0)"> Tables </a>
+                </li>
+  
+                <li aria-current="page" class=" breadcrumb-item active">
+                  Ngx Datatables
+                </li>
+              </ol>
+            </nav> -->
+          </div>
+  
+          <div class=" col-lg-6 col-5 text-right">
+            <!-- <a class=" btn btn-sm btn-neutral" [routerLink]="['/']"> New </a>
+  
+            <a class=" btn btn-sm btn-neutral" href="javascript:void(0)">
+              Filters
+            </a> -->
+          </div>
+          <!-- <div class=" col-lg-6 col-7">
+            <h3 class=" h2 text-white d-inline-block mb-0">Ngx Datatables</h3>
+  
+            <!-- <nav
+              aria-label="breadcrumb"
+              class=" d-none d-md-inline-block ml-md-4"
+            >
+              <ol class=" breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class=" breadcrumb-item">
+                  <a href="javascript:void(0)"> <i class=" fas fa-home"> </i> </a>
+                </li>
+  
+                <li class=" breadcrumb-item">
+                  <a href="javascript:void(0)"> Tables </a>
+                </li>
+  
+                <li aria-current="page" class=" breadcrumb-item active">
+                  Ngx Datatables
+                </li>
+              </ol>
+            </nav> -->
+          <!-- </div> --> 
+  
+          <!-- <div class=" col-lg-12 col-5 text-right">
+            <a class=" btn btn-sm btn-neutral" href="javascript:void(0)"> Create User</a>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class=" container-fluid mt--6">
+    <div class=" row">
+      <div class=" col">
+        <div class=" card">
+            <div class=" card-header"><h3 class=" mb-0">New MemberHTML5 inputs</h3></div>
+  
+            <div class=" card-body">
+                <form (ngSubmit)="onSubmit()">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="name" [(ngModel)]="user.name" name="name" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label form-control-label" for="username">Username</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="username" [(ngModel)]="user.username" name="username" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="email" type="email" [(ngModel)]="user.email" name="email" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone Number</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="phone_number" type="tel" [(ngModel)]="user.phone_number" name="phone_number" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label form-control-label" for="password">Password</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="password" type="password" [(ngModel)]="user.password" name="password" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label form-control-label" for="role">Role</label>
+                        <div class="col-md-10">
+                            <select class="form-control" id="role" [(ngModel)]="user.role" name="role" required>
+                                <option value="COMPANY_ADMIN">Admin</option>
+                                <option value="COMPANY_OPERATOR">Moderator</option>
+                                <option value="COMPANY_MODERATOR">Super User</option>
+                                <option value="COMPANY_TECHNICAL_OPERATOR">Super User</option>
+                                <option value="COMPANY_MAINTENANCE_SPECIALIST">Super User</option>
+                                <option value="COMPANY_CALL_CENTER">Super User</option>
+                                <option value="COMPANY_ANALYST">Super User</option>
+                                <!-- Add more roles as needed -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-10 offset-md-2">
+                            <button class="btn btn-primary" type="submit">Create User</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>

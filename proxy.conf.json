@@ -1,0 +1,9 @@
+{
+    "/documents": {
+      "target": "https://app.radx.app",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+  

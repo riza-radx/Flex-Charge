@@ -1,0 +1,362 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+<!-- Details Section -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Charging History detail</h3>
+            </div>
+            <div class="col-4" style="display: flex; justify-content: flex-end; gap: 10px;">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="container-fluid py-4">
+
+            <!-- ================================================================
+                 2-kolonesh: Session Info + Snapshot (majtas) | Financial + Partner (djathtas)
+                 Non-admin/analyst shohin vetem kolonen e majte (col-md-12 fallback).
+                 ================================================================ -->
+            <div class="row">
+
+              <!-- ============================================================
+                   MAJTAS: Session Info + Session Configuration Snapshot
+                   ============================================================ -->
+              <div [class]="canSeeFinancials ? 'col-md-6' : 'col-md-12'">
+
+                <!-- 🔹 Session Info -->
+                <div class="card mb-3">
+                  <div class="card-header bg-light py-2">
+                    <strong><i class="fa fa-info-circle text-primary"></i> Session Info</strong>
+                  </div>
+                  <div class="card-body">
+
+                    <!-- User info -->
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-id-card text-primary"></i> Card:
+                        <span class="text-muted">{{ chargingHistory.Card?.serial_no ?? 'Started remote' }}</span>
+                      </div>
+                      <div class="col-md-6" *ngIf="chargingHistory?.user_id">
+                        <i class="fa fa-user text-primary"></i> User:
+                        <a [routerLink]="['/users/user', chargingHistory?.user_id]" class="text-primary">
+                          {{ chargingHistory?.User?.name || chargingHistory?.User?.username || 'Unknown' }}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-6" *ngIf="chargingHistory?.User?.email">
+                        <i class="fa fa-envelope text-primary"></i> Email:
+                        <span class="text-muted">{{ chargingHistory?.User?.email }}</span>
+                      </div>
+                      <div class="col-md-6" *ngIf="chargingHistory?.User?.phone_number">
+                        <i class="fa fa-phone text-primary"></i> Phone:
+                        <span class="text-muted">{{ chargingHistory?.User?.phone_number }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-6" *ngIf="chargingHistory?.User?.idTeag">
+                        <i class="fa fa-hashtag text-primary"></i> ID Tag:
+                        <span class="text-muted">{{ chargingHistory?.User?.idTeag }}</span>
+                      </div>
+                      <div class="col-md-6" *ngIf="chargingHistory?.UserGroup?.usergr_name">
+                        <i class="fa fa-users text-primary"></i> User Group:
+                        <a [routerLink]="['/users/usergroup', chargingHistory?.usergr_id]" class="text-primary">
+                          {{ chargingHistory?.UserGroup?.usergr_name }}
+                        </a>
+                      </div>
+                    </div>
+
+                    <hr class="my-2" />
+
+                    <!-- Charger + Connector + Address -->
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fas fa-charging-station text-primary"></i> Charger:
+                        <span class="text-muted">
+                          <a *ngIf="chargingHistory?.Charger?.charger_id"
+                            [routerLink]="['/chargers/charger', chargingHistory?.Charger?.charger_id]"
+                            class="text-primary">
+                            {{ chargingHistory?.Charger?.charger_name ?? 'Unknown' }}
+                          </a>
+                          <span *ngIf="!chargingHistory?.Charger?.charger_id">
+                            {{ chargingHistory?.Charger?.charger_name ?? 'Unknown' }}
+                          </span>
+                        </span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-plug text-primary"></i> Connector:
+                        <span class="text-muted">{{ chargingHistory?.Connector?.connector_name ?? 'Unknown' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-12">
+                        <i class="fa fa-map-marker-alt text-primary"></i> Address:
+                        <span class="text-muted">
+                          {{ chargerLocation?.addres ?? 'Unknown' }},
+                          {{ chargerLocation?.city ?? 'Unknown' }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <hr class="my-2" />
+
+                    <!-- Date + Times -->
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-calendar-alt text-primary"></i> Date:
+                        <span class="text-muted">{{ chargingHistory.charging_history_date ?? 'N/A' }}</span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-hourglass-half text-primary"></i> Duration:
+                        <span class="text-muted">{{ chargingHistory?.charging_duration ?? 'N/A' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-clock text-primary"></i> Start:
+                        <span class="text-muted">{{ chargingHistory?.strted_time ?? 'N/A' }}</span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-clock text-primary"></i> End:
+                        <span class="text-muted">{{ chargingHistory?.ended_time ?? 'N/A' }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Status + Battery + Energy -->
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-battery-half text-primary"></i> Status:
+                        <span class="text-muted">{{ chargingHistory?.charging_status ?? 'Unknown' }}</span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-percentage text-primary"></i> Battery %:
+                        <span class="text-muted">{{ chargingHistory?.socValue ?? 'Unsupported' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-bolt text-primary"></i> Energy (kWh):
+                        <span class="text-muted">{{ chargingHistory?.total_energy | number:'1.2-4' }}</span>
+                      </div>
+                      <div class="col-md-6" *ngIf="chargingHistory?.started_type">
+                        <i class="fa fa-play-circle text-primary"></i> Started Type:
+                        <span class="text-muted">{{ chargingHistory?.started_type }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2" *ngIf="chargingHistory?.remoteStartReason || chargingHistory?.madeBy">
+                      <div class="col-md-6" *ngIf="chargingHistory?.remoteStartReason">
+                        <i class="fa fa-comment text-primary"></i> Remote Start Reason:
+                        <span class="text-muted">{{ chargingHistory?.remoteStartReason }}</span>
+                      </div>
+                      <div class="col-md-6" *ngIf="chargingHistory?.madeBy">
+                        <i class="fa fa-user text-primary"></i> Started By:
+                        <span class="text-muted">{{ chargingHistory?.madeBy }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Cost Breakdown -->
+                    <div class="card border-primary mt-3 mb-2">
+                      <div class="card-header bg-light py-2">
+                        <strong><i class="fa fa-receipt text-primary"></i> Cost Breakdown</strong>
+                      </div>
+                      <div class="card-body py-3">
+                        <div class="row mb-2">
+                          <div class="col-md-6">
+                            <i class="fa fa-bolt text-success"></i> Charging Cost:
+                            <span class="text-muted">{{ chargingCost | number:'1.2-2' }}</span>
+                          </div>
+                          <div class="col-md-6">
+                            <i class="fa fa-parking text-warning"></i> Idle / Parking Fee:
+                            <span class="text-muted">{{ idleFeeCost | number:'1.2-2' }}</span>
+                          </div>
+                        </div>
+                        <div class="row" *ngIf="idleFeeCost > 0">
+                          <div class="col-md-4">
+                            <i class="fa fa-clock text-warning"></i> Idle Min:
+                            <span class="text-muted">{{ billableIdleMinutes }}</span>
+                          </div>
+                          <div class="col-md-4">
+                            <i class="fa fa-coins text-warning"></i> Fee per Minute:
+                            <span class="text-muted">{{ feePerMinute | number:'1.2-2' }}</span>
+                          </div>
+                          <div class="col-md-4">
+                            <i class="fa fa-dollar-sign text-warning"></i> Idle Fee Cost:
+                            <span class="text-muted">{{ idleFeeCost | number:'1.2-2' }}</span>
+                          </div>
+                        </div>
+                        <hr class="my-2" />
+                        <div class="row">
+                          <div class="col-md-12 text-right">
+                            <strong><i class="fa fa-dollar-sign text-primary"></i> Total Cost:
+                              <span class="text-primary">{{ chargingHistory?.total_cost | number:'1.2-2' }}</span></strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- 📸 Session Configuration Snapshot (Admin/Analyst) -->
+                <div class="card mb-3" *ngIf="canSeeFinancials">
+                  <div class="card-header bg-light py-2">
+                    <strong><i class="fa fa-camera text-info"></i> Session Configuration Snapshot</strong>
+                  </div>
+                  <div class="card-body">
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-check-circle text-info"></i> Check Fisc:
+                        <span class="text-muted">
+                          {{ chargingHistory?.snap_check_fisk === true || chargingHistory?.snap_check_fisk === 1
+                              ? 'Yes' : (chargingHistory?.snap_check_fisk === false || chargingHistory?.snap_check_fisk === 0
+                                         ? 'No' : '—') }}
+                        </span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-wallet text-info"></i> Allow Pay-As-You-Go:
+                        <span class="text-muted">
+                          {{ (chargingHistory?.snap_allow_payg === 'true' || chargingHistory?.snap_allow_payg === true
+                              || chargingHistory?.snap_allow_payg === '1' || chargingHistory?.snap_allow_payg === 1)
+                              ? 'Yes' : (chargingHistory?.snap_allow_payg == null ? '—' : 'No') }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <i class="fa fa-envelope text-info"></i> Send Invoice by Email:
+                        <span class="text-muted">
+                          {{ chargingHistory?.snap_send_email === true || chargingHistory?.snap_send_email === 1
+                              ? 'Yes' : (chargingHistory?.snap_send_email === false || chargingHistory?.snap_send_email === 0
+                                         ? 'No' : '—') }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ============================================================
+                   DJATHTAS: Financial Details & Partner Split (Admin/Analyst)
+                   ============================================================ -->
+              <div class="col-md-6" *ngIf="canSeeFinancials">
+                <div class="card mb-3">
+                  <div class="card-header bg-light py-2">
+                    <strong><i class="fa fa-chart-line text-success"></i> Financial Details & Partner Split</strong>
+                  </div>
+                  <div class="card-body">
+
+                    <!-- BC Invoice (info kryesor ne krye) -->
+                    <div class="row mb-2">
+                      <div class="col-md-12">
+                        <i class="fa fa-file-invoice text-info"></i> <strong>BC Invoice:</strong>
+                        <span *ngIf="chargingHistory?.bc_invoice_number" class="text-success">
+                          {{ chargingHistory?.bc_invoice_number }}
+                        </span>
+                        <span *ngIf="!chargingHistory?.bc_invoice_number" class="text-muted">—</span>
+                      </div>
+                    </div>
+
+                    <hr class="my-2" />
+
+                    <!-- Sale & Purchase Rates -->
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-tags text-success"></i> <strong>Sale Rate (Lek/kWh):</strong>
+                        <span class="text-muted">{{ saleRateComputed | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-dollar-sign text-success"></i> <strong>Sale Revenue (Lek):</strong>
+                        <span class="text-muted">{{ chargingCost | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-shopping-cart text-warning"></i> <strong>Purchase Rate (Lek/kWh):</strong>
+                        <span class="text-muted">{{ purchaseRate | number:'1.2-4' }}</span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-coins text-warning"></i> <strong>Purchase Cost (Lek):</strong>
+                        <span class="text-muted">{{ purchaseCost | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-md-12 text-right">
+                        <strong>
+                          <i class="fa fa-piggy-bank text-primary"></i> Net Profit (Lek):
+                          <span class="text-primary">{{ netProfit | number:'1.2-2' }}</span>
+                        </strong>
+                      </div>
+                    </div>
+
+                    <!-- Ndarje vizuale mes financial + partner split -->
+                    <hr class="my-3" style="border-top: 2px solid #dee2e6;" />
+
+                    <!-- Partner & Company Split -->
+                    <div class="row mb-2">
+                      <div class="col-md-12">
+                        <i class="fa fa-handshake text-primary"></i> <strong>Partner:</strong>
+                        <span *ngIf="chargingHistory?.Partner?.partner_name">
+                          <a [routerLink]="['/partners/partner-details', chargingHistory?.Partner?.partner_id]"
+                            class="text-primary">
+                            {{ chargingHistory?.Partner?.partner_name }}
+                          </a>
+                        </span>
+                        <span *ngIf="!chargingHistory?.Partner?.partner_name" class="text-muted">— No partner —</span>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <i class="fa fa-percentage text-primary"></i> <strong>Partner Share %:</strong>
+                        <span class="text-muted">{{ partnerSharePct | number:'1.2-2' }}%</span>
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fa fa-percentage text-primary"></i> <strong>Company Share %:</strong>
+                        <span class="text-muted">{{ companySharePct | number:'1.2-2' }}%</span>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <i class="fa fa-money-bill text-primary"></i> <strong>Partner's Earning:</strong>
+                        <span class="text-primary">{{ partnerEarning | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="col-md-6 text-right">
+                        <i class="fa fa-money-bill text-primary"></i> <strong>Company's Earning:</strong>
+                        <span class="text-primary">{{ companyEarning | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

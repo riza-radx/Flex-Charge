@@ -1,0 +1,61 @@
+<div class=" header pb-6" style="background-color: #931623!important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Recharge RFID Card</h3>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="rechargeForm" (ngSubmit)="onSubmit()">
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" formControlName="amount" class="form-control" />
+                            <div *ngIf="rechargeForm.get('amount')?.invalid && rechargeForm.get('amount')?.touched" class="text-danger">
+                                Amount is required and must be a valid number.
+                              </div>
+                        </div>
+
+                        <!-- 🆕 Arsyeja e TopUp-it — mandatory -->
+                        <div class="form-group">
+                            <label for="topup_note">Reason (Arsyeja e TopUp-it) <span class="text-danger">*</span></label>
+                            <textarea id="topup_note" formControlName="topup_note" class="form-control" rows="3"
+                                      placeholder="Pershkruani arsyen e ketij TopUp-i (psh: 'Pagese me karte VISA #1234' ose 'Top-Up per faturen e prill')"></textarea>
+                            <div *ngIf="rechargeForm.get('topup_note')?.invalid && rechargeForm.get('topup_note')?.touched" class="text-danger">
+                                Arsyeja e TopUp-it eshte e detyrueshme (minimum 3 karaktere).
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label for="source">Payment Method</label>
+                            <select id="source" formControlName="source" class="form-control">
+                                <option *ngFor="let method of paymentMethods" [value]="method.id">
+                                    {{ method.brand }} ({{ method.last4 }})
+                                </option>
+                            </select>
+                            <div *ngIf="rechargeForm.get('source')?.invalid && rechargeForm.get('source')?.touched"
+                                class="text-danger">
+                                Please select a payment method.
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group">
+                            <label for="promoCode">Promo Code</label>
+                            <input type="text" id="promoCode" formControlName="promoCode" class="form-control"
+                                placeholder="Enter promo code" />
+                        </div> -->
+                        <button type="submit" class="btn btn-primary" >Submit</button>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

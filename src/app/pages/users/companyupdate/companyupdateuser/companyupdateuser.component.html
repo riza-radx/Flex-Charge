@@ -1,0 +1,243 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update User</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="name" formControlName="name" required />
+                <small *ngIf="userForm.controls.name.touched  && !userForm.controls.name?.valid" class="text-danger">
+                  Name is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="username">Username</label>
+              <div class="col-md-10">
+                <input class="form-control" id="username" formControlName="username" required />
+                <small *ngIf="userForm.controls.username.touched  && !userForm.controls.username?.valid"
+                  class="text-danger">
+                  Username is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+              <div class="col-md-10">
+                <input class="form-control" id="email" formControlName="email" required />
+
+                <!-- Email required error message -->
+                <small
+                  *ngIf="(userForm.controls.email.touched || submitted) && userForm.controls.email?.errors?.required"
+                  class="text-danger">
+                  Email is required.
+                </small>
+
+                <!-- Email format error message -->
+                <small *ngIf="(userForm.controls.email.touched || submitted) && userForm.controls.email?.errors?.email"
+                  class="text-danger">
+                  Please enter a valid email address.
+                </small>
+              </div>
+            </div>
+            <!-- 
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone Number</label>
+              <div class="col-md-10">
+                <input class="form-control" id="phone_number" formControlName="phone_number" required />
+                <small *ngIf="phoneNumberInvalid" class="text-danger">
+                  Please enter a valid phone number .
+                </small>
+              </div>
+            </div> -->
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone Number</label>
+              <div class="col-md-3">
+                <select class="form-control" (change)="onCountryChange($event)">
+                  <option *ngFor="let country of countries" [value]="country.prefix">
+                    {{ country.name }} ({{ country.prefix }})
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-7">
+                <input class="form-control" id="phone_number" formControlName="phone_number" required
+                  (input)="formatPhoneNumber()" />
+              </div>
+            </div>
+
+            <!-- New Password -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="newPassword">New Password</label>
+              <div class="col-md-10">
+                <input type="password" class="form-control" id="newPassword" formControlName="newPassword"
+                  [class.is-invalid]="userForm.controls.newPassword?.touched && userForm.controls.newPassword?.invalid" />
+                <small *ngIf="userForm.controls.newPassword?.touched && userForm.controls.newPassword?.invalid"
+                  class="text-danger">
+                  New Password is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="confirmPassword">Confirm Password</label>
+              <div class="col-md-10">
+                <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
+                  [class.is-invalid]="userForm.controls.confirmPassword?.touched && userForm.controls.confirmPassword?.invalid || (userForm.errors?.passwordMismatch && userForm.controls.confirmPassword?.touched)" />
+                <small *ngIf="userForm.controls.confirmPassword?.touched && userForm.controls.confirmPassword?.invalid"
+                  class="text-danger">
+                  Confirm Password is required.
+                </small>
+                <small *ngIf="userForm.errors?.passwordMismatch && userForm.controls.confirmPassword?.touched"
+                  class="text-danger">
+                  Passwords do not match.
+                </small>
+              </div>
+            </div>
+
+
+            <!-- <div class="form-group row">
+                    <label class="col-md-2 col-form-label form-control-label" for="password">Password</label>
+                    <div class="col-md-10">
+                        <input class="form-control" id="password" formControlName="password" required />
+                    </div>
+                </div> -->
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="role">Role</label>
+              <div class="col-md-10">
+                <select class="form-control" id="role" formControlName="role" required>
+                  <ng-container *ngIf="isRadXRole">
+                    <option [value]="'RadX_Admin'">RadX Admin</option>
+                    <option [value]="'RADX_MODERATOR'">RadX Moderator</option>
+                    <option [value]="'USER'">User</option>
+                  </ng-container>
+
+                  <ng-container *ngIf="isCompanyRole">
+                    <option [value]="'COMPANY_ADMIN'">Company Admin</option>
+                    <option [value]="'COMPANY_OPERATOR'">Company Operator</option>
+                    <!-- <option [value]="'COMPANY_MODERATOR'">Company Moderator</option> -->
+                    <!-- <option [value]="'COMPANY_TECHNICAL_OPERATOR'">Technical Operator</option> -->
+                    <!-- <option [value]="'COMPANY_MAINTENANCE_SPECIALIST'">Maintenance Specialist</option> -->
+                    <!-- <option [value]="'COMPANY_CALL_CENTER'">Call Center</option> -->
+                    <option [value]="'COMPANY_ANALYST'">Financial Analyst</option>
+                    <option [value]="'COMPANY_USER'">Company User</option>
+                    <!-- <option [value]="'COMPANY_SUPER_USER'">Super User</option> -->
+                  </ng-container>
+
+                  <ng-container *ngIf="isUserGroupRole">
+                    <option [value]="'USER_GROUP_ADMIN'">User Group Admin</option>
+                    <!-- <option [value]="'USER_GROUP_MODERATOR'">User Group Moderator</option> -->
+                    <option [value]="'USER_GROUP_USER'">User Group User</option>
+                  </ng-container>
+
+                  <ng-container *ngIf="isPartnerRole">
+                    <option [value]="'PARTNER_ADMIN'">Partner Admin</option>
+                    <!-- <option [value]="'PARTNER_MODERATOR'">Partner Moderator</option> -->
+                  </ng-container>
+                </select>
+
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="rate_id">Rate</label>
+              <div class="col-md-10">
+                <select class="form-control" id="rate_id" formControlName="rate_id">
+                  <option [value]="null">Select a Rate</option>
+                  <option *ngFor="let rate of rates" [value]="rate.rate_id">
+                    {{ rate.rate_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Customer Number -->
+            <!-- <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="customer_number">
+                Customer Number
+              </label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="customer_number" formControlName="customer_number"
+                  placeholder="e.g. CUST-A123" />
+              </div>
+            </div> -->
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="allowPayAsYouGo">Allow Pay As You
+                Go</label>
+              <div class="col-md-10">
+                <!-- <input 
+                      type="checkbox" 
+                      class="form-control" 
+                      id="allowPayAsYouGo" 
+                      formControlName="allowPayAsYouGo" 
+                      (change)="onAllowPayAsYouGoChange($event.target.checked)"
+                    /> -->
+                <input type="checkbox" id="allowPayAsYouGo" formControlName="allowPayAsYouGo"
+                  (change)="onAllowPayAsYouGoChange($event.target.checked)" />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="send_invoice_by_email">Send Invoice By
+                Mail</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="send_invoice_by_email" formControlName="send_invoice_by_email" />
+              </div>
+            </div>
+
+            <div *ngIf="isUserGroupRole" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="allow_money_transfert">Allow Money
+                Transfer</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="allow_money_transfert" formControlName="allow_money_transfert" />
+              </div>
+            </div>
+
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="isPhoneVerified">Is Phone Verified</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="isPhoneVerified" formControlName="isPhoneVerified" />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="resetStatus">Password Reset
+                Requested</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="resetStatus" formControlName="resetStatus" />
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

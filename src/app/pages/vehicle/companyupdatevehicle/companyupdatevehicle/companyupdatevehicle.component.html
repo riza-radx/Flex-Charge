@@ -1,0 +1,197 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Update Vehicle</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+            <!-- VIN Code -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vinCode">VIN Code</label>
+              <div class="col-md-10">
+                <input class="form-control" id="vinCode" formControlName="vinCode"  />
+                <!-- <small *ngIf="vehicleForm.get('vinCode')?.invalid && vehicleForm.get('vinCode')?.touched"
+                  class="text-danger">
+                  VIN Code is required.
+                </small> -->
+              </div>
+            </div>
+
+            <!-- Vehicle Number -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleNumber">Vehicle Number</label>
+              <div class="col-md-10">
+                <input class="form-control" id="vehicleNumber" formControlName="vehicleNumber"  />
+                <!-- <small *ngIf="vehicleForm.get('vehicleNumber')?.invalid && vehicleForm.get('vehicleNumber')?.touched"
+                  class="text-danger">
+                  Vehicle Number is required.
+                </small> -->
+              </div>
+            </div>
+
+            <!-- Vehicle Brand -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleBrand">Vehicle Brand</label>
+              <div class="col-md-10">
+                <select class="form-control" id="vehicleBrand" formControlName="vehicleBrand"
+                  (change)="onBrandChange($event)" required>
+                  <option *ngFor="let brand of evVehicleBrands" [value]="brand">{{ brand }}</option>
+                </select>
+                <small *ngIf="vehicleForm.get('vehicleBrand')?.invalid && vehicleForm.get('vehicleBrand')?.touched"
+                  class="text-danger">
+                  Vehicle Brand is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Vehicle Model -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleModel">Vehicle Model</label>
+              <div class="col-md-10">
+                <select class="form-control" id="vehicleModel" formControlName="vehicleModel"
+                  (change)="onModelChange($event)">
+                  <option *ngFor="let model of evVehicleModels" [value]="model">{{ model }}</option>
+                  <option *ngIf="evVehicleModels.length === 0" value="">No specified model for this brand</option>
+                </select>
+                <small *ngIf="vehicleForm.get('vehicleModel')?.invalid && vehicleForm.get('vehicleModel')?.touched"
+                  class="text-danger">
+                  Vehicle Model is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Vehicle Year -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="vehicleYear">Vehicle Year</label>
+              <div class="col-md-10">
+                <select class="form-control" id="vehicleYear" formControlName="vehicleYear">
+                  <option *ngFor="let year of evVehicleYears" [value]="year">{{ year }}</option>
+                  <option *ngIf="evVehicleYears.length === 0" value="">No specified year for this model</option>
+                </select>
+                <small *ngIf="vehicleForm.get('vehicleYear')?.invalid && vehicleForm.get('vehicleYear')?.touched"
+                  class="text-danger">
+                  Vehicle Year is required.
+                </small>
+              </div>
+            </div>
+
+
+            <!-- User -->
+            <div *ngIf="vehicleForm.get('userId')?.value !== null" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+              <div class="col-md-10">
+                <select class="form-control" id="userId" formControlName="userId">
+                  <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                </select>
+                <small *ngIf="vehicleForm.get('userId')?.invalid && vehicleForm.get('userId')?.touched"
+                  class="text-danger">
+                  User is required.
+                </small>
+              </div>
+            </div>
+
+
+            <!-- User ID -->
+            <!-- <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="userId">User ID</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="userId" formControlName="userId" required />
+                </div>
+              </div> -->
+            <!-- <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="userId">User</label>
+                <div class="col-md-10">
+                  <select class="form-control" id="userId"  formControlName="userId" required>
+                    <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                  </select>
+                </div>
+              </div> -->
+
+
+            <!-- Company ID -->
+            <!-- <div class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company ID</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="companyId" formControlName="companyId" required />
+                </div>
+              </div> -->
+            <!-- <div *ngIf="isCompanyRole" class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                <div class="col-md-10">
+                  <select class="form-control" id="companyId"  formControlName="companyId" required>
+                    <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}</option>
+                  </select>
+                </div>
+
+              </div>
+            </div> -->
+
+            <!-- Company -->
+            <div *ngIf="isCompanyRole">
+              <div *ngIf="vehicleForm.get('companyId')?.value !== null" class="form-group row">
+                <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                <div class="col-md-10">
+                  <select class="form-control" id="companyId" formControlName="companyId">
+                    <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name }}
+                    </option>
+                  </select>
+                  <small *ngIf="vehicleForm.get('companyId')?.invalid && vehicleForm.get('companyId')?.touched"
+                    class="text-danger">
+                    Company is required.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <!-- User Group -->
+            <div *ngIf="vehicleForm.get('usergrId')?.value !== null" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergrId">User Group</label>
+              <div class="col-md-10">
+                <select class="form-control" id="usergrId" formControlName="usergrId">
+                  <option *ngFor="let usergroup of usergroups" [value]="usergroup.usergr_id">{{ usergroup.usergr_name }}
+                  </option>
+                </select>
+                <small *ngIf="vehicleForm.get('usergrId')?.invalid && vehicleForm.get('usergrId')?.touched"
+                  class="text-danger">
+                  User Group is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Created Time -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="createdTime">Created Time</label>
+              <div class="col-md-10">
+                <input class="form-control" id="createdTime" formControlName="createdTime" readonly required />
+                <small *ngIf="vehicleForm.get('createdTime')?.invalid && vehicleForm.get('createdTime')?.touched"
+                  class="text-danger">
+                  Created Time is required.
+                </small>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Update Vehicle</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

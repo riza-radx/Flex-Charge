@@ -1,0 +1,385 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Chargers</h3>
+                <!-- todo : Adding the function for counting the new entries-->
+                <!-- <p *ngIf="isRadXRole" class="text-sm mb-0">✓ {{ currentMonthCountEntry }} New Chargers this month</p> -->
+              </div>
+              <div class="btn-group">
+                <button *ngIf="isRadXRole || isCompanyRole && !isCompanyAnalyst" type="button"
+                  class="btn btn-icon-clipboard btn-outline-primary" tooltip="Add New Charger">
+                  <a [routerLink]="['/assets/chargers/create/radx']">
+                    <i class="fas fa-charging-station"></i>
+                  </a>
+                </button>
+                <button (click)="exportToPDF()" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                  tooltip="Export to PDF">
+                  <i class="fas fa-file-pdf"></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                  tooltip="Export to Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dataTables_wrapper py-4">
+          <div class="row">
+            <div class="col-auto">
+              <div class="dataTables_length" id="datatable_length">
+                <label>
+                  <span *ngIf="!isSmallScreen">Show</span>
+                  <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                    (change)="entriesChange($event)">
+                    <option value="10" [selected]="entries == 10">10</option>
+                    <option value="25" [selected]="entries == 25">25</option>
+                    <option value="50" [selected]="entries == 50">50</option>
+                    <option value="-1" [selected]="entries == -1">All</option>
+                  </select>
+                  <span *ngIf="!isSmallScreen">entries</span>
+                </label>
+              </div>
+            </div>
+            <div class="col ml--2   custom-flex-end-center">
+              <!-- Search Input -->
+              <div id="datatable_filter" class="dataTables_filter">
+                <label>
+                  <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                    placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+                  <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                </label>
+              </div>
+              <div id="datatable_filter" class="dataTables_filter">
+                <!-- Filter Dropdown Button -->
+                <div class="btn-group" dropdown>
+                  <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle"
+                    aria-controls="dropdown-basic">
+                    <span *ngIf="!isSmallScreen">Filters</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                    aria-labelledby="button-basic">
+
+
+                    <!-- Dropdown for Company -->
+                    <li role="menuitem" *ngIf="isRadXRole">
+                      <label for="companySelect" class="dropdown-item">Company</label>
+                      <select id="companySelect" [(ngModel)]="selectedCompany" class="form-control"
+                        (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Companies</option>
+                        <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                          }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Partner -->
+                    <li role="menuitem" *ngIf="isRadXRole || isCompanyRole">
+                      <label for="partnerSelect" class="dropdown-item">Partner</label>
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="partnerSelect" [(ngModel)]="selectedPartner" class="form-control"
+                        (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Partners</option>
+                        <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name }}
+                        </option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="partnerSelect" [(ngModel)]="selectedPartner"
+                        class="form-control" (change)="getChargersByCompany()" (click)="$event.stopPropagation()">
+                        <option value="">All Partners</option>
+                        <option *ngFor="let partner of partners" [value]="partner.partner_id">{{ partner.partner_name }}
+                        </option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Type -->
+                    <li role="menuitem">
+                      <label for="typeSelect" class="dropdown-item">Type</label>
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="typeSelect" [(ngModel)]="selectedType" class="form-control"
+                        (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Types</option>
+                        <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="typeSelect" [(ngModel)]="selectedType" class="form-control"
+                        (change)="getChargersByCompany()" (click)="$event.stopPropagation()">
+                        <option value="">All Types</option>
+                        <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+                      </select>
+
+                      <!-- Dropdown for PArtner Roles -->
+                      <select *ngIf="isPartnerRole" id="typeSelect" [(ngModel)]="selectedType" class="form-control"
+                        (change)="getChargersByPartner()" (click)="$event.stopPropagation()">
+                        <option value="">All Types</option>
+                        <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Status -->
+                    <li role="menuitem">
+                      <label for="statusSelect" class="dropdown-item">Status</label>
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="statusSelect" [(ngModel)]="selectedStatus" class="form-control"
+                        (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Statuses</option>
+                        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="statusSelect" [(ngModel)]="selectedStatus" class="form-control"
+                        (change)="getChargersByCompany()" (click)="$event.stopPropagation()">
+                        <option value="">All Statuses</option>
+                        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+                      </select>
+
+                      <!-- Dropdown for PArtner Roles -->
+                      <select *ngIf="isPartnerRole" id="statusSelect" [(ngModel)]="selectedStatus" class="form-control"
+                        (change)="getChargersByPartner()" (click)="$event.stopPropagation()">
+                        <option value="">All Statuses</option>
+                        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for OCPP Protocol -->
+                    <li role="menuitem">
+                      <label for="ocppSelect" class="dropdown-item">OCPP Protocol</label>
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="ocppSelect" [(ngModel)]="selectedOcppProtocol" class="form-control"
+                        (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Protocols</option>
+                        <option *ngFor="let protocol of ocppProtocols" [value]="protocol">{{ protocol }}</option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="ocppSelect" [(ngModel)]="selectedOcppProtocol"
+                        class="form-control" (change)="getChargersByCompany()" (click)="$event.stopPropagation()">
+                        <option value="">All Protocols</option>
+                        <option *ngFor="let protocol of ocppProtocols" [value]="protocol">{{ protocol }}</option>
+                      </select>
+
+                      <!-- Dropdown for PArtner Roles -->
+                      <select *ngIf="isPartnerRole" id="ocppSelect" [(ngModel)]="selectedOcppProtocol"
+                        class="form-control" (change)="getChargersByPartner()" (click)="$event.stopPropagation()">
+                        <option value="">All Protocols</option>
+                        <option *ngFor="let protocol of ocppProtocols" [value]="protocol">{{ protocol }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Max Voltage -->
+                    <li role="menuitem">
+                      <label for="voltageSelect" class="dropdown-item">Max Voltage</label>
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="voltageSelect" [(ngModel)]="selectedMaxVoltage"
+                        class="form-control" (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Voltages</option>
+                        <option *ngFor="let voltage of maxVoltages" [value]="voltage">{{ voltage }}</option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="voltageSelect" [(ngModel)]="selectedMaxVoltage"
+                        class="form-control" (change)="getChargersByCompany()" (click)="$event.stopPropagation()">
+                        <option value="">All Voltages</option>
+                        <option *ngFor="let voltage of maxVoltages" [value]="voltage">{{ voltage }}</option>
+                      </select>
+
+                      <!-- Dropdown for PArtner Roles -->
+                      <select *ngIf="isPartnerRole" id="voltageSelect" [(ngModel)]="selectedMaxVoltage"
+                        class="form-control" (change)="getChargersByPartner()" (click)="$event.stopPropagation()">
+                        <option value="">All Voltages</option>
+                        <option *ngFor="let voltage of maxVoltages" [value]="voltage">{{ voltage }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Phase -->
+                    <li role="menuitem">
+                      <label for="phaseSelect" class="dropdown-item">Phase</label>
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="phaseSelect" [(ngModel)]="selectedPhase" class="form-control"
+                        (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Phases</option>
+                        <option *ngFor="let phase of phases" [value]="phase">{{ phase }}</option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="phaseSelect" [(ngModel)]="selectedPhase" class="form-control"
+                        (change)="getChargersByCompany()" (click)="$event.stopPropagation()">
+                        <option value="">All Phases</option>
+                        <option *ngFor="let phase of phases" [value]="phase">{{ phase }}</option>
+                      </select>
+
+                      <!-- Dropdown for PArtner Roles -->
+                      <select *ngIf="isPartnerRole" id="phaseSelect" [(ngModel)]="selectedPhase" class="form-control"
+                        (change)="getChargersByPartner()" (click)="$event.stopPropagation()">
+                        <option value="">All Phases</option>
+                        <option *ngFor="let phase of phases" [value]="phase">{{ phase }}</option>
+                      </select>
+                    </li>
+
+                    <!-- Dropdown for Phase Rotation -->
+                    <li role="menuitem">
+                      <label for="phaseRotationSelect" class="dropdown-item">Phase Rotation</label>
+
+                      <!-- Dropdown for RadX Roles -->
+                      <select *ngIf="isRadXRole" id="phaseRotationSelect" [(ngModel)]="selectedPhaseRotation"
+                        class="form-control" (change)="getChargers()" (click)="$event.stopPropagation()">
+                        <option value="">All Rotations</option>
+                        <option *ngFor="let rotation of phaseRotations" [value]="rotation">{{ rotation }}</option>
+                      </select>
+
+                      <!-- Dropdown for Company Roles -->
+                      <select *ngIf="isCompanyRole" id="phaseRotationSelect" [(ngModel)]="selectedPhaseRotation"
+                        class="form-control" (change)="getChargersByCompany()" (click)="$event.stopPropagation()">
+                        <option value="">All Rotations</option>
+                        <option *ngFor="let rotation of phaseRotations" [value]="rotation">{{ rotation }}</option>
+                      </select>
+
+                      <!-- Dropdown for PArtner Roles -->
+                      <select *ngIf="isPartnerRole" id="phaseRotationSelect" [(ngModel)]="selectedPhaseRotation"
+                        class="form-control" (change)="getChargersByPartner()" (click)="$event.stopPropagation()">
+                        <option value="">All Rotations</option>
+                        <option *ngFor="let rotation of phaseRotations" [value]="rotation">{{ rotation }}</option>
+                      </select>
+                    </li>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'" [headerHeight]="50"
+            [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined" [rows]="temp"
+            [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+            (select)="onSelect($event)">
+            <ngx-datatable-column name="Name" prop="charger_name"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isSmallScreen" name="Type" prop="type"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isSmallScreen" name="Number of Connectors"
+              prop="no_of_connectors"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isSmallScreen" name="Valid" prop="valid"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isSmallScreen" name="Status" prop="status"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isSmallScreen" name="Rate Power" prop="rate_power"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isSmallScreen && !isPartnerRole && !isUserGroupRole" name="Created By" prop="madeBy"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="!isSmallScreen && !isPartnerRole && !isUserGroupRole" name="Modified By" prop="modifiedBy"></ngx-datatable-column>
+            <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Actions" prop="actions">
+              <ng-template ngx-datatable-cell-template let-row="row">
+                <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                  [routerLink]="['/assets/chargers/update/company', row.charger_id]"><i
+                    class="fas fa-edit"></i></button>
+                <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                  [routerLink]="['/assets/chargers/delete/company', row.charger_id]"><i
+                    class="fas fa-trash-alt"></i></button>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable> -->
+          <div class="scrollable-table">
+            <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+              [rows]="temp" [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+              (select)="onSelect($event)">
+
+              <ngx-datatable-column name="No." [width]="100">
+                <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                  {{ rowIndex + 1 }}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Name" prop="charger_name"></ngx-datatable-column>
+              <ngx-datatable-column name="Type" prop="type"></ngx-datatable-column>
+              <ngx-datatable-column name="Number of Connectors" prop="no_of_connectors"></ngx-datatable-column>
+              <ngx-datatable-column name="Valid" prop="valid"></ngx-datatable-column>
+              <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
+              <!-- Connector 1 Type -->
+              <!-- <ngx-datatable-column name="Connector 1" prop="connector1Type">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.connector1Type }}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Conn.1 Status" prop="connector1Status">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.connector1Status }}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Connector 2" prop="connector2Type">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.connector2Type }}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Conn.2 Status" prop="connector2Status">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.connector2Status }}
+                </ng-template>
+              </ngx-datatable-column> -->
+              <ngx-datatable-column name="Rate Power" prop="rate_power"></ngx-datatable-column>
+              <!-- 🆕 Eficenca ne % — kolona e fshehur nga UI me kerkese te userit; te dhena mbeten ne DB.
+              <ngx-datatable-column name="Efficiency (%)" prop="efficiency_percentage">
+                <ng-template let-value="value" ngx-datatable-cell-template>
+                  {{ value != null ? value : 100 }}
+                </ng-template>
+              </ngx-datatable-column>
+              -->
+              <ngx-datatable-column name="Is Public" prop="is_public">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                  {{ value === 'true' || value === '1' ? 'Yes' : 'No' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Is Public" prop="is_public">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                  {{ value === 'true' || value === '1' ? 'Yes' : 'No' }}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Created By" prop="madeBy"></ngx-datatable-column>
+              <ngx-datatable-column name="Modified By" prop="modifiedBy"></ngx-datatable-column>
+
+              <!-- 🆕 G/L accounts (BC) — VETEM COMPANY_ADMIN + COMPANY_ANALYST. -->
+              <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="G/L Purchase" prop="g_l_purchase"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="G/L Earnings" prop="g_l_earnings"></ngx-datatable-column>
+
+              <!-- 🆕 Kolona Actions tashme shfaqet edhe per COMPANY_ANALYST (finance) qe te editojne
+                   G/L fields. Butoni Delete mbetet i bllokuar per analyst — vetem edit lejohet. -->
+              <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole || isCompanyAnalyst" name="Actions"
+                prop="actions">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                    [routerLink]="['/assets/chargers/update/company', row.charger_id]"><i
+                      class="fas fa-edit"></i></button>
+                  <button *ngIf="!isCompanyAnalyst" type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                    [routerLink]="['/assets/chargers/delete/company', row.charger_id]"><i
+                      class="fas fa-trash-alt"></i></button>
+                </ng-template>
+              </ngx-datatable-column>
+
+            </ngx-datatable>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

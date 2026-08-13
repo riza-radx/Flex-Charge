@@ -1,0 +1,1105 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+
+<!-- Tabs Section -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Charger Details</h3>
+            </div>
+            <div *ngIf="isRadXRole || isCompanyRole || isCompanyAnalyst" class="col-4"
+              style="display:    flex; justify-content:    flex-end; gap:    10px;">
+              <!-- 🆕 Buton "Change Buy Energy Price" — vetem COMPANY_ADMIN + COMPANY_ANALYST. -->
+              <button *ngIf="isCompanyAdmin || isCompanyAnalyst" type="button" class="btn btn-sm btn-warning"
+                (click)="openRebillModal()" tooltip="Change Buy Energy Price">
+                <i class="fas fa-money-bill-wave"></i> Change Buy Energy Price
+              </button>
+              <button *ngIf="!isCompanyAnalyst" type="button" class="btn btn-sm btn-neutral"
+                [routerLink]="['/assets/connectors/createconnector/', id]" tooltip="Add Connector"><i
+                  class="fas fa-code-branch"></i></button>
+              <button *ngIf="!isCompanyAnalyst" type="button" class="btn btn-sm btn-neutral" [routerLink]="['/assets/localList/create/', id]"
+                tooltip="Add Local List"><i class="fas fa-list"></i></button>
+              <!-- 🆕 Edit — lejuar per te gjitha rolet qe shohin header-in, PERFSHIRE COMPANY_ANALYST.
+                   Gate eksplicite qe intent-i te jete i qarte + rezistente ndaj cache-it te vjeter. -->
+              <button *ngIf="isRadXRole || isCompanyRole || isCompanyAdmin || isCompanyAnalyst"
+                type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                [routerLink]="['/assets/chargers/update/company', chargers[0]?.charger_id]"><i
+                  class="fas fa-edit"></i></button>
+              <button *ngIf="!isCompanyAnalyst" type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                [routerLink]="['/assets/chargers/delete/company', chargers[0]?.charger_id]"><i
+                  class="fas fa-trash-alt"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="container py-4">
+            <div *ngIf="chargers.length">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h4 class="card-title"><i class="fa fa-bolt text-primary"></i> Charger Name: <span
+                      class="font-weight-normal text-muted">{{ chargers[0]?.charger_name }}</span></h4>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <i class="fa fa-plug text-primary"></i> Type: <span class="text-muted">{{ chargers[0]?.type
+                        }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-exchange-alt text-primary "></i> Current Type: <span class="text-muted">{{
+                        chargers[0]?.current_type }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-times-circle text-primary"></i> Status: <span class="text-muted">{{
+                        chargers[0]?.status }}</span>
+                    </div>
+                  </div>
+
+                  <!-- ================= HARDWARE & TECHNICAL INFO ================= -->
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <i class="fa fa-battery-full text-primary"></i> Max Amperage: <span class="text-muted">{{
+                        chargers[0]?.max_amperage }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-tachometer-alt text-primary"></i> Max Power: <span class="text-muted">{{
+                        chargers[0]?.max_power }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-plug text-primary"></i> Max Voltage: <span class="text-muted">{{
+                        chargers[0]?.max_voltage }}</span>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <i class="fa fa-link text-primary"></i> No of Connectors: <span class="text-muted">{{
+                        chargers[0]?.no_of_connectors }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-id-badge text-primary"></i> OCPP ID: <span class="text-muted">{{
+                        chargers[0]?.ocpp_id }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-code text-primary"></i> OCPP Protocol: <span class="text-muted">{{
+                        chargers[0]?.ocpp_protocol }}</span>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <div class="col-md-4">
+                      <i class="fa fa-sitemap text-primary"></i> Phase: <span class="text-muted">{{ chargers[0]?.phase
+                        }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-sync-alt text-primary"></i> Phase Rotation: <span class="text-muted">{{
+                        chargers[0]?.phase_rotation }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-chart-line text-primary"></i> Rate Power: <span class="text-muted">{{
+                        chargers[0]?.rate_power }}</span>
+                    </div>
+                  </div>
+
+                  <!-- ================= 💰 PRICING & RATES ================= -->
+                  <hr class="my-3" />
+                  <h6 class="text-uppercase text-muted mb-3">
+                    <i class="fa fa-dollar-sign text-primary mr-1"></i> Pricing &amp; Rates
+                  </h6>
+                  <div class="row mb-4">
+                    <div class="col-md-4">
+                      <i class="fa fa-dollar-sign text-primary"></i> Charger Rate (Sale):
+                      <span class="text-muted">{{ rateName ? rateName : 'No Rate set' }}</span>
+                    </div>
+                    <div class="col-md-4" *ngIf="!isBursaCharger">
+                      <i class="fa fa-dollar-sign text-primary"></i> Energy Tariff Rate (Buy):
+                      <span class="text-muted">{{ energyTariffRateName ? energyTariffRateName : 'No Energy Tariff Rate set' }}</span>
+                    </div>
+                    <div class="col-md-4" *ngIf="isBursaCharger">
+                      <i class="fa fa-water text-info"></i> Energy Tariff Rate (Buy):
+                      <span class="badge badge-info">🌊 Bursa (ALPEX Day-Ahead)</span>
+                    </div>
+                    <!-- 🆕 G/L accounts (BC) — vetem COMPANY_ADMIN + COMPANY_ANALYST i shohin. -->
+                    <div class="col-md-4" *ngIf="isCompanyAdmin || isCompanyAnalyst">
+                      <i class="fa fa-book text-primary"></i> G/L Purchase:
+                      <span class="text-muted">{{ chargers[0]?.g_l_purchase ? chargers[0]?.g_l_purchase : 'N/A' }}</span>
+                    </div>
+                    <div class="col-md-4" *ngIf="isCompanyAdmin || isCompanyAnalyst">
+                      <i class="fa fa-book text-primary"></i> G/L Earnings:
+                      <span class="text-muted">{{ chargers[0]?.g_l_earnings ? chargers[0]?.g_l_earnings : 'N/A' }}</span>
+                    </div>
+                    <!-- 🆕 Eficenca ne %: fshehur nga UI me kerkese te userit; mbetet ne DB me default 100.
+                    <div class="col-md-4">
+                      <i class="fa fa-bolt text-primary"></i> Efficiency:
+                      <span class="text-muted">{{ chargers[0]?.efficiency_percentage != null ? chargers[0]?.efficiency_percentage : 100 }}%</span>
+                    </div>
+                    -->
+
+                  </div>
+
+                  <!-- 🆕 Info: Cmimi i blerjes se energjise per çdo ore — VETEM COMPANY_ADMIN + COMPANY_ANALYST.
+                       Nese jane te barabarta te gjitha oret, shfaqet nje vlere e vetme; ndryshe tabele.
+                       Shfaqet VETEM per chargers me rate fikse (jo bursa). -->
+                  <div *ngIf="(isCompanyAdmin || isCompanyAnalyst) && !isBursaCharger && energyTariffHourlyPricesLoaded && energyTariffHourlyPrices.length === 24"
+                       class="mt-3">
+                    <h6 class="text-uppercase text-muted mb-2">
+                      <i class="fa fa-money-bill-wave text-primary mr-1"></i> Cmimi i Blerjes (Lek/kWh, pa TVSH) — per çdo ore
+                    </h6>
+                    <div class="table-responsive">
+                      <table class="table table-sm table-bordered mb-0" style="font-size: 12px;">
+                        <thead>
+                          <tr>
+                            <th *ngFor="let h of [0,1,2,3,4,5,6,7,8,9,10,11]" class="text-center">
+                              {{ (h < 10 ? '0' + h : h) + ':00 - ' + (h + 1 < 10 ? '0' + (h + 1) : h + 1) + ':00' }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td *ngFor="let h of [0,1,2,3,4,5,6,7,8,9,10,11]" class="text-center">
+                              {{ energyTariffHourlyPrices[h] }}
+                            </td>
+                          </tr>
+                        </tbody>
+                        <thead>
+                          <tr>
+                            <th *ngFor="let h of [12,13,14,15,16,17,18,19,20,21,22,23]" class="text-center">
+                              {{ h + ':00 - ' + (h === 23 ? '00' : (h + 1 < 10 ? '0' + (h + 1) : h + 1)) + ':00' }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td *ngFor="let h of [12,13,14,15,16,17,18,19,20,21,22,23]" class="text-center">
+                              {{ energyTariffHourlyPrices[h] }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- 🆕 Bursa Prices per diten e sotme — VETEM per chargers me uses_bursa_price=true -->
+                  <div *ngIf="(isCompanyAdmin || isCompanyAnalyst) && isBursaCharger && bursaTodayLoaded"
+                       class="mt-3">
+                    <h6 class="text-uppercase text-muted mb-2">
+                      <i class="fa fa-water text-info mr-1"></i>
+                      🌊 Cmimi i Blerjes nga Bursa (ALL/kWh) — <small>{{ bursaTodayDate }}</small>
+                    </h6>
+                    <div *ngIf="bursaTodayPrices.length === 0" class="alert alert-warning" style="font-size: 13px">
+                      S'ka te dhena bursa per diten e sotme ({{ bursaTodayDate }}).
+                      Shko te <a routerLink="/rates/bursa-prices">Rates → Bursa Prices</a> per t'i shkarkuar nga ALPEX.
+                    </div>
+                    <div *ngIf="bursaTodayPrices.length > 0" class="table-responsive">
+                      <table class="table table-sm table-bordered mb-0" style="font-size: 12px;">
+                        <thead>
+                          <tr>
+                            <th *ngFor="let p of bursaTodayPrices.slice(0, 12)" class="text-center">
+                              {{ (p.hour < 10 ? '0' + p.hour : p.hour) + ':00 - ' + (p.hour + 1 < 10 ? '0' + (p.hour + 1) : p.hour + 1) + ':00' }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td *ngFor="let p of bursaTodayPrices.slice(0, 12)" class="text-center">
+                              <strong>{{ p.buy_price_all_kwh }}</strong>
+                              <div style="font-size: 10px; color: #999">{{ p.price_eur_mwh }} €/MWh</div>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <thead>
+                          <tr>
+                            <th *ngFor="let p of bursaTodayPrices.slice(12, 24)" class="text-center">
+                              {{ p.hour + ':00 - ' + (p.hour === 23 ? '00' : (p.hour + 1 < 10 ? '0' + (p.hour + 1) : p.hour + 1)) + ':00' }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td *ngFor="let p of bursaTodayPrices.slice(12, 24)" class="text-center">
+                              <strong>{{ p.buy_price_all_kwh }}</strong>
+                              <div style="font-size: 10px; color: #999">{{ p.price_eur_mwh }} €/MWh</div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- ================= 📅 RESERVATIONS & FEES ================= -->
+                  <hr class="my-3" />
+                  <h6 class="text-uppercase text-muted mb-3">
+                    <i class="fa fa-calendar-alt text-primary mr-1"></i> Reservations &amp; Fees
+                  </h6>
+                  <div class="row mb-4">
+                    <div class="col-md-4">
+                      <i class="fa fa-check text-primary"></i> Allow Reservation:
+                      <span class="text-muted" *ngIf="chargers[0]?.allow_reservation == '1'">Yes</span>
+                      <span class="text-muted" *ngIf="chargers[0]?.allow_reservation == '0'">No</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-dollar-sign text-primary"></i> Reservation fee:
+                      <span class="text-muted">{{ chargers[0]?.reservation_fee }}</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="fa fa-clock text-primary"></i> Reservation wait:
+                      <span class="text-muted">{{ chargers[0]?.reservation_wait }}</span>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <i class="fa fa-dollar-sign text-primary"></i> Full Charge Fee (per minutes):
+                      <span class="text-muted">{{ chargers[0]?.fullchargefeeperminute }}</span>
+                    </div>
+                  </div>
+
+                  <!-- ================= ⚙️ TOGGLE SWITCH (Rate Priority) ================= -->
+                  <hr class="my-3" />
+                  <h6 class="text-uppercase text-muted mb-3">
+                    <i class="fa fa-toggle-on text-primary mr-1"></i> Rate Priority Toggle
+                  </h6>
+                  <div class="row mb-3">
+                    <div class="col-md-12">
+                      <i class="fa fa-toggle-on text-primary"></i> Toggle Switch:
+                      <span *ngIf="chargers[0]?.charger_rate_priority === 'true'" class="badge badge-success">
+                        ON — charger.rate_id → user.rate_id → company default
+                      </span>
+                      <span *ngIf="chargers[0]?.charger_rate_priority !== 'true' && chargers[0]?.charger_rate_priority_start" class="badge badge-warning">
+                        SCHEDULED — pritet aktivizimi automatik
+                      </span>
+                      <span *ngIf="chargers[0]?.charger_rate_priority !== 'true' && !chargers[0]?.charger_rate_priority_start" class="badge badge-secondary">
+                        OFF — user.rate_id → charger.rate_id → company default
+                      </span>
+
+                      <!-- Start (nese ekziston) -->
+                      <span *ngIf="chargers[0]?.charger_rate_priority_start"
+                        class="text-muted ml-2">
+                        start: {{ chargers[0]?.charger_rate_priority_start | date:'yyyy-MM-dd HH:mm' }}
+                      </span>
+
+                      <!-- End -->
+                      <span *ngIf="chargers[0]?.charger_rate_priority_until"
+                        class="text-muted ml-2">
+                        end: {{ chargers[0]?.charger_rate_priority_until | date:'yyyy-MM-dd HH:mm' }}
+                      </span>
+
+                      <span *ngIf="chargers[0]?.charger_rate_priority === 'true' && !chargers[0]?.charger_rate_priority_until"
+                        class="text-muted ml-2">
+                        (pa limit kohor)
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- ================= 📍 LOCATION & PARTNER ================= -->
+                  <hr class="my-3" />
+                  <h6 class="text-uppercase text-muted mb-3">
+                    <i class="fa fa-map-pin text-primary mr-1"></i> Location &amp; Partner
+                  </h6>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <i class="fa fa-map-pin text-primary"></i> Location:
+                      <span class="text-muted">
+                        <a *ngIf="chargers[0]?.location_id"
+                          [routerLink]="['/assets/locations', chargers[0]?.location_id]" class="text-primary">
+                          {{ chargers[0]?.Location.location_name }}
+                        </a>
+                        <span *ngIf="!chargers[0]?.location_id">
+                          {{ chargers[0]?.Location.location_name }}
+                        </span>
+                      </span>
+                    </div>
+                    <div class="col-md-6" *ngIf="chargers[0]?.partner_id">
+                      <i class="fa fa-handshake text-primary"></i> Partner:
+                      <span class="text-muted">
+                        <a *ngIf="!isPartnerRole"
+                           [routerLink]="['/partners/partner', chargers[0]?.partner_id]"
+                           class="text-primary">
+                          {{ chargers[0]?.Partner?.partner_name || 'Not part of a partner' }}
+                        </a>
+                        <span *ngIf="isPartnerRole">
+                          {{ chargers[0]?.Partner?.partner_name || 'Not part of a partner' }}
+                        </span>
+                      </span>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!chargers.length">
+              <p>No charger details available.</p>
+            </div>
+          </div>
+          <tabset #chargerTabs>
+
+            <!-- General Tab -->
+            <!-- <tab heading="General">
+              
+              
+            </tab> -->
+
+            <!-- Charging History Tab -->
+            <tab heading="Charging History">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterChargingHistoryTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempChargingHistory" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onChargingHistoryActivate($event)"
+                    (select)="onSelect($event)">
+                    <ngx-datatable-column name="ID" prop="charging_history_id"></ngx-datatable-column>
+                    <ngx-datatable-column name="User" prop="User.username"></ngx-datatable-column>
+                    <ngx-datatable-column name="User Group" prop="UserGroup.usergr_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Card">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ row.card ? row.card : 'Scanned by QR Code' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Connector" prop="Connector.connector_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="charging_history_date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Strted Time" prop="strted_time"></ngx-datatable-column>
+                    <ngx-datatable-column name="Ended Time" prop="ended_time"></ngx-datatable-column>
+                    <ngx-datatable-column name="Total Energy" prop="total_energy"></ngx-datatable-column>
+                    <ngx-datatable-column name="Battery" prop="socValue"></ngx-datatable-column>
+                    <ngx-datatable-column name="Total Cost" prop="total_cost"></ngx-datatable-column>
+                    <!-- 🆕 Cmimi i blerjes se energjise (energy_tariff_price snap) — VETEM COMPANY_ADMIN + COMPANY_ANALYST. -->
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Buy Price (Lek/kWh)" [width]="140">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row?.energy_tariff_price !== null && row?.energy_tariff_price !== undefined && row?.energy_tariff_price !== ''">
+                          {{ (+row.energy_tariff_price).toFixed(2) }}
+                        </span>
+                        <span *ngIf="row?.energy_tariff_price === null || row?.energy_tariff_price === undefined || row?.energy_tariff_price === ''"
+                          class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Check Fisk" [width]="110">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_check_fisk === true || row.snap_check_fisk === 1" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_check_fisk === false || row.snap_check_fisk === 0" class="text-danger">No</span>
+                        <span *ngIf="row.snap_check_fisk === null || row.snap_check_fisk === undefined" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="PAYG" prop="snap_allow_payg" [width]="100">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_allow_payg === 'true' || row.snap_allow_payg === '1'" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_allow_payg === 'false' || row.snap_allow_payg === '0'" class="text-muted">No</span>
+                        <span *ngIf="!row.snap_allow_payg" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="Send Email" [width]="120">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.snap_send_email === true || row.snap_send_email === 1" class="text-success">Yes</span>
+                        <span *ngIf="row.snap_send_email === false || row.snap_send_email === 0" class="text-muted">No</span>
+                        <span *ngIf="row.snap_send_email === null || row.snap_send_email === undefined" class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isCompanyAdmin || isCompanyAnalyst" name="BC Invoice" [width]="140">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row?.Charging?.bc_invoice_number || row?.bc_invoice_number"
+                          class="text-success">{{ row?.Charging?.bc_invoice_number || row?.bc_invoice_number }}</span>
+                        <span *ngIf="!(row?.Charging?.bc_invoice_number || row?.bc_invoice_number)"
+                          class="text-muted">—</span>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+
+
+              </div>
+            </tab>
+
+            <!-- Connectors Tab -->
+            <tab heading="Connectors">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterConnectorTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined" [rows]="tempConnectors" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+
+                    <!-- <ngx-datatable-column name="Connector ID" prop="connector_id"></ngx-datatable-column> -->
+
+                    <!-- <ngx-datatable-column name="No.">
+                      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                        {{ rowIndex + 1 }}
+                      </ng-template>
+                    </ngx-datatable-column> -->
+                    <ngx-datatable-column name="Connector Number" prop="connector_no"></ngx-datatable-column>
+
+                    <ngx-datatable-column name="Connector Name" prop="connector_name"></ngx-datatable-column>
+                    <ngx-datatable-column name="Rated Power" prop="rated_power"></ngx-datatable-column>
+                    <ngx-datatable-column name="Standard" prop="standard"></ngx-datatable-column>
+                    <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
+
+                    <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Actions" prop="actions">
+                      <ng-template ngx-datatable-cell-template let-row="row">
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                          [routerLink]="['/assets/connectors/updateconnector', row.connector_id]">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                          [routerLink]="['/assets/connectors/deleteconnector', row.connector_id]">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="View QR Code"
+                          [routerLink]="['/assets/qr-code-popup', row.connector_id]">
+                          <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button type="button"
+                          *ngIf="chargers.length > 0 && chargers[0].allow_reservation !== '0' && chargers[0].allow_reservation !== false"
+                          class="btn btn-sm btn-neutral" tooltip="Add Reservation"
+                          [routerLink]="['/monitoring/addreservation', chargers[0].charger_id, row.connector_id]"
+                          [disabled]="row.status === 'Reserved' || row.status === 'Preparing' || row.status === 'Offline'">
+                          <i class="fas fa-calendar-plus"></i>
+                        </button>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+
+              </div>
+            </tab>
+
+            <!-- Reservations Tab -->
+            <tab heading="Reservations">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterReservationsTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries :    undefined" [rows]="tempReservations" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <!-- <ngx-datatable-column name="Reservation ID" prop="reservation_id"></ngx-datatable-column> -->
+                    <ngx-datatable-column name="No.">
+                      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                        {{ rowIndex + 1 }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Time" prop="time"></ngx-datatable-column>
+                    <ngx-datatable-column name="User" prop="user"></ngx-datatable-column>
+                    <ngx-datatable-column name="Charger" prop="charger"></ngx-datatable-column>
+                    <ngx-datatable-column name="Status">
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        {{ row.reservationStatus }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Actions" prop="actions">
+                      <ng-template ngx-datatable-cell-template let-row="row">
+                        <button *ngIf="row.reservationStatus === 'active'" type="button" class="btn btn-sm btn-neutral"
+                          tooltip="Cancel Reservation"
+                          [routerLink]="['/monitoring/reservation/deletereservation', row.Charger.ocpp_id, row.reservation_id]">
+                          <i class="fas fa-calendar-minus"></i>
+                        </button>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <!-- Local List Tab -->
+            <tab heading="Local List">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterLogsTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries :    undefined" [rows]="tempLocalLists" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <ngx-datatable-column name="No.">
+                      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                        {{ rowIndex + 1 }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="User" prop="User.username"></ngx-datatable-column>
+                    <ngx-datatable-column name="Id Tag" prop="id_tag"></ngx-datatable-column>
+                    <ngx-datatable-column name="Card Serial" prop="Card.serial_no"></ngx-datatable-column>
+                    <ngx-datatable-column name="Date Created" prop="created_date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
+                    <ngx-datatable-column *ngIf="isRadXRole || isCompanyRole" name="Actions" prop="actions">
+                      <ng-template ngx-datatable-cell-template let-row="row">
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                          [routerLink]="['/assets/localList/delete', row.charger_local_list_id, id]"><i
+                            class="fas fa-trash-alt"></i></button>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <!-- Logs Tab -->
+            <tab heading="Logs">
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2 ">
+                    <!-- Search Input -->
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterLogsTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button type="button" class="btn-icon-clipboard" tooltip="Export Excel"
+                      (click)="exportLogsToExcel()" [disabled]="!tempLogs || tempLogs.length === 0">
+                      <i class="fas fa-file-excel"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries :    undefined" [rows]="tempLogs" [selected]="selected"
+                    [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+                    <!-- <ngx-datatable-column name="Log ID" prop="log_id"></ngx-datatable-column> -->
+                    <ngx-datatable-column name="No.">
+                      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                        {{ rowIndex + 1 }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Protocol" prop="protocol"></ngx-datatable-column>
+                    <ngx-datatable-column name="Status" prop="protocol_status"></ngx-datatable-column>
+                    <ngx-datatable-column name="Description" prop="protocol_description"></ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
+                    <ngx-datatable-column name="Time" prop="time"></ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <!-- Diagnostics Tab — Company Admin + RadX Admin -->
+            <tab *ngIf="isCompanyAdmin || isRadXAdmin" heading="Diagnostics" (selectTab)="onDiagnosticsTabSelect()">
+              <div class="dataTables_wrapper py-4">
+                <!-- Header: action + status -->
+                <div class="row align-items-center mb-3">
+                  <div class="col-md-6">
+                    <h6 class="mb-1">Diagnostics files te FTP</h6>
+                    <small class="text-muted">File-at e ngarkuara nga charger-i pas GetDiagnostics.</small>
+                  </div>
+                  <div class="col-md-6 text-md-right">
+                    <button class="btn btn-sm btn-outline-primary mr-2"
+                            (click)="loadDiagnosticsFiles()"
+                            [disabled]="diagnosticsLoading">
+                      <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-sm btn-primary"
+                            (click)="sendGetDiagnosticsFromTab()"
+                            [disabled]="diagnosticsSending">
+                      <i class="fas fa-file-medical-alt"></i>
+                      {{ diagnosticsSending ? 'Po dërgohet…' : 'Send GetDiagnostics' }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Status line -->
+                <div *ngIf="diagnosticsLastStatus" class="alert alert-info py-2 px-3 mb-3"
+                     style="font-size: 0.9em;">
+                  {{ diagnosticsLastStatus }}
+                </div>
+                <div *ngIf="diagnosticsError" class="alert alert-danger py-2 px-3 mb-3"
+                     style="font-size: 0.9em;">
+                  {{ diagnosticsError }}
+                </div>
+
+                <!-- Loading -->
+                <div *ngIf="diagnosticsLoading" class="text-center py-4">
+                  <i class="fas fa-spinner fa-spin"></i> Duke ngarkuar listën…
+                </div>
+
+                <!-- Empty -->
+                <div *ngIf="!diagnosticsLoading && diagnosticsFiles.length === 0 && !diagnosticsError"
+                     class="text-center py-4 text-muted">
+                  Asnjë diagnostikë e ruajtur për këtë charger.
+                </div>
+
+                <!-- Files table -->
+                <div *ngIf="!diagnosticsLoading && diagnosticsFiles.length > 0" class="scrollable-table">
+                  <table class="table table-sm table-hover">
+                    <thead>
+                      <tr>
+                        <th>Data / Ora</th>
+                        <th>File</th>
+                        <th>Madhësia</th>
+                        <th class="text-right">Veprime</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let f of diagnosticsFiles">
+                        <td style="white-space: nowrap;">{{ formatFileDate(f.modifiedAt) }}</td>
+                        <td style="font-family: monospace; font-size: 0.8em; word-break: break-all;">
+                          {{ f.name }}
+                        </td>
+                        <td>{{ formatFileSize(f.size) }}</td>
+                        <td class="text-right">
+                          <button class="btn btn-sm btn-primary"
+                                  (click)="downloadDiagnostic(f.name)">
+                            <i class="fas fa-download"></i> Shkarko
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </tab>
+
+            <!-- 🆕 Energy Report Tab — COMPANY_ADMIN + COMPANY_ANALYST -->
+            <tab *ngIf="isCompanyAdmin || isCompanyAnalyst" heading="Energy Report" (selectTab)="onEnergyReportTabSelect()">
+              <div class="p-3">
+                <!-- Mode selector -->
+                <div class="btn-group mb-3" role="group">
+                  <button type="button" class="btn btn-sm"
+                    [ngClass]="energyMode==='year' ? 'btn-primary' : 'btn-outline-primary'"
+                    (click)="onEnergyModeChange('year')">Yearly total</button>
+                  <button type="button" class="btn btn-sm"
+                    [ngClass]="energyMode==='month' ? 'btn-primary' : 'btn-outline-primary'"
+                    (click)="onEnergyModeChange('month')">Monthly total</button>
+                  <button type="button" class="btn btn-sm"
+                    [ngClass]="energyMode==='daily' ? 'btn-primary' : 'btn-outline-primary'"
+                    (click)="onEnergyModeChange('daily')">Daily breakdown</button>
+                  <button type="button" class="btn btn-sm"
+                    [ngClass]="energyMode==='day' ? 'btn-primary' : 'btn-outline-primary'"
+                    (click)="onEnergyModeChange('day')">Single day</button>
+                </div>
+
+                <!-- Date inputs -->
+                <div class="row mb-3">
+                  <ng-container *ngIf="energyMode === 'year'">
+                    <div class="col-auto">
+                      <label class="form-control-label d-block">Year</label>
+                      <select class="form-control form-control-sm"
+                        [(ngModel)]="energyYear" (change)="loadEnergyReport()">
+                        <option *ngFor="let y of energyYearOptions" [ngValue]="y">{{ y }}</option>
+                      </select>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="energyMode === 'month' || energyMode === 'daily'">
+                    <div class="col-auto">
+                      <label class="form-control-label d-block">Year</label>
+                      <select class="form-control form-control-sm"
+                        [(ngModel)]="energyYear" (change)="loadEnergyReport()">
+                        <option *ngFor="let y of energyYearOptions" [ngValue]="y">{{ y }}</option>
+                      </select>
+                    </div>
+                    <div class="col-auto">
+                      <label class="form-control-label d-block">Month</label>
+                      <select class="form-control form-control-sm"
+                        [(ngModel)]="energyMonth" (change)="loadEnergyReport()">
+                        <option *ngFor="let m of energyMonthOptions" [ngValue]="m.num">{{ m.name }}</option>
+                      </select>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="energyMode === 'day'">
+                    <div class="col-auto">
+                      <label class="form-control-label d-block">Date</label>
+                      <input type="date" class="form-control form-control-sm"
+                        [(ngModel)]="energyDate" (change)="loadEnergyReport()" />
+                    </div>
+                  </ng-container>
+                </div>
+
+                <!-- Total display card -->
+                <div class="card mb-3">
+                  <div class="card-body text-center py-4">
+                    <h6 class="text-muted mb-2 text-uppercase">Total Energy</h6>
+                    <h1 class="mb-0 display-3">
+                      <strong>{{ formatEnergy(energyTotal).value }}</strong>
+                      <small class="text-muted ml-2" style="font-size: 0.5em;">
+                        {{ formatEnergy(energyTotal).unit }}
+                      </small>
+                    </h1>
+                    <small class="text-muted d-block mt-2">
+                      Raw: {{ energyTotal | number:'1.2-2' }} kWh
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Chart + Table (in yearly total mode dhe daily breakdown mode) -->
+                <ng-container *ngIf="energyMode === 'daily' || energyMode === 'year'">
+                  <!-- 🆕 Export buttons -->
+                  <div class="d-flex justify-content-end mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-success mr-2"
+                      (click)="exportEnergyReportToExcel()"
+                      [disabled]="!energyBreakdown || energyBreakdown.length === 0">
+                      <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger"
+                      (click)="exportEnergyReportToPDF()"
+                      [disabled]="!energyBreakdown || energyBreakdown.length === 0">
+                      <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                  </div>
+
+                  <div class="card mb-3">
+                    <div class="card-header">
+                      <h6 class="mb-0">{{ energyMode === 'year' ? 'Monthly consumption' : 'Daily consumption' }}</h6>
+                    </div>
+                    <div class="card-body">
+                      <div style="position: relative; height: 320px;">
+                        <canvas id="energyChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header">
+                      <h6 class="mb-0">{{ energyMode === 'year' ? 'Breakdown per month' : 'Breakdown per day' }}</h6>
+                    </div>
+                    <div class="card-body p-0">
+                      <ngx-datatable class="bootstrap" [columnMode]="'force'"
+                        [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                        [rows]="energyBreakdown" [limit]="12">
+                        <ngx-datatable-column [name]="energyMode === 'year' ? 'Month' : 'Date'" prop="date">
+                          <ng-template ngx-datatable-cell-template let-value="value">
+                            {{ formatBucketLabel(value) }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="Energy" prop="total_energy">
+                          <ng-template ngx-datatable-cell-template let-value="value">
+                            {{ formatEnergy(value).value }} {{ formatEnergy(value).unit }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                      </ngx-datatable>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <div *ngIf="energyLoading" class="text-center text-muted mt-3">
+                  <i class="fas fa-spinner fa-spin"></i> Loading...
+                </div>
+              </div>
+            </tab>
+
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🆕 Modal: Change Buy Energy Price -->
+<div *ngIf="showRebillModal" class="modal fade show d-block" tabindex="-1" role="dialog"
+     style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-money-bill-wave text-warning mr-1"></i>
+          Change Buy Energy Price — retroaktive per sesionet e ketij chargeri
+        </h5>
+        <button type="button" class="close" (click)="closeRebillModal()" [disabled]="rebillLoading">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- ========== SUCCESS VIEW: shfaqet vetem kur veprimi ka perfunduar me sukses ========== -->
+        <ng-container *ngIf="rebillLastResult; else rebillFormView">
+          <div class="alert alert-success text-center mb-2" role="alert" style="font-size: 15px;">
+            <i class="fas fa-check-circle mr-2"></i>
+            <strong>Rezultati:</strong> u perditesuan <strong>{{ rebillLastResult.affectedCount }}</strong>
+            sesione (nga {{ rebillLastResult.totalCount }} te skanuara).
+          </div>
+          <div *ngIf="rebillLastResult.bursaSkipped > 0" class="alert alert-warning mb-0" style="font-size: 13px">
+            ⚠️ <strong>{{ rebillLastResult.bursaSkipped }}</strong> sesione u anashkaluan sepse mungonin
+            cmimet e bursa per ato (data, ora). Kontrollo <em>Rates → Bursa Prices</em> per t'i mbushur.
+          </div>
+        </ng-container>
+
+        <!-- ========== FORM VIEW: shfaqet perpara/gjate submit-it ========== -->
+        <ng-template #rebillFormView>
+          <!-- Info alert -->
+          <div class="alert alert-info" role="alert" style="font-size: 13px;">
+            Kjo do te perditesoje <strong>energy_tariff_price</strong> per çdo sesion te chargerit
+            <strong>{{ chargers[0]?.charger_name }}</strong> qe fillon brenda intervalit te dhene.
+            Ora e fillimit (<code>strted_time</code>) percakton çmimin qe aplikohet.
+          </div>
+
+          <!-- Toast per error mesazhet -->
+          <div *ngIf="rebillMessage" class="alert" [ngClass]="rebillMessageClass" role="alert">
+            {{ rebillMessage }}
+          </div>
+
+          <!-- Intervali datë-orë -->
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label form-control-label" for="rebillStart">Start (nga)</label>
+            <div class="col-md-9">
+              <input id="rebillStart" type="datetime-local" class="form-control"
+                     [(ngModel)]="rebillStartDatetime" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label form-control-label" for="rebillEnd">End (deri ne)</label>
+            <div class="col-md-9">
+              <div class="d-flex align-items-center" style="gap: 12px;">
+                <input id="rebillEnd" type="datetime-local" class="form-control"
+                       [(ngModel)]="rebillEndDatetime" [disabled]="rebillEndIsNow" />
+                <label class="mb-0" style="white-space: nowrap;">
+                  <input type="checkbox" [(ngModel)]="rebillEndIsNow" /> Deri tani (Now)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode: rate ekzistuese vs custom vs bursa -->
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label form-control-label">Rate</label>
+            <div class="col-md-9">
+              <div class="d-flex flex-wrap align-items-center" style="gap: 20px;">
+                <label class="mb-0">
+                  <input type="radio" name="rebillMode" value="rate" [(ngModel)]="rebillMode" /> Zgjidh rate ekzistuese
+                </label>
+                <label class="mb-0">
+                  <input type="radio" name="rebillMode" value="custom" [(ngModel)]="rebillMode" /> Custom (24 çmime per çdo ore)
+                </label>
+                <label class="mb-0">
+                  <input type="radio" name="rebillMode" value="bursa" [(ngModel)]="rebillMode" /> 🌊 Bursa (per cdo sesion, cmimi i orës nga ALPEX)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 🆕 Bursa info -->
+          <div *ngIf="rebillMode === 'bursa'" class="alert alert-info mt-2" style="font-size: 12px">
+            Per cdo sesion ne interval, sistemi do te lexoje <strong>bursa_hourly_price</strong> per
+            (data, ora) dhe do te vendose <code>energy_tariff_price = buy_price_all_kwh</code>.
+            <br />
+            <strong>Kujdes:</strong> nese ndonje dite ose ore s'ka te dhena ne <em>Rates → Bursa Prices</em>,
+            ai sesion nuk perditesohet (mbetet me cmimin e vjeter). Sigurohu qe kalendari i bursa eshte
+            i mbushur per intervalin qe ke zgjedhur.
+          </div>
+
+          <!-- Dropdown rate ekzistuese -->
+          <div *ngIf="rebillMode === 'rate'" class="form-group row">
+            <label class="col-md-3 col-form-label form-control-label" for="rebillRateId">Rate</label>
+            <div class="col-md-9">
+              <select id="rebillRateId" class="form-control" [(ngModel)]="rebillSelectedRateId">
+                <option [ngValue]="null" disabled>Zgjidh rate</option>
+                <option *ngFor="let r of rebillAvailableRates" [ngValue]="r.rate_id">
+                  {{ r.rate_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Custom hourly prices (24 fusha) -->
+          <div *ngIf="rebillMode === 'custom'" class="form-group">
+            <label class="form-control-label">Custom çmime (Lek/kWh, pa TVSH) per çdo fashe orare</label>
+            <div class="row">
+              <div *ngFor="let h of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]"
+                   class="col-md-2 col-sm-3 col-4 mb-2">
+                <label style="font-size: 11px; margin-bottom: 2px;">
+                  {{ (h < 10 ? '0' + h : h) + ':00 - ' + (h === 23 ? '00' : (h + 1 < 10 ? '0' + (h + 1) : h + 1)) + ':00' }}
+                </label>
+                <input type="number" min="0" step="0.01" class="form-control form-control-sm"
+                       [(ngModel)]="rebillCustomHourly[h]" />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="modal-footer">
+        <!-- ========== SUCCESS FOOTER: vetem butoni OK qe mbyll modalin ========== -->
+        <ng-container *ngIf="rebillLastResult; else rebillFormFooter">
+          <button type="button" class="btn btn-success" (click)="closeRebillModal()">
+            <i class="fas fa-check"></i> OK
+          </button>
+        </ng-container>
+        <!-- ========== FORM FOOTER: Anulo + Submit ========== -->
+        <ng-template #rebillFormFooter>
+          <button type="button" class="btn btn-secondary" (click)="closeRebillModal()" [disabled]="rebillLoading">
+            Anulo
+          </button>
+          <button type="button" class="btn btn-warning" (click)="onRebillSubmitClick()" [disabled]="rebillLoading">
+            <i class="fas fa-money-bill-wave"></i> Submit
+          </button>
+        </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- 🆕 Dialog konfirmimi para submit-it aktual -->
+<div *ngIf="showRebillConfirm" class="modal fade show d-block" tabindex="-1" role="dialog"
+     style="background-color: rgba(0,0,0,0.6); z-index: 1060;">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-exclamation-triangle text-warning mr-1"></i>
+          Konfirmo ndryshimin retroaktive
+        </h5>
+      </div>
+      <div class="modal-body">
+        <p>Do te perditesosh <strong>energy_tariff_price</strong> per te gjitha sesionet e chargerit
+          <strong>{{ chargers[0]?.charger_name }}</strong> qe fillojne midis:</p>
+        <ul>
+          <li><strong>Start:</strong> {{ rebillStartDatetime }}</li>
+          <li><strong>End:</strong> {{ rebillEndIsNow ? 'Now (momenti aktual)' : rebillEndDatetime }}</li>
+          <li><strong>Rate:</strong>
+            <span *ngIf="rebillMode === 'rate'">Ekzistuese (ID: {{ rebillSelectedRateId }})</span>
+            <span *ngIf="rebillMode === 'custom'">Custom (24 çmime)</span>
+            <span *ngIf="rebillMode === 'bursa'">🌊 Bursa (cmimi per (data, ora) nga ALPEX)</span>
+          </li>
+        </ul>
+        <p class="text-danger mb-0"><strong>Ky veprim eshte i pakthyeshem.</strong> Konfirmoni per te vazhduar.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelRebillConfirm()" [disabled]="rebillLoading">
+          Anulo
+        </button>
+        <button type="button" class="btn btn-warning" (click)="confirmRebillSubmit()" [disabled]="rebillLoading">
+          <i *ngIf="rebillLoading" class="fas fa-spinner fa-spin mr-1"></i>
+          Konfirmo dhe ekzekuto
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

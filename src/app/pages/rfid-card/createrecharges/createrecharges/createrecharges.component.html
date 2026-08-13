@@ -1,0 +1,93 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Recharge RFID Card</h3>
+                </div>
+                <div class="card-body">
+                    <form *ngIf="forAdminRecharge" [formGroup]="rechargeForm" (ngSubmit)="onSubmitAdmin()">
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" formControlName="amount" class="form-control" />
+                            <div *ngIf="rechargeForm.get('amount')?.invalid && rechargeForm.get('amount')?.touched" class="text-danger">
+                                Amount is required and must be a valid number.
+                              </div>
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label for="source">Source (Optional)</label>
+                            <select id="source" formControlName="source" class="form-control">
+                                <option *ngFor="let method of paymentMethods" [value]="method.id">{{ method.brand }} {{
+                                    method.last4 }}</option>
+                            </select>
+                        </div> -->
+
+                        <!-- <div class="form-group">
+                            <label for="promoCode">Promo Code</label>
+                            <input type="text" id="promoCode" formControlName="promoCode" class="form-control"
+                                placeholder="Enter promo code" />
+                        </div> -->
+
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <form *ngIf="!forAdminRecharge" [formGroup]="rechargeForm" (ngSubmit)="onSubmit()">
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" formControlName="amount" class="form-control" />
+                            <div *ngIf="rechargeForm.get('amount')?.invalid && rechargeForm.get('amount')?.touched" class="text-danger">
+                                Amount is required and must be a valid number.
+                              </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="total_amount">Total Amount</label>
+                            <input type="number" class="form-control" [value]="totalAmount" readonly />
+                        </div>
+                        <!-- <div class="form-group">
+                            <label for="source">Source (Optional)</label>
+                            <select id="source" formControlName="source" class="form-control">
+                                <option *ngFor="let method of paymentMethods" [value]="method.id">{{ method.brand }} {{
+                                    method.last4 }}</option>
+                            </select>
+                        </div> -->
+
+                        <!-- <div class="form-group">
+                            <label for="promoCode">Promo Code</label>
+                            <input type="text" id="promoCode" formControlName="promoCode" class="form-control"
+                                placeholder="Enter promo code" />
+                        </div> -->
+
+                        <div class="mt-3">
+                            <small>
+                                <strong> 💡 *Note: a small 2.5% commission is charged when adding funds to your account.</strong>
+                            </small>
+                        </div>
+
+                        <div *ngIf="rechargeForm.get('amount')?.valid" class="mt-3">
+                            <p style="font-size: 1.1rem; font-weight: 500;">
+                                💡 Total amount <strong>{{ this.totalAmount}}</strong> is the value you should pay to add in your wallet the recharge of
+                                <strong>{{ rechargeForm.get('amount')?.value }}</strong>.
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

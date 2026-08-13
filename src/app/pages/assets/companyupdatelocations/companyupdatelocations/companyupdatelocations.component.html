@@ -1,0 +1,134 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Update Location</h3>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="locationForm" (ngSubmit)="onSubmit()">
+                        <!-- Location Name -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="locationName">Location
+                                Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="locationName" formControlName="locationName" required />
+                                <small
+                                    *ngIf="locationForm.get('locationName').invalid && (locationForm.get('locationName').touched || locationForm.get('locationName').dirty)"
+                                    class="text-danger">
+                                    Location Name is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Partner ID -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="partnerId">Partner</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="partnerId" formControlName="partnerId">
+                                    <option [value]="null">Select Partner</option>
+                                    <option *ngFor="let partner of partners" [value]="partner.partner_id">{{
+                                        partner.partner_name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="address">Address</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="address" formControlName="address" required />
+                                <small
+                                    *ngIf="locationForm.get('address').invalid && (locationForm.get('address').touched || locationForm.get('address').dirty)"
+                                    class="text-danger">
+                                    Address is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- City -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="city">City</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="city" formControlName="city" required />
+                                <small
+                                    *ngIf="locationForm.get('city').invalid && (locationForm.get('city').touched || locationForm.get('city').dirty)"
+                                    class="text-danger">
+                                    City is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Country -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="country">Country</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="country" formControlName="country" required />
+                                <small
+                                    *ngIf="locationForm.get('country').invalid && (locationForm.get('country').touched || locationForm.get('country').dirty)"
+                                    class="text-danger">
+                                    Country is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Latitude -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="latitude">Latitude</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="latitude" formControlName="latitude" required />
+                                <small
+                                    *ngIf="locationForm.get('latitude').invalid && (locationForm.get('latitude').touched || locationForm.get('latitude').dirty)"
+                                    class="text-danger">
+                                    Latitude is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Longitude -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="longitude">Longitude</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="longitude" formControlName="longitude" required />
+                                <small
+                                    *ngIf="locationForm.get('longitude').invalid && (locationForm.get('longitude').touched || locationForm.get('longitude').dirty)"
+                                    class="text-danger">
+                                    Longitude is required.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- 🆕 Vendor Number OSHEE — vetem COMPANY_ADMIN + COMPANY_ANALYST i shohin/redaktojne. -->
+                        <div class="form-group row" *ngIf="isCompanyAdmin || isCompanyAnalyst">
+                            <label class="col-md-2 col-form-label form-control-label" for="vendor_number_oshee">Vendor Number OSHEE</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="vendor_number_oshee"
+                                    formControlName="vendor_number_oshee" placeholder="Vendor number OSHEE" />
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Update
+                                    Location</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,179 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="card-header">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h3 class="mb-0">Rates</h3>
+                <!-- todo : Adding the function for counting the new entries-->
+                <!-- <p *ngIf="isRadXRole" class="text-sm mb-0">✓ {{ currentMonthCountEntry }} New Rate this month</p> -->
+              </div>
+              <div class="btn_new">
+                <!-- 🆕 Create New Rate: hequr gate-i !isCompanyAnalyst — COMPANY_ANALYST tashme mund te krijoje rate te reja. -->
+                <button class="btn-icon-clipboard" tooltip="Create New Rate">
+                  <a [routerLink]="['/rates/radxcreaterate']">
+                    <i class="fas fa-plus-square"></i>
+                  </a>
+                </button>
+                <button (click)="exportToPDF()" type="button" class="btn-icon-clipboard " tooltip="Export PDF">
+                  <i class="fas fa-file-pdf "></i>
+                </button>
+                <button (click)="exportToExcel()" type="button" class="btn-icon-clipboard " tooltip="Export Excel">
+                  <i class="fas fa-file-excel"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 🆕 Tabs per te ndare rate-t sipas tipit (default = Sale) + numeruesit -->
+          <ul class="nav nav-tabs px-4 pt-2" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link" role="tab" style="cursor:pointer;"
+                [class.active]="activeRateTab === 'sale'"
+                (click)="setRateTab('sale')">
+                Sale Rates <span class="badge badge-pill badge-secondary ml-1">{{ saleCount }}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" role="tab" style="cursor:pointer;"
+                [class.active]="activeRateTab === 'purchase'"
+                (click)="setRateTab('purchase')">
+                Purchase Rates <span class="badge badge-pill badge-secondary ml-1">{{ purchaseCount }}</span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="dataTables_wrapper py-4">
+            <div class="row">
+              <div class="col-auto">
+                <div class="dataTables_length" id="datatable_length">
+                  <label>
+                    <span *ngIf="!isSmallScreen">Show</span>
+                    <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                      (change)="entriesChange($event)">
+                      <option value="10" [selected]="entries == 10">10</option>
+                      <option value="25" [selected]="entries == 25">25</option>
+                      <option value="50" [selected]="entries == 50">50</option>
+                      <option value="-1" [selected]="entries == -1">All</option>
+                    </select>
+                    <span *ngIf="!isSmallScreen">entries</span>
+                  </label>
+                </div>
+              </div>
+              <div class="col ml--2 custom-flex-end-center">
+                <!-- Search Input -->
+                <div id="datatable_filter" class="dataTables_filter">
+                  <label>
+                    <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                      placeholder="Search records" aria-controls="datatable" (input)="filterTable($event)" />
+                    <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                  </label>
+                </div>
+                <div *ngIf="isRadXRole" id="datatable_filter" class="dataTables_filter">
+                  <!-- Filter Dropdown Button -->
+                  <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button"
+                      class="btn btn-outline-primary dropdown-toggle" aria-controls="dropdown-basic">
+                      <span *ngIf="!isSmallScreen">Filters</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right p-3" role="menu"
+                      aria-labelledby="button-basic">
+                      <!-- Dropdown for Company -->
+                      <li role="menuitem" *ngIf="isRadXRole">
+                        <label for="companySelect" class="dropdown-item">Company</label>
+                        <select id="companySelect" class="form-control" (change)="filterByCompany($event.target.value)"
+                          (click)="$event.stopPropagation()">
+                          <option value="">All Companies</option>
+                          <option *ngFor="let company of companies" [value]="company.company_id">{{ company.company_name
+                            }}</option>
+                        </select>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+              [rows]="temp" [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+              (select)="onSelect($event)">
+              <ngx-datatable-column name="Rate Name" prop="rate_name"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Created By" prop="madeBy"></ngx-datatable-column>
+              <ngx-datatable-column *ngIf="!isSmallScreen" name="Modified By" prop="modifiedBy"></ngx-datatable-column>
+              <ngx-datatable-column name="Actions" prop="actions">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                    [routerLink]="['/rates/radxupdaterate/', row.rate_id]"><i class="fas fa-edit"></i></button>
+                  <button type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                    [routerLink]="['/rates/radxdeleterate/', row.rate_id]">
+                    <i class="fas fa-trash-alt"></i></button>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable> -->
+            <div class="scrollable-table">
+              <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [limit]="entries != -1 ? entries : undefined" [rows]="temp" [selected]="selected"
+                [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+
+                <ngx-datatable-column name="Rate Name" prop="rate_name">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row?.rate_name }}
+                    <span *ngIf="row?.is_default === true || row?.is_default === 1"
+                          style="display:inline-block;background:#28a745;color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;">DEFAULT</span>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Default" prop="is_default">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <i *ngIf="row?.is_default === true || row?.is_default === 1"
+                       class="fas fa-check-circle" style="color:#28a745;font-size:16px;"></i>
+                    <span *ngIf="!(row?.is_default === true || row?.is_default === 1)" style="color:#aaa;">-</span>
+                  </ng-template>
+                </ngx-datatable-column>
+                <!-- 🆕 Category kolona: shfaqet vetem ne tab-in Purchase -->
+                <ngx-datatable-column *ngIf="activeRateTab === 'purchase'" name="Category" prop="purchase_category">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <span *ngIf="row?.purchase_category" class="badge badge-info">{{ row.purchase_category }}</span>
+                    <span *ngIf="!row?.purchase_category" style="color:#aaa;">-</span>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Created By" prop="madeBy"></ngx-datatable-column>
+                <ngx-datatable-column name="Modified By" prop="modifiedBy"></ngx-datatable-column>
+
+                <!-- 🆕 Actions column: hequr gate-i !isCompanyAnalyst — COMPANY_ANALYST tashme mund te editoje/fshije. -->
+                <ngx-datatable-column name="Actions" prop="actions">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                      [routerLink]="['/rates/radxupdaterate/', row.rate_id]">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                      [routerLink]="['/rates/radxdeleterate/', row.rate_id]">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

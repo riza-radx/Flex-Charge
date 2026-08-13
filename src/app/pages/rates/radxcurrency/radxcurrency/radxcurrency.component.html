@@ -1,0 +1,177 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class=" container-fluid">
+    <div class=" header-body">
+      <div class=" row align-items-center py-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class=" container-fluid mt--6">
+  <div class=" row">
+    <div class=" col">
+      <div class="card">
+        <div class="card-body">
+
+          <!-- 🆕 Tabs: Currencies (default) + BSH Exchange Rates -->
+          <tabset [justified]="false">
+
+            <!-- ─────────── Tab 1: Currencies ─────────── -->
+            <tab heading="Currencies">
+              <div class="col-12 mt-3">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <div>
+                    <h3 class="mb-0">Currencies</h3>
+                  </div>
+                  <div class="btn-group">
+                    <button *ngIf="isRadXAdmin" type="button" class="btn btn-icon-clipboard btn-outline-primary"
+                      tooltip="Add New Currency">
+                      <a [routerLink]="['/rates/radxcreatecurrency']">
+                        <i class="fas fa-plus-square"></i>
+                      </a>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Show</span>
+                        <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2  custom-flex-end-center">
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search" class="form-control form-control-sm"
+                          placeholder="Search records" aria-controls="datatable" (keyup)="filterTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search" (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="scrollable-table">
+                  <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="entries != -1 ? entries : undefined"
+                    [rows]="temp" [selected]="selected" [selectionType]="'multiClick'" (activate)="onActivate($event)"
+                    (select)="onSelect($event)">
+
+                    <ngx-datatable-column name="No.">
+                      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                        {{ rowIndex + 1 }}
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Currency Name" prop="currency_name"></ngx-datatable-column>
+
+                    <ngx-datatable-column *ngIf="isRadXAdmin" name="Actions" prop="actions">
+                      <ng-template ngx-datatable-cell-template let-row="row">
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                          [routerLink]="['/rates/radxupdatecurrency/', row.currency_id]"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-sm btn-neutral" tooltip="Delete"
+                          [routerLink]="['/rates/radxdeletecurrency/', row.currency_id]"><i
+                            class="fas fa-trash-alt"></i></button>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+            <!-- ─────────── Tab 2: BSH Exchange Rates (historik) ─────────── -->
+            <tab heading="BSH Exchange Rates">
+              <div class="col-12 mt-3">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <div>
+                    <h3 class="mb-0">Exchange Rates — Banka e Shqipërisë</h3>
+                    <p class="text-sm mb-0 text-muted">Kursi ditor merret automatikisht cdo dite ne 13:00 nga bankofalbania.org.</p>
+                  </div>
+                  <div class="btn-group">
+                    <button *ngIf="isRadXAdmin || isRadXModerator" type="button"
+                      class="btn btn-icon-clipboard btn-outline-primary"
+                      tooltip="Fetch Now nga BSH"
+                      (click)="fetchExchangeNow()">
+                      <i class="fas fa-sync-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="dataTables_wrapper py-4">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length">
+                      <label>
+                        <span *ngIf="!isSmallScreen">Filtro valute</span>
+                        <select class="form-control form-control-sm" [(ngModel)]="selectedValute"
+                          (change)="loadExchangeRates()">
+                          <option value="">Te gjitha</option>
+                          <option value="EUR">EUR</option>
+                          <option value="USD">USD</option>
+                          <option value="GBP">GBP</option>
+                          <option value="CHF">CHF</option>
+                          <option value="JPY">JPY</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="scrollable-table">
+                  <ngx-datatable class="bootstrap selection-cell" [columnMode]="'force'"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="20"
+                    [rows]="exchangeRatesTemp">
+
+                    <ngx-datatable-column name="#" [width]="60">
+                      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex">
+                        {{ rowIndex + 1 }}
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Valute" prop="valute" [width]="100"></ngx-datatable-column>
+
+                    <ngx-datatable-column name="Exchange Rate" prop="exchange_rate">
+                      <ng-template ngx-datatable-cell-template let-value="value">
+                        <strong>{{ value }}</strong>
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Date" prop="date">
+                      <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value | date:'yyyy-MM-dd' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Created At" prop="created_at">
+                      <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value | date:'yyyy-MM-dd HH:mm' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Updated At" prop="updated_at">
+                      <ng-template ngx-datatable-cell-template let-value="value">
+                        {{ value | date:'yyyy-MM-dd HH:mm' }}
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+              </div>
+            </tab>
+
+          </tabset>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

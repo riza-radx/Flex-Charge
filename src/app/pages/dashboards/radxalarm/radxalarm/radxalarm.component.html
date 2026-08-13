@@ -1,0 +1,63 @@
+
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-5 text-right"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="dataTables_wrapper py-4">
+          <div class="card-header">
+            <h3 class="mb-0">Alarms</h3>
+            <!-- <p *ngIf="isRadXRole" class="text-sm mb-0">
+              ✓ {{ alarmCountCurrentMonth }} New Alarms this month
+            </p> -->
+          </div>
+          <div class="table-responsive">
+            <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+              [rowHeight]="'auto'" [footerHeight]="50"   [limit]="10" [rows]="rows" [selected]="selected"
+              [selectionType]="'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)">
+              <ngx-datatable-column [sortable]="false">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <div class="card-body" style="padding: 5px; font-size: 12px; line-height: 1.2;">
+                    <h4 class="card-title text-truncate-header">
+                      <i class="fas fa-charging-station text-primary"></i>
+                      Charger:
+                      <span class="font-weight-normal">{{ row.Charger.charger_name }}</span>
+                    </h4>
+                    <div class="row" style="margin: 0;">
+                      <div class="col-md-3 text-truncate">
+                        <i class="fa fa-plug text-primary"></i> Connector:
+                        <span>{{ row.Connector.connector_name }}</span>
+                      </div>
+                      <div class="col-md-3 text-truncate">
+                        <i class="fa fa-bug text-primary"></i> Error Code:
+                        <span class="text-muted">{{ row.error_code }}</span>
+                      </div>
+                      <div class="col-md-3 text-truncate">
+                        <i class="fa fa-circle-notch text-primary"></i> Status:
+                        <span class="text-muted">{{ row.status }}</span>
+                      </div>
+                      <div class="col-md-3 text-truncate">
+                        <i class="fa fa-calendar-alt text-primary"></i> Alarm
+                        Time:
+                        <span class="text-muted">{{ row.alarm_time }}&nbsp;{{ row.created_time }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

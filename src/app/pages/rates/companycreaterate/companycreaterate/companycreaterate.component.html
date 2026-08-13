@@ -1,0 +1,73 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h3 class="h2 text-white d-inline-block mb-0">Create Rate</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Rate</h3>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()">
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="name">Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="name" [(ngModel)]="rate.name" name="name" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="companyId">Company ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="companyId" [(ngModel)]="rate.companyId" name="companyId" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="defaultPrice">Default Price</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="defaultPrice" type="number" [(ngModel)]="rate.defaultPrice" name="defaultPrice" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="percentage">Percentage</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="percentage" type="number" [(ngModel)]="rate.percentage" name="percentage" required />
+                            </div>
+                        </div>
+
+                        <!-- 🆕 Set as Default — kur ka shume rate per kompani, ky perdoret si fallback -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="isDefault">Set as Default</label>
+                            <div class="col-md-10 d-flex align-items-center">
+                                <input class="form-check-input" id="isDefault" type="checkbox" [(ngModel)]="rate.isDefault" name="isDefault" style="margin-right:8px;" />
+                                <small class="text-muted">Nese check, ky rate perdoret kur user dhe charger nuk kane rate te dedikuar. Vetem 1 default per kompani (zgjedhja automatike ben unset te te tjereve).</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Create Rate</button>
+                            </div>
+                        </div>
+
+                        <div *ngIf="errorMessage" class="alert alert-danger">
+                            {{ errorMessage }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

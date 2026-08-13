@@ -1,0 +1,78 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class=" container-fluid">
+      <div class=" header-body">
+        <div class=" row align-items-center py-4">
+          <div class=" col-lg-6 col-7">
+            <h3 class=" h2 text-white d-inline-block mb-0">Notifications</h3>
+  
+          </div>
+  
+          <div class=" col-lg-6 col-5 text-right">
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="dataTables_wrapper py-4">
+            <div class="card-header">
+              <h3 class="mb-0">Notifications</h3>
+            </div>
+            <div class="table-responsive">
+              <ngx-datatable
+                id="notifications-section"
+                class="bootstrap selection-cell"
+                [columnMode]="'force'"
+                [rowHeight]="'auto'"
+                [footerHeight]="50"
+                [limit]="10"
+                [rows]="notifications"
+                [selectionType]="'none'"
+              >
+                <!-- Custom Column for Notifications -->
+                <ngx-datatable-column [sortable]="false">
+                  <ng-template let-notification="row" ngx-datatable-cell-template>
+                    <div class="card-body" style="padding: 5px; font-size: 12px; line-height: 1.2;">
+                      <div class="row align-items-center">
+                        <div class="col-auto">
+                          <a class="avatar rounded-circle" href="javascript:void(0)">
+                            <img
+                              alt="Notification Image"
+                              src="assets/img/stations/car-charging-station.jpg"
+                            />
+                          </a>
+                        </div>
+                        <div class="col-6">
+                          <h4 class="card-title text-truncate-header mb-0">
+                            <i class="fas fa-bell text-primary"></i>
+                            {{ notification.notification_type }}
+                          </h4>
+                          <p class="mb-0 text-sm text-muted">
+                            {{ notification.notification_description }}
+                          </p>
+                        </div>
+                        <div class="col-5 text-right">
+                          <small class="text-muted">
+                            {{ notification.created_date }} {{ notification.created_time }}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  

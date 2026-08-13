@@ -1,0 +1,153 @@
+<div class="header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Transfer Money</h3>
+                </div>
+                <div class="card-body">
+
+                    <!-- Permbledhje balancash -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:#fdf7f8;border:1px solid #eed7da;">
+                                <div class="text-muted small">Your wallet ({{ userName || '—' }})</div>
+                                <div style="font-size:1.4rem;font-weight:600;">
+                                    {{ adminBalance | number:'1.2-2' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:#f3f6f9;border:1px solid #d8e0e8;">
+                                <div class="text-muted small">User ({{ userUserName || '—' }})</div>
+                                <div style="font-size:1.4rem;font-weight:600;">
+                                    {{ userBalance | number:'1.2-2' }}
+                                </div>
+                                <div *ngIf="userDebitBalance > 0" class="small mt-1" style="color:#c0392b;">
+                                    Debt: {{ userDebitBalance | number:'1.2-2' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form (ngSubmit)="submitTransfer()" #transferForm="ngForm">
+
+                        <!-- Drejtimi i transferimit -->
+                        <div class="form-group">
+                            <label class="d-block mb-2">Transfer direction</label>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="dir_to_user" name="direction" class="custom-control-input"
+                                    [checked]="direction === 'to_user'" (change)="onDirectionChange('to_user')" />
+                                <label class="custom-control-label" for="dir_to_user">
+                                    Send to user <span class="text-muted">(admin → user)</span>
+                                </label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-3">
+                                <input type="radio" id="dir_from_user" name="direction" class="custom-control-input"
+                                    [checked]="direction === 'from_user'" (change)="onDirectionChange('from_user')" />
+                                <label class="custom-control-label" for="dir_from_user">
+                                    Recall from user <span class="text-muted">(user → admin)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Shuma -->
+                        <div class="form-group mt-3">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" class="form-control" [(ngModel)]="transferAmount"
+                                name="amount" [max]="maxAmount" min="0.01" step="0.01" required #amount="ngModel" />
+                            <small class="text-muted">
+                                Max:
+                                <ng-container *ngIf="direction === 'to_user'">
+                                    your balance ({{ adminBalance | number:'1.2-2' }})
+                                </ng-container>
+                                <ng-container *ngIf="direction === 'from_user'">
+                                    user balance ({{ userBalance | number:'1.2-2' }})
+                                </ng-container>
+                            </small>
+                            <div *ngIf="amount.invalid && amount.touched" class="text-danger mt-1">
+                                Please enter a valid amount within the allowed maximum.
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div *ngIf="transferAmount && transferAmount > 0"
+                             class="p-3 rounded mt-3"
+                             [style.background]="isPreviewInvalid ? '#fdecea' : '#fdf0f2'"
+                             [style.border]="isPreviewInvalid ? '1px solid #f5c6cb' : '1px solid #eec9ce'">
+                            <div class="font-weight-bold mb-2">Preview</div>
+                            <div>
+                                <span class="text-muted">Your wallet:</span>
+                                <strong>{{ adminBalance | number:'1.2-2' }}</strong>
+                                &nbsp;→&nbsp;
+                                <strong [class.text-danger]="adminPreviewBalance < 0">
+                                    {{ adminPreviewBalance | number:'1.2-2' }}
+                                </strong>
+                            </div>
+
+                            <!-- Debit settlement (vetem per to_user kur ka borxh) -->
+                            <div *ngIf="direction === 'to_user' && userDebitBalance > 0" class="mt-2 pt-2"
+                                 style="border-top:1px dashed #e0bfc4;">
+                                <div>
+                                    <span class="text-muted">User debt:</span>
+                                    <strong>{{ userDebitBalance | number:'1.2-2' }}</strong>
+                                    &nbsp;→&nbsp;
+                                    <strong [style.color]="userPreviewDebitBalance === 0 ? '#198754' : '#c0392b'">
+                                        {{ userPreviewDebitBalance | number:'1.2-2' }}
+                                    </strong>
+                                    <span *ngIf="debitSettlementAmount > 0" class="text-muted small">
+                                        (paid: {{ debitSettlementAmount | number:'1.2-2' }})
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="mt-2">
+                                <span class="text-muted">User balance:</span>
+                                <strong>{{ userBalance | number:'1.2-2' }}</strong>
+                                &nbsp;→&nbsp;
+                                <strong [class.text-danger]="userPreviewBalance < 0">
+                                    {{ userPreviewBalance | number:'1.2-2' }}
+                                </strong>
+                                <span *ngIf="direction === 'to_user' && userDebitBalance > 0 && balanceCreditAmount > 0" class="text-muted small">
+                                    (+{{ balanceCreditAmount | number:'1.2-2' }} pas pageses se debit-it)
+                                </span>
+                                <span *ngIf="direction === 'to_user' && userDebitBalance > 0 && balanceCreditAmount === 0" class="text-muted small">
+                                    (e gjithe shuma shkoi te debit settlement)
+                                </span>
+                            </div>
+
+                            <div class="text-muted small mt-2">
+                                Totali brenda grupit nuk ndryshon — vetëm shpërndarja midis adminit dhe user-it.
+                            </div>
+                        </div>
+
+                        <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+                        <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+
+                        <button type="submit" class="btn btn-primary mt-3"
+                                [disabled]="transferForm.invalid || isPreviewInvalid || isLoading || !allowTransfer">
+                            <span *ngIf="isLoading">Processing…</span>
+                            <span *ngIf="!isLoading">
+                                <ng-container *ngIf="direction === 'to_user'">Send</ng-container>
+                                <ng-container *ngIf="direction === 'from_user'">Recall</ng-container>
+                            </span>
+                        </button>
+
+                        <div *ngIf="!allowTransfer" class="text-muted small mt-2">
+                            You don't have permission to transfer funds.
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

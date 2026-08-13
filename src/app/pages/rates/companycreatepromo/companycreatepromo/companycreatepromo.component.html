@@ -1,0 +1,86 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h3 class="h2 text-white d-inline-block mb-0">Create Promo</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Promo</h3>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()">
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="promoName">Promo Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="promoName" [(ngModel)]="promo.promoName" name="promoName" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="promoCode">Promo Code</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="promoCode" [(ngModel)]="promo.promoCode" name="promoCode" required />
+                            </div>
+                        </div>
+
+                        <!-- Checkbox to toggle between amount and percentage -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="useAmount">Use Amount</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="useAmount" [(ngModel)]="useAmount" name="useAmount" (change)="toggleUseAmount()" />
+                            </div>
+                        </div>
+
+                        <!-- Percentage input field (disabled if useAmount is checked) -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="percentage">Percentage</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="percentage" type="number" [(ngModel)]="promo.percentage" name="percentage" 
+                                       [disabled]="useAmount" required />
+                            </div>
+                        </div>
+
+                        <!-- Amount input field (disabled if useAmount is not checked) -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="amount">Amount</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="amount" type="number" [(ngModel)]="promo.amount" name="amount" 
+                                       [disabled]="!useAmount" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="companyId">Company ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" id="companyId" [(ngModel)]="promo.companyId" name="companyId" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="isEnabled">Is Enabled</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" id="isEnabled" [(ngModel)]="promo.isEnabled" name="isEnabled" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Create Promo</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

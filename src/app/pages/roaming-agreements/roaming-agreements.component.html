@@ -1,0 +1,134 @@
+<div class="header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h3 class="h2 text-white d-inline-block mb-0">Roaming Agreements</h3>
+          <p class="text-white mb-0" style="opacity:0.85;font-size:13px;">Marreveshjet aktive ku kompania juaj eshte pjesetare (view-only)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+          <div *ngIf="!canSee" class="alert alert-warning">
+            Vetem COMPANY_ADMIN dhe COMPANY_ANALYST mund te aksesojne kete faqe.
+          </div>
+
+          <div *ngIf="canSee && loading && agreements.length === 0" class="text-center py-4">
+            <em>Po ngarkohet...</em>
+          </div>
+
+          <div *ngIf="canSee && !loading && agreements.length === 0" class="text-center py-4 text-muted">
+            <p>Asnje marreveshje aktive per kompanine tuaj.</p>
+            <p style="font-size:13px;">Per te lidhur nje marreveshje te re me nje kompani tjeter, kontaktoni RadX team.</p>
+          </div>
+
+          <div *ngIf="canSee && agreements.length > 0" class="table-responsive">
+            <table class="table table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Partner</th>
+                  <th>Periudha</th>
+                  <th class="text-center">Status</th>
+                  <th>Settlement</th>
+                  <th class="text-right">Veprime</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of agreements; let i = index" [class.text-muted]="!a.active">
+                  <td>{{ i + 1 }}</td>
+                  <td><strong>{{ a.name }}</strong></td>
+                  <td>{{ partnerCompanyName(a) }}</td>
+                  <td><small>{{ a.valid_from }} → {{ a.valid_to || '∞' }}</small></td>
+                  <td class="text-center">
+                    <span *ngIf="a.active" class="badge badge-success">Active</span>
+                    <span *ngIf="!a.active" class="badge badge-secondary">Inactive</span>
+                  </td>
+                  <td><small>{{ a.settlement_period }}</small></td>
+                  <td class="text-right">
+                    <button class="btn btn-sm btn-outline-primary" (click)="openDetails(a)">View Details</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───── Modal: View Details ───── -->
+<div *ngIf="showModal && selectedAgreement" class="modal-backdrop" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1040;"></div>
+<div *ngIf="showModal && selectedAgreement" class="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:1050;padding:20px;">
+  <div class="modal-content" style="background:#fff;border-radius:8px;width:100%;max-width:800px;max-height:95vh;overflow-y:auto;">
+
+    <div class="modal-header" style="padding:16px 24px;border-bottom:1px solid #e9ecef;display:flex;justify-content:space-between;align-items:center;">
+      <h4 class="mb-0">{{ selectedAgreement.name }}</h4>
+      <button class="close" (click)="closeModal()" style="background:none;border:none;font-size:24px;">×</button>
+    </div>
+
+    <div class="modal-body" style="padding:24px;">
+      <!-- Bazike -->
+      <h5 style="border-bottom:1px solid #e9ecef;padding-bottom:8px;">📋 Te dhenat baze</h5>
+      <table style="width:100%;font-size:13px;margin-bottom:24px;">
+        <tr><td style="padding:4px 12px;"><strong>Status:</strong></td><td>
+          <span *ngIf="selectedAgreement.active" class="badge badge-success">Active</span>
+          <span *ngIf="!selectedAgreement.active" class="badge badge-secondary">Inactive</span>
+        </td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Partner kompani:</strong></td><td>{{ partnerCompanyName(selectedAgreement) }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Periudha:</strong></td><td>{{ selectedAgreement.valid_from }} → {{ selectedAgreement.valid_to || '∞' }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Settlement Period:</strong></td><td>{{ selectedAgreement.settlement_period }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Allow PAYG:</strong></td><td>{{ selectedAgreement.allow_pay_as_you_go ? 'Po' : 'Jo' }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Only Card:</strong></td><td>{{ selectedAgreement.only_card ? 'Po (vetem RFID)' : 'Jo (Remote Start lejohet)' }}</td></tr>
+      </table>
+
+      <!-- Out perspektive (klientet tane) -->
+      <h5 style="border-bottom:1px solid #e9ecef;padding-bottom:8px;color:#1976d2;">📤 {{ myPerspectiveOut(selectedAgreement)?.label }}</h5>
+      <table style="width:100%;font-size:13px;margin-bottom:24px;" *ngIf="myPerspectiveOut(selectedAgreement) as out">
+        <tr><td style="padding:4px 12px;"><strong>Status:</strong></td><td>{{ out.terms.active ? '✅ Aktiv' : '⏸️ Pause' }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Pricing:</strong></td><td>{{ out.terms.pricing_mode }}</td></tr>
+        <tr *ngIf="out.terms.pricing_mode === 'override'"><td style="padding:4px 12px;"><strong>Cmim override:</strong></td><td>{{ out.terms.price_override_kwh }} ALL/kWh</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Settlement:</strong></td><td>{{ out.terms.settlement_mode }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Home fee:</strong></td><td>{{ out.terms.home_fee_pct }}{{ out.terms.settlement_mode === 'home_fee_pct' ? '%' : ' ALL fixed' }}</td></tr>
+        <tr *ngIf="out.terms.min_fee_per_session"><td style="padding:4px 12px;"><strong>Min fee/session:</strong></td><td>{{ out.terms.min_fee_per_session }} ALL</td></tr>
+        <tr *ngIf="out.terms.max_kwh_per_session"><td style="padding:4px 12px;"><strong>Max kWh/session:</strong></td><td>{{ out.terms.max_kwh_per_session }}</td></tr>
+      </table>
+
+      <!-- In perspektive (klientet partner @ chargers tane) -->
+      <h5 style="border-bottom:1px solid #e9ecef;padding-bottom:8px;color:#28a745;">📥 {{ myPerspectiveIn(selectedAgreement)?.label }}</h5>
+      <table style="width:100%;font-size:13px;margin-bottom:24px;" *ngIf="myPerspectiveIn(selectedAgreement) as inP">
+        <tr><td style="padding:4px 12px;"><strong>Status:</strong></td><td>{{ inP.terms.active ? '✅ Aktiv' : '⏸️ Pause' }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Pricing:</strong></td><td>{{ inP.terms.pricing_mode }}</td></tr>
+        <tr *ngIf="inP.terms.pricing_mode === 'override'"><td style="padding:4px 12px;"><strong>Cmim override:</strong></td><td>{{ inP.terms.price_override_kwh }} ALL/kWh</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Settlement:</strong></td><td>{{ inP.terms.settlement_mode }}</td></tr>
+        <tr><td style="padding:4px 12px;"><strong>Home fee:</strong></td><td>{{ inP.terms.home_fee_pct }}{{ inP.terms.settlement_mode === 'home_fee_pct' ? '%' : ' ALL fixed' }}</td></tr>
+      </table>
+
+      <!-- Notes -->
+      <div *ngIf="selectedAgreement.notes">
+        <h5 style="border-bottom:1px solid #e9ecef;padding-bottom:8px;">📝 Notes</h5>
+        <p>{{ selectedAgreement.notes }}</p>
+      </div>
+
+      <p style="color:#888;font-size:11px;margin-top:24px;">
+        Per te ndryshuar termat e marreveshjes, kontaktoni RadX team.
+      </p>
+    </div>
+
+    <div class="modal-footer" style="padding:16px 24px;border-top:1px solid #e9ecef;display:flex;justify-content:flex-end;">
+      <button class="btn btn-secondary" (click)="closeModal()">Mbyll</button>
+    </div>
+  </div>
+</div>

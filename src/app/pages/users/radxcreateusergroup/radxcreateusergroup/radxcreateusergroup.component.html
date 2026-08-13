@@ -1,0 +1,253 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-5 text-right"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Create User Group</h3>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()" #userForm="ngForm">
+            <!-- User Group Logo -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="file">Upload Logo</label>
+              <div class="col-md-10">
+                <input type="file" class="form-control" id="file" (change)="onFileSelected($event)" />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="usergr_name">Name</label>
+              <div class="col-md-10">
+                <input class="form-control" id="usergr_name" [(ngModel)]="userGroup.usergr_name" name="usergr_name"
+                  required />
+                <small
+                  *ngIf="userForm.controls.usergr_name?.invalid && (userForm.controls.usergr_name?.touched || userForm.controls.usergr_name?.dirty)"
+                  class="text-danger">
+                  Name is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="description">Description</label>
+              <div class="col-md-10">
+                <input class="form-control" id="description" [(ngModel)]="userGroup.usergr_description"
+                  name="usergr_description" required />
+                <small
+                  *ngIf="userForm.controls.usergr_description?.invalid && (userForm.controls.usergr_description?.touched || userForm.controls.usergr_description?.dirty)"
+                  class="text-danger">
+                  Description is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="address">Address</label>
+              <div class="col-md-10">
+                <input class="form-control" id="address" [(ngModel)]="userGroup.usergr_addres" name="usergr_addres"
+                  required />
+                <small
+                  *ngIf="userForm.controls.usergr_addres?.invalid && (userForm.controls.usergr_addres?.touched || userForm.controls.usergr_addres?.dirty)"
+                  class="text-danger">
+                  Address is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="city">City</label>
+              <div class="col-md-10">
+                <input class="form-control" id="city" [(ngModel)]="userGroup.usergr_city" name="usergr_city" required />
+                <small
+                  *ngIf="userForm.controls.usergr_city?.invalid && (userForm.controls.usergr_city?.touched || userForm.controls.usergr_city?.dirty)"
+                  class="text-danger">
+                  City is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="country">Country</label>
+              <div class="col-md-10">
+                <input class="form-control" id="country" [(ngModel)]="userGroup.usergr_country" name="usergr_country"
+                  required />
+                <small
+                  *ngIf="userForm.controls.usergr_country?.invalid && (userForm.controls.usergr_country?.touched || userForm.controls.usergr_country?.dirty)"
+                  class="text-danger">
+                  Country is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="phone_number">Phone Number</label>
+              <div class="col-md-3">
+                <select class="form-control" (change)="onCountryChange($event)">
+                  <option *ngFor="let country of countries" [value]="country.prefix">
+                    {{ country.name }} ({{ country.prefix }})
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-7">
+                <input class="form-control" id="phone_number" type="tel" [(ngModel)]="userGroup.usergr_phone_no"
+                  name="phone_number" required (input)="formatPhoneNumber()" />
+              </div>
+            </div>
+
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="email">Email</label>
+              <div class="col-md-10">
+                <input class="form-control" id="email" type="email" [(ngModel)]="userGroup.usergr_email" name="email"
+                  required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" />
+                <small *ngIf="userForm.submitted && !userForm.controls.email?.valid" class="text-danger">
+                  A valid email is required.
+                </small>
+                <small *ngIf="userForm.controls.email?.invalid && userForm.controls.email?.touched" class="text-danger">
+                  Please enter a valid email address.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="rate_id">Select Rate</label>
+              <div class="col-md-10">
+                <select class="form-control" id="rate_id" [(ngModel)]="userGroup.rate_id" name="rate_id">
+                  <option [value]="null">Select a Rate</option>
+                  <option *ngFor="let rate of rates" [value]="rate.rate_id">
+                    {{ rate.rate_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 🆕 Partner (opsional) — dropdown me search si tek krijimi i karteles. -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="partner_id">Partner</label>
+              <div class="col-md-10">
+                <input type="text" id="partnerSearch" class="form-control mb-2"
+                  [(ngModel)]="partnerSearchTerm" (input)="filterPartners()"
+                  name="partnerSearch" placeholder="Search partner by name..." />
+                <select class="form-control" id="partner_id"
+                  [(ngModel)]="userGroup.partner_id" name="partner_id">
+                  <option [ngValue]="null">-- Not linked to a partner --</option>
+                  <option *ngFor="let partner of filteredPartners" [ngValue]="partner.partner_id">
+                    {{ partner.partner_name }}
+                  </option>
+                </select>
+                <small class="text-muted d-block mt-1">
+                  Nese grupi i perket nje partneri, zgjidhe ketu. Perndryshe lere "Not linked".
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="customer_number">
+                Customer Number
+                <span *ngIf="userGroup.check_fisk" class="text-danger">*</span>
+              </label>
+              <div class="col-md-10">
+                <input class="form-control" id="customer_number" [(ngModel)]="userGroup.customer_number"
+                  name="customer_number" placeholder="e.g. CUST-A123" [required]="userGroup.check_fisk" />
+                <small *ngIf="userGroup.check_fisk && userForm.submitted && !userGroup.customer_number"
+                  class="text-danger">
+                  Customer Number is required when Check Fiscalization is enabled.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="dimension_value">
+                Dimension KLIENT/FURNITOR
+                <span *ngIf="userGroup.check_fisk" class="text-danger">*</span>
+              </label>
+              <div class="col-md-10">
+                <input class="form-control" id="dimension_value" [(ngModel)]="userGroup.dimension_value"
+                  name="dimension_value" placeholder="Shkruaj vlerën e dimensionit" [required]="userGroup.check_fisk" />
+                <small *ngIf="userGroup.check_fisk && userForm.submitted && !userGroup.dimension_value"
+                  class="text-danger">
+                  Dimension KLIENT/FURNITOR is required when Check Fiscalization is enabled.
+                </small>
+              </div>
+            </div>
+
+
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                  [readonly]="true" />
+              </div>
+            </div>
+
+            <!-- Pay As You Go Checkbox -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label">Allow Pay As You Go</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="allow_pay_as_you_go" [(ngModel)]="userGroup.allow_pay_as_you_go"
+                  name="allow_pay_as_you_go" />
+              </div>
+            </div>
+
+            <!-- Split Wallet Checkbox -->
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label">Split Wallet</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="split_wallet" [(ngModel)]="userGroup.split_wallet" name="split_wallet" />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label">Send Invoice By Mail </label>
+              <div class="col-md-10">
+                <input type="checkbox" id="send_invoice_by_email" [(ngModel)]="userGroup.send_invoice_by_email"
+                  name="send_invoice_by_email" />
+              </div>
+            </div>
+
+            <div *ngIf="isAdminUser" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="check_fisk">Check Fisc</label>
+              <div class="col-md-10">
+                <input type="checkbox" id="check_fisk" [(ngModel)]="userGroup.check_fisk" name="check_fisk" />
+              </div>
+            </div>
+
+            <!-- 🆕 Vega Staff toggle — vetem admin/analyst mund ta shohin/aktivizojne. -->
+            <div *ngIf="canManageVegaStaff" class="form-group row">
+              <label class="col-md-2 col-form-label form-control-label" for="is_vega_staff">Vega Staff</label>
+              <div class="col-md-10">
+                <label class="custom-toggle">
+                  <input type="checkbox" id="is_vega_staff"
+                    [(ngModel)]="userGroup.is_vega_staff" name="is_vega_staff" />
+                  <span class="custom-toggle-slider rounded-circle"></span>
+                </label>
+                <small class="text-muted d-block mt-1">
+                  Aktivizoje nese ky grup i perket stafit te Vega .
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" type="submit">Create User Group</button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3" style="background-color: #ffcccc; color: #660000;">
+            {{ errorMessage }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

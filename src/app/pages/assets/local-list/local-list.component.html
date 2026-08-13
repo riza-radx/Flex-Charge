@@ -1,0 +1,231 @@
+<div class="header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Local List</h3>
+                </div>
+                <div class="card-body">
+                    <form #localListForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
+                        <!-- Block a Card or User -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="createFor">Card /
+                                User</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="createFor" [(ngModel)]="localList.createFor"
+                                    name="createFor" required (ngModelChange)="onCreateForChange($event)">
+                                    <option value="">Select an option</option>
+                                    <option value="card">Card</option>
+                                    <option value="user">User</option>
+                                </select>
+                                <small
+                                    *ngIf="localListForm.controls.createFor?.invalid && (localListForm.controls.createFor?.touched || localListForm.submitted)"
+                                    class="text-danger">
+                                    Pick one option what do you want to block.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- User/Card belongs to -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="belongsTo">User/Card belongs
+                                to</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="belongsTo" [(ngModel)]="localList.belongsTo"
+                                    name="belongsTo" (ngModelChange)="onBelongsToChange($event)" required>
+                                    <option value="">Select an option</option>
+                                    <option value="company">Company</option>
+                                    <option value="usergroup">User Group</option>
+                                </select>
+                                <small
+                                    *ngIf="localListForm.controls.belongsTo?.invalid && (localListForm.controls.belongsTo?.touched || localListForm.submitted)"
+                                    class="text-danger">
+                                    Select an option.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- User Group Selection -->
+                        <div *ngIf="localList.belongsTo === 'usergroup'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="userGroupId">Select User
+                                Group</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="userGroupId" [(ngModel)]="localList.userGroupId"
+                                    name="userGroupId" required (ngModelChange)="onUserGroupChange($event)">
+                                    <option value="">Select a User Group</option>
+                                    <option *ngFor="let group of userGroups" [value]="group.usergr_id">{{
+                                        group.usergr_name }}</option>
+                                </select>
+                                <small *ngIf="localListForm.controls.userGroupId?.invalid && 
+                      (localListForm.controls.userGroupId?.touched || localListForm.submitted)" class="text-danger">
+                                    Please select a user group.
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <!-- Company -->
+                        <div *ngIf="localList.belongsTo === 'company'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="companyId">Company</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="companyId" [value]="company?.company_name"
+                                    readonly />
+                            </div>
+                        </div>
+
+                        <!-- Card/User Selection based on belongsTo -->
+                        <!-- <div *ngIf="localList.createFor === 'card'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="cardId">Select Card</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="cardId" [(ngModel)]="selectedCard" name="cardId">
+                                    <option *ngFor="let card of availableCards" [value]="card.card_id">{{ card.serial_no
+                                        }}</option>
+                                </select>
+                            </div>
+                        </div> -->
+                        <!-- <div *ngIf="localList.createFor === 'card'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="cardId">
+                                Select Card
+                            </label>
+
+                            <div class="col-md-10">
+                                <select class="form-control" id="cardId" name="cardId" [(ngModel)]="selectedCard">
+                                    <option [ngValue]="'all'">All Cards</option>
+                                    <option *ngFor="let card of availableCards" [ngValue]="card.card_id">
+                                        {{ card.serial_no }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div> -->
+                        <div *ngIf="localList.createFor === 'card'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="cardId">
+                                Select Card
+                            </label>
+
+                            <div class="col-md-10">
+                                <!-- 🔍 search -->
+                                <input type="text" class="form-control mb-2" placeholder="Search card…"
+                                    [ngModel]="cardSearch" (ngModelChange)="applyCardFilter($event)" />
+
+                                <select class="form-control" id="cardId" name="cardId" [(ngModel)]="selectedCard">
+                                    <option [ngValue]="'all'">All Cards</option>
+                                    <option *ngFor="let card of filteredCards" [ngValue]="card.card_id">
+                                        {{ card.serial_no }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+                        <!-- <div *ngIf="localList.createFor === 'user'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="userId">Select User</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="userId" [(ngModel)]="selectedUser" name="userId">
+                                    <option *ngFor="let user of availableUsers" [value]="user.id">{{ user.username }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div> -->
+                        <!-- <div *ngIf="localList.createFor === 'user'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="userId">
+                                Select User
+                            </label>
+
+                            <div class="col-md-10">
+                                <select class="form-control" id="userId" name="userId" [(ngModel)]="selectedUser">
+                                    <option [ngValue]="'all'">All Users</option>
+                                    <option *ngFor="let user of availableUsers" [ngValue]="user.id">
+                                        {{ user.username }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div> -->
+                        <div *ngIf="localList.createFor === 'user'" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="userId">
+                                Select User
+                            </label>
+
+                            <div class="col-md-10">
+                                <!-- 🔍 search -->
+                                <input type="text" class="form-control mb-2" placeholder="Search user…"
+                                    [ngModel]="userSearch" (ngModelChange)="applyUserFilter($event)" />
+
+                                <select class="form-control" id="userId" name="userId" [(ngModel)]="selectedUser">
+                                    <option [ngValue]="'all'">All Users</option>
+                                    <option *ngFor="let user of filteredUsers" [ngValue]="user.id">
+                                        {{ user.username }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Status Dropdown -->
+                        <!-- <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="status">Status</label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="status" [(ngModel)]="localList.status" name="status"
+                                    required>
+                                    <option value="">Select status</option>
+                                    <option value="Accepted">Accepted</option>
+                                    <option value="Blocked">Blocked</option>
+                                </select>
+                                <small *ngIf="localListForm.controls.status?.invalid && 
+                      (localListForm.controls.status?.touched || localListForm.submitted)" class="text-danger">
+                                    Please select a status.
+                                </small>
+                            </div>
+                        </div> -->
+
+                        <!-- Add Selected Card/User -->
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-sm btn-neutral" type="button" (click)="addSelectedCardOrUser()">
+                                    Add to List
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Display Selected Cards/Users -->
+                        <div *ngIf="selectedItems.length > 0" class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label">Selected Cards/Users</label>
+                            <div class="col-md-10">
+                                <ul class="selected-list">
+                                    <li *ngFor="let item of selectedItems; let i = index" class="selected-item">
+                                        {{ item.name }}
+                                        <i class="fa fa-times remove-icon" (click)="removeItem(i)"></i>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+                        <!-- Submit Button -->
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">
+                                    Submit List
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">
+                        {{ errorMessage }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

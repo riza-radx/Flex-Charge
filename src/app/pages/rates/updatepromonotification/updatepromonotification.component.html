@@ -1,0 +1,82 @@
+<div class="header pb-6" style="background-color: #931623 !important">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <h3 class="text-white">Update Promo Notification</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Update Notification</h3>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="notificationForm" (ngSubmit)="onSubmit()">
+
+                        <!-- Step -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="step">Step</label>
+                            <div class="col-md-10">
+                                <input type="number" class="form-control" id="step" formControlName="step_count"
+                                    readonly>
+                                <small
+                                    *ngIf="notificationForm.get('step_count')?.invalid && notificationForm.get('step_count')?.touched"
+                                    class="text-danger">Step is required.</small>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="title">Title</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="title" formControlName="title" required>
+                                <small
+                                    *ngIf="notificationForm.get('title')?.invalid && notificationForm.get('title')?.touched"
+                                    class="text-danger">Title is required.</small>
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label" for="body">Body</label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" id="body" formControlName="body" rows="3"
+                                    required></textarea>
+                                <small
+                                    *ngIf="notificationForm.get('body')?.invalid && notificationForm.get('body')?.touched"
+                                    class="text-danger">Body is required.</small>
+                            </div>
+                        </div>
+
+                        <!-- Notification Type -->
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label form-control-label"
+                                for="notificationType">Type</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="notificationType"
+                                    formControlName="notification_type" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button class="btn btn-primary" type="submit">Update Notification</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3"
+                        style="background-color: #ffcccc; color: #660000;">
+                        {{ errorMessage }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

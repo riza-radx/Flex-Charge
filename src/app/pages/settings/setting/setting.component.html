@@ -1,0 +1,503 @@
+<div class=" header pb-6" style="background-color: #931623 !important">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h3 class="h2 text-white d-inline-block mb-0">Settings</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-9">
+              <h3 class="mb-0">Settings</h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <tabset #settingsTabs>
+            <!-- Update Password Tab -->
+            <tab heading="Update Password">
+              <div class="py-4">
+                <h4>Update Password</h4>
+                <form (ngSubmit)="onUpdatePasswordSubmit()">
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label form-control-label" for="oldPassword">Old Password</label>
+                    <div class="col-md-9">
+                      <input class="form-control" id="oldPassword" type="password"
+                        [(ngModel)]="updatePassword.oldPassword" name="oldPassword" required />
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label form-control-label" for="newPassword">New Password</label>
+                    <div class="col-md-9">
+                      <input class="form-control" id="newPassword" type="password"
+                        [(ngModel)]="updatePassword.newPassword" name="newPassword" required />
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                      <button class="btn btn-primary" type="submit">Update Password</button>
+                    </div>
+                  </div>
+
+                  <div *ngIf="updatePasswordSuccessMessage" class="alert alert-success">
+                    {{ updatePasswordSuccessMessage }}
+                  </div>
+                  <div *ngIf="updatePasswordErrorMessage" class="alert alert-danger">
+                    {{ updatePasswordErrorMessage }}
+                  </div>
+                </form>
+              </div>
+            </tab>
+            <!-- Update Image -->
+            <tab heading="Update Image">
+              <div class="py-4">
+                <h4>Update Image</h4>
+                <form (ngSubmit)="onUserImageSubmit()">
+                  <!-- User Image -->
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label form-control-label" for="userImage">Upload Image</label>
+                    <div class="col-md-9">
+                      <input type="file" class="form-control" id="userImage" (change)="onFileChange($event)"
+                        accept="image/*" />
+                    </div>
+                  </div>
+                  <!-- Submit Button -->
+                  <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                      <button class="btn btn-primary" type="submit">Update Image</button>
+                    </div>
+                  </div>
+                </form>
+                <div *ngIf="errorMessage" class="alert alert-danger mt-3"   style="background-color: #ffcccc; color: #660000;">{{ errorMessage }}</div>
+
+              </div>
+            </tab>
+
+
+            <!-- Billing Details Tab -->
+            <!-- <tab heading="Billing Details">
+              
+
+              
+      <div class=" card ">
+        <div class=" card-body">
+          <div class=" row justify-content-between align-items-center">
+ 
+
+            <div class=" col-auto">
+              <div class=" d-flex align-items-center">
+               
+
+                <div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class=" mt-4">
+            <form [formGroup]="stripeTest" (ngSubmit)="onBillingDetailsSubmit()">
+              <div class="form-group">
+                <div class="input-group input-group-alternative mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="ni ni-single-02"></i>
+                    </span>
+                  </div>
+                  <input
+                    class="form-control"
+                    placeholder="Name on card"
+                    type="text"
+                    formControlName="name"
+                  />
+                </div>
+              </div>
+              <ngx-stripe-card-group [elementsOptions]="elementsOptions">
+
+                <div class="form-group">
+                  <div class="input-group input-group-alternative mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="ni ni-credit-card"></i>
+                      </span>
+                    </div>
+                    <ngx-stripe-card-number 
+        id="card-number" 
+        class=" form-control"
+        [options]="cardOptions"
+        ></ngx-stripe-card-number>
+        <ngx-stripe-card-number id="card-number" 
+        class=" form-control" [options]="cardOptions"></ngx-stripe-card-number>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="form-group">
+                      <div class="input-group input-group-alternative mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">
+                            <i class="ni ni-calendar-grid-58"></i>
+                          </span>
+                        </div>
+                        <ngx-stripe-card-expiry
+                        id="card-expiry" 
+                        class=" form-control"
+                        [options]="cardOptions" ></ngx-stripe-card-expiry>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-group">
+                      <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">
+                            <i class="ni ni-lock-circle-open"></i>
+                          </span>
+                        </div>
+                        <ngx-stripe-card-cvc 
+                        id="card-cvc" 
+                        class=" form-control"
+                        [options]="cardOptions" ></ngx-stripe-card-cvc>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ngx-stripe-card-group>
+              <button class="btn btn-block btn-info" type="submit">
+                Save new card
+              </button>
+            </form>
+
+
+            
+
+
+          
+            
+            
+            
+          </div>
+        </div>
+      </div>
+
+              <div class="dataTables_wrapper py-4"  *ngIf="rows && rows.length > 0">
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                          <span *ngIf="!isSmallScreen">Show</span>
+                          <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2  custom-flex-end-center">
+              
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                  [headerHeight]="30" [footerHeight]="30" [rowHeight]="85"
+                  [limit]="entries !== -1 ? entries : undefined" [rows]="temp" [selected]="selected"
+                  [selectionType]="'multiClick'" (select)="onSelect($event)">
+
+                  <ngx-datatable-column [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <div class="card-body" style="padding: 5px; font-size: 12px; line-height: 1.2;">
+                        <h4 class="card-title text-truncate-header">
+                          <i class="fas fa-credit-card text-primary"></i> Card Info:
+                          <span class="font-weight-normal">{{ row.card_name }}</span>
+                        </h4>
+                        <div class="row mb-3" style="margin: 0;">
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-credit-card text-primary"></i> Brand:
+                            <span>{{ row.brand }}</span>
+                          </div>
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-key text-primary"></i> Last 4 Digits:
+                            <span class="text-muted">{{ row.last4 }}</span>
+                          </div>
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-calendar text-primary"></i> Expiry Month:
+                            <span class="text-muted">{{ row.exp_month }}</span>
+                          </div>
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-calendar text-primary"></i> Expiry Year:
+                            <span class="text-muted">{{ row.exp_year }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3" style="margin: 0;">
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-lock text-primary"></i> CVC:
+                            <span class="text-muted">{{ row.cvc }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                </ngx-datatable>
+              </div>
+            </tab> -->
+
+            <!-- Pok Billing Details Tab -->
+            <!-- <tab heading="POK Billing Details">
+              <div class="card">
+                <div class="card-body">
+                  <form [formGroup]="pokPayForm" (ngSubmit)="onPokBillingDetailsSubmit()">
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="First Name"
+                        type="text"
+                        formControlName="firstName"
+                        aria-label="First Name"
+                        required
+                      />
+                      <div *ngIf="pokPayForm.get('firstName')?.invalid && pokPayForm.get('firstName')?.touched" class="text-danger">
+                        First name is required.
+                      </div>
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Last Name"
+                        type="text"
+                        formControlName="lastName"
+                        aria-label="Last Name"
+                        required
+                      />
+                      <div *ngIf="pokPayForm.get('lastName')?.invalid && pokPayForm.get('lastName')?.touched" class="text-danger">
+                        Last name is required.
+                      </div>
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Address"
+                        type="text"
+                        formControlName="address1"
+                        aria-label="Address"
+                        required
+                      />
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Locality"
+                        type="text"
+                        formControlName="locality"
+                        aria-label="Locality"
+                        required
+                      />
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Postal Code"
+                        type="text"
+                        formControlName="postalCode"
+                        aria-label="Postal Code"
+                        pattern="^[A-Za-z0-9- ]+$"
+                        required
+                      />
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Country Code (e.g., US)"
+                        type="text"
+                        formControlName="countryCode"
+                        aria-label="Country Code"
+                        pattern="^[A-Za-z]{2,3}$"
+                        required
+                      />
+                    </div>
+              
+                
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Email"
+                        type="email"
+                        formControlName="email"
+                        aria-label="Email"
+                        required
+                      />
+                      <div *ngIf="pokPayForm.get('email')?.invalid && pokPayForm.get('email')?.touched" class="text-danger">
+                        Enter a valid email address.
+                      </div>
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Card Number (16 digits)"
+                        type="tel"
+                        formControlName="cardNumber"
+                        pattern="\d{16}"
+                        aria-label="Card Number"
+                        required
+                      />
+                      <div *ngIf="pokPayForm.get('cardNumber')?.invalid && pokPayForm.get('cardNumber')?.touched" class="text-danger">
+                        Card number must be 16 digits.
+                      </div>
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Expiration Month (MM)"
+                        type="number"
+                        formControlName="expirationMonth"
+                        min="1"
+                        max="12"
+                        aria-label="Expiration Month"
+                        required
+                      />
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="Expiration Year (YYYY)"
+                        type="number"
+                        formControlName="expirationYear"
+                        aria-label="Expiration Year"
+                        required
+                      />
+                    </div>
+              
+                    <div class="form-group">
+                      <input
+                        class="form-control"
+                        placeholder="CVC"
+                        type="password"
+                        formControlName="securityCode"
+                        pattern="\d{3,4}"
+                        aria-label="Security Code"
+                        required
+                      />
+                    </div>
+              
+                    <button class="btn btn-block btn-info" type="submit" [disabled]="pokPayForm.invalid">
+                      Save New Card
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <div class="dataTables_wrapper py-4"  *ngIf="rows && rows.length > 0"> 
+                <div class="row">
+                  <div class="col-auto">
+                    <div class="dataTables_length" id="datatable_length">
+                      <label>
+                          <span *ngIf="!isSmallScreen">Show</span>
+                          <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                          (change)="entriesChange($event)">
+                          <option value="10" [selected]="entries == 10">10</option>
+                          <option value="25" [selected]="entries == 25">25</option>
+                          <option value="50" [selected]="entries == 50">50</option>
+                          <option value="-1" [selected]="entries == -1">All</option>
+                        </select>
+                        <span *ngIf="!isSmallScreen">entries</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col ml--2  custom-flex-end-center">
+                    
+                    <div id="datatable_filter" class="dataTables_filter">
+                      <label>
+                        <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                          class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                          (input)="filterTable($event)" />
+                        <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                          (click)="toggleSearchInput()"></i>
+                      </label>
+                    </div>
+                  </div> 
+                </div>
+          
+                <ngx-datatable id="print-section" class="bootstrap selection-cell" [columnMode]="'force'"
+                  [headerHeight]="30" [footerHeight]="30" [rowHeight]="85"
+                  [limit]="entries !== -1 ? entries : undefined" [rows]="temp" [selected]="selected"
+                  [selectionType]="'multiClick'" (select)="onSelect($event)">
+          
+                 
+                  <ngx-datatable-column [sortable]="false">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <div class="card-body" style="padding: 5px; font-size: 12px; line-height: 1.2;">
+                        <h4 class="card-title text-truncate-header">
+                          <i class="fas fa-credit-card text-primary"></i> Card Info:
+                          <span class="font-weight-normal">{{ row.card_name }}</span>
+                        </h4>
+                        <div class="row mb-3" style="margin: 0;">
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-credit-card text-primary"></i> Brand:
+                            <span>{{ row.brand }}</span>
+                          </div>
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-key text-primary"></i> Last 4 Digits:
+                            <span class="text-muted">{{ row.last4 }}</span>
+                          </div>
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-calendar text-primary"></i> Expiry Month:
+                            <span class="text-muted">{{ row.exp_month }}</span>
+                          </div>
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-calendar text-primary"></i> Expiry Year:
+                            <span class="text-muted">{{ row.exp_year }}</span>
+                          </div>
+                        </div>
+                        <div class="row mb-3" style="margin: 0;">
+                          <div class="col-md-3 text-truncate">
+                            <i class="fa fa-lock text-primary"></i> CVC:
+                            <span class="text-muted">{{ row.cvc }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ngx-datatable-column>
+          
+                </ngx-datatable>
+              </div> 
+            </tab> -->
+
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

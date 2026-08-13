@@ -1,0 +1,151 @@
+<!-- Header Section -->
+<div class="header pb-6 d-flex align-items-center"
+  style="min-height: 120px;background-size: cover;background-position: center top; background-color:#931623 !important;">
+  <span class="mask "></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+
+<!-- Tabs Section -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Location Details</h3>
+            </div>
+            <!-- 🆕 COMPANY_ANALYST tashme lejohet te editoje (per G/L / Vendor Number OSHEE), por jo te fshije. -->
+            <div *ngIf="(isRadXRole || isCompanyRole || isCompanyAnalyst) && !isRoamingView" class="col-4"
+              style="display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="button" class="btn btn-sm btn-neutral" tooltip="Edit"
+                [routerLink]="['/assets/locations/update/company', location.location_id ]"><i
+                  class="fas fa-edit"></i></button>
+              <button *ngIf="!isCompanyAnalyst" type="button" class=" btn btn-sm btn-neutral" tooltip="Delete"
+                [routerLink]="['/assets/locations/delete/company', location.location_id ]"> <i
+                  class="fas fa-trash-alt"></i></button>
+            </div>
+          </div>
+          <div *ngIf="location">
+            <div class="container py-4">
+
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h4 class="card-title"><i class="fa fa-bolt text-primary"></i> Location Name: <span
+                      class="font-weight-normal">{{ location.location_name }}</span></h4>
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row mb-3">
+                        <div class="col-md-4">
+                          <i class="fa fa-map-marker-alt text-primary"></i> Address: <span>{{ location.addres }}, {{
+                            location.city }}, {{ location.country }}</span>
+                        </div>
+                        <div class="col-md-4">
+                          <i class="fa fa-globe text-primary"></i> Cordinates: <span>{{ location.latitude }}, {{
+                            location.longitude }}</span>
+                        </div>
+                        <div class="col-md-4">
+                          <i class="fa fa-building text-primary"></i> Company: <span>{{ companyName }}</span>
+                        </div>
+                        <div class="col-md-4" *ngIf="partnerName">
+                          <i class="fa fa-handshake text-primary"></i> Partner:
+                          <span *ngIf="location?.partner_id">
+                            <a [routerLink]="['/partners/partner', location?.partner_id]" class="text-primary">
+                              {{ partnerName }}
+                            </a>
+                          </span>
+                          <span *ngIf="!location?.partner_id">
+                            {{ partnerName }}
+                          </span>
+                        </div>
+                        <!-- 🆕 Vendor Number OSHEE — vetem COMPANY_ADMIN + COMPANY_ANALYST i shohin. -->
+                        <div class="col-md-4" *ngIf="isCompanyAdmin || isCompanyAnalyst">
+                          <i class="fa fa-book text-primary"></i> Vendor Number OSHEE:
+                          <span>{{ location?.vendor_number_oshee ? location?.vendor_number_oshee : 'N/A' }}</span>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <div *ngIf="!location">
+            <p>No location details available.</p>
+          </div>
+
+
+        </div>
+        <div class="card-body">
+          <div *ngIf="chargers.length">
+            <tabset #locationTabs>
+              <!-- Chargers Tab -->
+              <tab heading="Chargers">
+                <div class="dataTables_wrapper py-4">
+                  <div class="row">
+                    <div class="col-auto">
+                      <div class="dataTables_length" id="datatable_length">
+                        <label>
+                          <span *ngIf="!isSmallScreen">Show</span>
+                          <select name="datatable_length" aria-controls="datatable" class="form-control form-control-sm"
+                            (change)="entriesChange($event)">
+                            <option value="10" [selected]="entries == 10">10</option>
+                            <option value="25" [selected]="entries == 25">25</option>
+                            <option value="50" [selected]="entries == 50">50</option>
+                            <option value="-1" [selected]="entries == -1">All</option>
+                          </select>
+                          <span *ngIf="!isSmallScreen">entries</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col ml--2 ">
+                      <!-- Search Input -->
+                      <div id="datatable_filter" class="dataTables_filter">
+                        <label>
+                          <input *ngIf="!isSmallScreen || isInputVisible" type="search"
+                            class="form-control form-control-sm" placeholder="Search records" aria-controls="datatable"
+                            (input)="filterChargersTable($event)" />
+                          <i *ngIf="isSmallScreen && !isInputVisible" class="fas fa-search"
+                            (click)="toggleSearchInput()"></i>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="scrollable-table">
+                    <ngx-datatable id="print-section" class="bootstrap selection-cell" [scrollbarH]="isSmallScreen" [columnMode]="isSmallScreen ? 'standard' : 'force'"
+                      [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                      [limit]="entries != -1 ? entries : undefined" [rows]="tempChargers" [selected]="selected"
+                      [selectionType]="isRoamingView ? null : 'multiClick'" (activate)="onActivate($event)" (select)="onSelect($event)"
+                      [ngStyle]="isRoamingView ? { 'cursor': 'default' } : {}">
+                      <ngx-datatable-column name="Charger Name" prop="charger_name"></ngx-datatable-column>
+                      <ngx-datatable-column name="Type" prop="type"></ngx-datatable-column>
+                      <ngx-datatable-column name="Current Type" prop="current_type"></ngx-datatable-column>
+                      <ngx-datatable-column name="Max Amperage" prop="max_amperage"></ngx-datatable-column>
+                      <ngx-datatable-column name="Max Power" prop="max_power"></ngx-datatable-column>
+                      <ngx-datatable-column name="Max Voltage" prop="max_voltage"></ngx-datatable-column>
+                      <ngx-datatable-column name="No of Connectors" prop="no_of_connectors"></ngx-datatable-column>
+                      <ngx-datatable-column name="OCPP ID" prop="ocpp_id"></ngx-datatable-column>
+                      <ngx-datatable-column name="OCPP Protocol" prop="ocpp_protocol"></ngx-datatable-column>
+                      <ngx-datatable-column name="Phae" prop="phase"></ngx-datatable-column>
+                      <ngx-datatable-column name="Phae Rotation" prop="phase_rotation"></ngx-datatable-column>
+                      <ngx-datatable-column name="Rate Power" prop="rate_power"></ngx-datatable-column>
+                      <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
+                      <!-- Add more columns as needed -->
+                    </ngx-datatable>
+                  </div>
+                </div>
+              </tab>
+
+            </tabset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
