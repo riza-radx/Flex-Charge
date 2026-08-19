@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
@@ -161,12 +162,12 @@ export class AuthService {
   getCUGPBasedOnUserRole(): Observable<any> {
     const token = localStorage.getItem('authToken');
     if (!token) {
-      console.error('No token found in localStorage');
+      logger.error('No token found in localStorage');
       return throwError(() => new Error('No token found'));
     }
 
     if (this.isTokenExpired(token)) {
-      console.error('Token is expired');
+      logger.error('Token is expired');
       return throwError(() => new Error('Token is expired'));
     }
 

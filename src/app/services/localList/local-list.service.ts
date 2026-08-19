@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
@@ -19,7 +20,7 @@ export class LocalListService {
   }
 
   private errorHandler(error: any) {
-    console.error('Error:', error);
+    logger.error('Error:', error);
     return throwError(error);
   }
 

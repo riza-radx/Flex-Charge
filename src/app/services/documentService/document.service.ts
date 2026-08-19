@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 
@@ -271,7 +272,7 @@ export class DocumentService {
 
   // Add Document
   addDocumentx(formData: FormData): Observable<{ success: boolean; message: string }> {
-    formData.forEach((value, key) => console.log(`${key}: ${value}`));
+    formData.forEach((value, key) => logger.log(`${key}: ${value}`));
 
     const token = localStorage.getItem('authToken');
     const url = `${this.apiUrl}/api/v1/documents/createdocument`;
