@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
@@ -179,22 +180,22 @@ export class AddReservationComponent implements OnInit {
             break;
           case 'USER':
           case 'SUPER_USER':
-            console.log('SUPER_USER is set to true');
+            logger.log('SUPER_USER is set to true');
             this.isUserRole = true;
             this.getChargerDetails(this.chargerId);
             this.getConnector();
             this.getCurrentUser();
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -206,15 +207,15 @@ export class AddReservationComponent implements OnInit {
   getChargerDetails(chargerId: number): void {
     this.chargerService.getCharger(chargerId).subscribe({
       next: (response: any) => {
-        console.log('Charger Details:', response);
+        logger.log('Charger Details:', response);
         this.chargerDetails = response;  // Save response to the component's property
         this.ocppId = response.charger.ocpp_id;
         this.reservationFee = response.charger.reservation_fee;
-        console.log(' this.reservationFee:', this.reservationFee);
-        console.log('OCPP ID:', this.ocppId);
+        logger.log(' this.reservationFee:', this.reservationFee);
+        logger.log('OCPP ID:', this.ocppId);
       },
       error: (error) => {
-        console.error('Error fetching charger details:', error);
+        logger.error('Error fetching charger details:', error);
       }
     });
   }
@@ -224,10 +225,10 @@ export class AddReservationComponent implements OnInit {
       next: (data: any) => {
         this.users = data.users;
 
-        console.log('Users:', this.users);
+        logger.log('Users:', this.users);
       },
       error: (error) => {
-        console.error('Error fetching users:', error);
+        logger.error('Error fetching users:', error);
         this.errorMessage = 'Error fetching users. Please try again.';
       }
     });
@@ -237,7 +238,7 @@ export class AddReservationComponent implements OnInit {
     return this.userService.getUserById(id).pipe(
       map(response => response.user), // Extract user data directly
       catchError(error => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
         return of(null); // Return null in case of error
       })
     );
@@ -245,7 +246,7 @@ export class AddReservationComponent implements OnInit {
   loadUsersByPartner(partnerId: number) {
     this.partnerMemberService.getPartnerMemberByPartner(partnerId).subscribe(
       async (data: any) => {
-        console.log("(data.partnerMember)", data.partnerMember);
+        logger.log("(data.partnerMember)", data.partnerMember);
   
         if (data && Array.isArray(data.partnerMember)) {
           this.users = await Promise.all(data.partnerMember.map(async (member: any) => {
@@ -253,7 +254,7 @@ export class AddReservationComponent implements OnInit {
               const userResponse = await this.userService.getUserById(member.user_id).toPromise();
               const user = userResponse.user;
   
-              console.log("(userResponse)", userResponse);
+              logger.log("(userResponse)", userResponse);
   
               return {
                 ...member,
@@ -265,20 +266,20 @@ export class AddReservationComponent implements OnInit {
                 }
               };
             } catch (error) {
-              console.error('Error fetching user for partner member:', member, error);
+              logger.error('Error fetching user for partner member:', member, error);
               return { ...member, user: null };
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
   
-        console.log("this.users (partner)", this.users);
+        logger.log("this.users (partner)", this.users);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching partner members:', error);
+        logger.error('Error fetching partner members:', error);
       }
     );
   }
@@ -286,14 +287,14 @@ export class AddReservationComponent implements OnInit {
   loadUsersByUserGroups(userGroupId: number) {
     this.userGroupMembersService.getUserGroupMemberByUserGroup(userGroupId).subscribe(
       async (data: any) => {
-        console.log("(data.userGroupMembers",data.userGroupMembers); 
+        logger.log("(data.userGroupMembers",data.userGroupMembers); 
         if (data && Array.isArray(data.userGroupMembers)) {
           // Map through company members and fetch user details for each member
           this.users = await Promise.all(data.userGroupMembers.map(async (member: any) => {
             try {
               const userResponse = await this.userService.getUserById(member.user_id).toPromise();
               const user = userResponse.user; // Extract user details from the response
-              console.log("(userResponse",userResponse); 
+              logger.log("(userResponse",userResponse); 
               // Combine member and user data
               return {
                 ...member,
@@ -305,62 +306,62 @@ export class AddReservationComponent implements OnInit {
                 },
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log("this.users",this.users); // Check the final combined data structure
+        logger.log("this.users",this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
   getCurrentUser() {
     this.authService.getCurrentUser().subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.users = data.user.userId;
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     )
   }
   onUserChange() {
     if (this.reservation.userId) {
-      console.log("this.reservation.userId", this.reservation.userId);
+      logger.log("this.reservation.userId", this.reservation.userId);
       this.getUserBalance(this.reservation.userId);
     }
   }
   getUserBalance(userId: string) {
     this.userService.getUserById(userId).subscribe({
       next: (data: any) => {
-        console.log("data", data);
+        logger.log("data", data);
         this.userBalance = data.user.balance;
         this.userAllowPayAsYouGo = data.user.allow_pay_as_you_go;
-        console.log("userBalance", this.userBalance);
+        logger.log("userBalance", this.userBalance);
         this.checkReservationFee();
       },
       error: (error) => {
-        console.error('Error fetching user balance:', error);
+        logger.error('Error fetching user balance:', error);
         this.errorMessage = 'Error fetching user balance. Please try again.';
       }
     });
   }
   checkReservationFee() {
-    console.log("userBalance", this.userBalance);
-    console.log("userAllowPayAsYouGo", this.userAllowPayAsYouGo);
-    console.log("reservationFee", this.reservationFee);
+    logger.log("userBalance", this.userBalance);
+    logger.log("userAllowPayAsYouGo", this.userAllowPayAsYouGo);
+    logger.log("reservationFee", this.reservationFee);
     if (this.userBalance < this.reservationFee && (this.userAllowPayAsYouGo === "false" || this.userAllowPayAsYouGo === "0")) {
       this.enableAddReservation = false;
-      console.log("enableAddReservation", this.enableAddReservation)
+      logger.log("enableAddReservation", this.enableAddReservation)
     } else {
       this.enableAddReservation = true;
     }
@@ -369,13 +370,13 @@ export class AddReservationComponent implements OnInit {
   getConnector(): void {
     this.connectorService.getConnector(this.connectorId).subscribe({
       next: (data: any) => {
-        console.log('getConnector data:', data);
+        logger.log('getConnector data:', data);
         this.connector = data.connector;
         this.reservation.connectorId = data.connector.connector_id;
 
       },
       error: (error) => {
-        console.error('Error fetching connectors:', error);
+        logger.error('Error fetching connectors:', error);
         this.errorMessage = 'Error fetching connectors. Please try again.';
       }
     });
@@ -387,7 +388,7 @@ export class AddReservationComponent implements OnInit {
         this.users = data.users
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -398,7 +399,7 @@ export class AddReservationComponent implements OnInit {
     // Validate form fields
     if (!this.reservation.userId || !this.reservation.connectorId) {
       this.errorMessage = 'Please fill in all required fields before submitting.';
-      console.error('Form is incomplete. Please fill in all fields.');
+      logger.error('Form is incomplete. Please fill in all fields.');
       return;
     }
 
@@ -411,7 +412,7 @@ export class AddReservationComponent implements OnInit {
       time: now.toTimeString().split(' ')[0]  // Format HH:MM:SS
     };
 
-    console.log("this.ocppId, body", this.ocppId, body);
+    logger.log("this.ocppId, body", this.ocppId, body);
 
     // Clear previous messages
     this.errorMessage = null;
@@ -419,11 +420,11 @@ export class AddReservationComponent implements OnInit {
     // Call the reservation service
     this.chargerService.addReservation(this.ocppId, body).subscribe({
       next: (response) => {
-        console.log('Reservation created successfully:', response);
+        logger.log('Reservation created successfully:', response);
         this.router.navigate(['/monitoring/reservation']);
       },
       error: (error) => {
-        console.error('Error creating reservation:', error);
+        logger.error('Error creating reservation:', error);
         this.errorMessage = this.handleRechargeError(error);
       }
     });

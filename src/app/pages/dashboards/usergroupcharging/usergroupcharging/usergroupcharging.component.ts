@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargingService } from "../../../../services/chargingService/charging.service";
@@ -75,10 +76,10 @@ export class UsergroupchargingComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const usergr_id = parsedCugpCred.usergr_id;
-      console.log('User Group ID:', usergr_id);
+      logger.log('User Group ID:', usergr_id);
       this.getRFIDCards(usergr_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getChargings();
   }
@@ -148,24 +149,24 @@ getRFIDCards(usergrId: number) {
     (response) => {
       if (response && response.success && Array.isArray(response.card)) {
         // Process each card and fetch its charging history
-        console.log(response.card);
+        logger.log(response.card);
         response.card.forEach((card) => {
           this.getChargings(card.card_id);
         });
       } else {
-        console.error('Expected an array but got:', response.card);
+        logger.error('Expected an array but got:', response.card);
       }
     },
     (error) => {
       this.errorMessage = error.message;
-      console.log(error);
+      logger.log(error);
     }
   );
 }
 
 
 getChargings(cardId: number) {
-  console.log(cardId);
+  logger.log(cardId);
   this.chargingService.getChargingByCard(cardId).subscribe(
     (data) => {
       const chargings = data.charging;
@@ -173,7 +174,7 @@ getChargings(cardId: number) {
       this.chargings = [...this.chargings, ...chargings];
       this.rows = this.chargings;
       this.temp = [...this.rows];
-      console.log('Chargings:', this.rows);
+      logger.log('Chargings:', this.rows);
 
       // Fetch additional details for each charging entry
       this.rows.forEach((row, index) => {
@@ -184,7 +185,7 @@ getChargings(cardId: number) {
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
         this.connectorService.getConnector(row.connector_id).subscribe(
@@ -194,7 +195,7 @@ getChargings(cardId: number) {
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
         this.cardService.getCard(row.card_id).subscribe(
@@ -204,7 +205,7 @@ getChargings(cardId: number) {
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
         this.ratePerDaysService.getRatePerDay(row.rate_per_days_id).subscribe(
@@ -214,14 +215,14 @@ getChargings(cardId: number) {
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       });
     },
     (error) => {
       this.errorMessage = error.message;
-      console.log(error);
+      logger.log(error);
     }
   );
 }

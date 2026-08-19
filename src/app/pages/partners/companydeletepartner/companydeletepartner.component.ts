@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PartnerService } from 'src/app/services/partnerService/partner.service';
@@ -21,8 +22,8 @@ export class CompanydeletepartnerComponent implements OnInit {
   ngOnInit(): void {
     this.partnerId = this.route.snapshot.params['id'];
     this.getPartnerDetails(this.partnerId);
-    console.log('Charger ID:', this.partnerId);
-    console.log('Charger Name:', this.partnerName);  // Debugging line
+    logger.log('Charger ID:', this.partnerId);
+    logger.log('Charger Name:', this.partnerName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class CompanydeletepartnerComponent implements OnInit {
   confirmDelete(): void {
     this.partnerService.deletePartner(this.partnerId).subscribe({
       next: (response) => {
-        console.log('Partner deleted successfully:', response);
+        logger.log('Partner deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/partners/partner']);
       },
       error: (error) => {
-        console.error('Error deleting partner:', error);
+        logger.error('Error deleting partner:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class CompanydeletepartnerComponent implements OnInit {
     this.partnerService.getPartner(id).subscribe({
       next: (response) => {
         this.partnerName = response.partner.partner_name;
-        console.log('response:', response);
-        console.log('partnerName:', this.partnerName);
+        logger.log('response:', response);
+        logger.log('partnerName:', this.partnerName);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }

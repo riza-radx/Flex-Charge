@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -60,7 +61,7 @@ export class RadxupdatevouchersComponent implements OnInit {
     this.getVoucherById(this.voucherId);
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -101,15 +102,15 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -121,7 +122,7 @@ case 'COMPANY_USER':
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
@@ -129,10 +130,10 @@ case 'COMPANY_USER':
     this.companyService.getCompany(companyId).subscribe(
       (data: any) => {
         this.companies = [data.company];
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -147,22 +148,22 @@ case 'COMPANY_USER':
     }
   
     const voucherData = this.voucherForm.value;
-    console.log('Submitting voucherData:', voucherData);
+    logger.log('Submitting voucherData:', voucherData);
   
     this.voucherService.updateVoucher(this.voucherId, voucherData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('Voucher updated successfully:', response);
+          logger.log('Voucher updated successfully:', response);
           setTimeout(() => {
             this.router.navigate(['/rates/vouchers']);
           }, 1000);
         } else {
-          console.error('Failed to update voucher:', response);
+          logger.error('Failed to update voucher:', response);
           this.errorMessage = 'Failed to update the voucher. Please try again.';
         }
       },
       error: (error) => {
-        console.error('Error updating voucher:', error);
+        logger.error('Error updating voucher:', error);
         this.errorMessage = this.getErrorMessage(error);
       }
     });
@@ -189,8 +190,8 @@ case 'COMPANY_USER':
   getVoucherById(id: number): void {
     this.voucherService.getVoucher(id).subscribe({
       next: (response) => {
-        console.log('ID:', id);
-        console.log('API response:', response);
+        logger.log('ID:', id);
+        logger.log('API response:', response);
         const voucher = response.voucher;
 
         // Ensure the response data matches the form structure
@@ -209,7 +210,7 @@ case 'COMPANY_USER':
 
       },
       error: (error) => {
-        console.error('Error fetching voucher details:', error);
+        logger.error('Error fetching voucher details:', error);
       }
     });
   }

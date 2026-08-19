@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -142,15 +143,15 @@ export class RadxupdaterfidcardComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.loadUsers();
@@ -163,14 +164,14 @@ export class RadxupdaterfidcardComponent implements OnInit {
   loadUsers() {
     this.userService.getAllUsers().subscribe(
       response => this.users = response.users,
-      error => console.error('Error fetching users', error)
+      error => logger.error('Error fetching users', error)
     );
   }
 
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
@@ -181,7 +182,7 @@ export class RadxupdaterfidcardComponent implements OnInit {
         // console.log("this.userGroups", this.userGroups);
       },
       error => {
-        console.error('Error fetching user groups:', error);
+        logger.error('Error fetching user groups:', error);
       }
     );
   }
@@ -205,11 +206,11 @@ export class RadxupdaterfidcardComponent implements OnInit {
 
           // console.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -224,10 +225,10 @@ export class RadxupdaterfidcardComponent implements OnInit {
             user.name?.toLowerCase().includes(searchTerm)
           );
         });
-        console.log("this.filteredUsersFiltered in loadCompanyUsers", this.filteredUsersFiltered)
+        logger.log("this.filteredUsersFiltered in loadCompanyUsers", this.filteredUsersFiltered)
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -235,7 +236,7 @@ export class RadxupdaterfidcardComponent implements OnInit {
   loadCompaniesByID(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => this.companies = [response.company],
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
@@ -246,7 +247,7 @@ export class RadxupdaterfidcardComponent implements OnInit {
         // console.log('Companies:', this.userGroups);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -259,7 +260,7 @@ export class RadxupdaterfidcardComponent implements OnInit {
         this.filteredPartners = [...this.partners];
       },
       error => {
-        console.error('Error fetching partners:', error);
+        logger.error('Error fetching partners:', error);
       }
     );
   }
@@ -293,7 +294,7 @@ export class RadxupdaterfidcardComponent implements OnInit {
 
   onSubmit() {
     if (this.rfidCardForm.invalid) {
-      console.log('Submitting this.rfidCardForm.invalid:', this.rfidCardForm.invalid);
+      logger.log('Submitting this.rfidCardForm.invalid:', this.rfidCardForm.invalid);
       this.rfidCardForm.markAllAsTouched();
       this.errorMessage = 'Please fill out all required fields correctly before submitting.';
       setTimeout(() => (this.errorMessage = ''), 5000);
@@ -309,12 +310,12 @@ export class RadxupdaterfidcardComponent implements OnInit {
       rfidCardData.usergrId = parseInt(rfidCardData.usergrId, 10);
     }
 
-    console.log('Submitting rfidCardData:', rfidCardData);
+    logger.log('Submitting rfidCardData:', rfidCardData);
     rfidCardData.multiple_charging_session =
       rfidCardData.multiple_charging_session ? 'true' : 'false';
     this.cardService.updateCard(this.rfidCardId, rfidCardData).subscribe({
       next: (response) => {
-        console.log('Card updated successfully:', response);
+        logger.log('Card updated successfully:', response);
 
         if (!response.success) {
           // Backend returned success: false, show error message
@@ -331,7 +332,7 @@ export class RadxupdaterfidcardComponent implements OnInit {
         }, 3000);
       },
       error: (error) => {
-        console.error('Error updating RFID card:', error);
+        logger.error('Error updating RFID card:', error);
         this.handleError(error);
       }
     });
@@ -377,7 +378,7 @@ export class RadxupdaterfidcardComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.error('Error fetching card details:', error);
+        logger.error('Error fetching card details:', error);
       }
     });
   }

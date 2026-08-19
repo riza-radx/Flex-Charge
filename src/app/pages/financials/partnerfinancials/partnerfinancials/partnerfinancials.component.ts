@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReportService } from "../../../../services/reportService/report.service";
@@ -68,7 +69,7 @@ export class PartnerfinancialsComponent {
     const id = localStorage.getItem('cugpCred.partner_id');
     this.reportService.getAllReportByPartner(id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.report)) {
           // If data.report is an array
           this.reports = data.report;
@@ -76,14 +77,14 @@ export class PartnerfinancialsComponent {
           // If data.report is a single object
           this.reports = [data.report];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

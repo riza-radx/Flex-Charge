@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { VehicleService } from "../../../../services/vehicleService/vehicle.service";
@@ -63,10 +64,10 @@ export class CompanyvehicleComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const company_id = parsedCugpCred.company_id;
-      console.log('User Group ID:', company_id);
+      logger.log('User Group ID:', company_id);
       this.getVehicles(company_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getVehicles()
   }
@@ -74,15 +75,15 @@ export class CompanyvehicleComponent implements OnInit {
   getVehicles(companyId: number) {
     this.vehicleService.getVehicleByCompany(companyId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.rows = data.vehicles;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

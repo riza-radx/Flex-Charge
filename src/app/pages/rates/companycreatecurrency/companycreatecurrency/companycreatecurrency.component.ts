@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CurrencyService } from 'src/app/services/currencyService/currency.service';
@@ -18,11 +19,11 @@ export class CompanycreatecurrencyComponent {
   onSubmit() {
     this.currencyService.addCurrency(this.currency).subscribe(
       (response) => {
-        console.log('Currency created successfully:', response);
+        logger.log('Currency created successfully:', response);
         this.router.navigate(['/currencies']);  // Adjust the navigation as needed
       },
       (error) => {
-        console.error('Error creating currency:', error);
+        logger.error('Error creating currency:', error);
       }
     );
   }

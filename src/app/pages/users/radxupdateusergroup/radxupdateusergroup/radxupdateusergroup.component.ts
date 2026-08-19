@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserGroupService } from "../../../../services/userGroupService/user-group.service";
@@ -69,12 +70,12 @@ export class RadxupdateusergroupComponent implements OnInit {
       (data) => {
         this.rows = data.userGroup;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

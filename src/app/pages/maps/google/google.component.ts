@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { ChargerLocationService } from "../../../services/chargerLocationService/charger-location.service";
@@ -38,7 +39,7 @@ export class GoogleComponent implements OnInit {
   // Handle user roles similar to your provided example
   initializeUserRole() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -90,11 +91,11 @@ export class GoogleComponent implements OnInit {
           this.getLocationsByPartner(partner_id);
           break;
         default:
-          console.error('Unknown user role:', this.userRole);
+          logger.error('Unknown user role:', this.userRole);
           this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
   }
@@ -109,24 +110,24 @@ export class GoogleComponent implements OnInit {
           this.initializeMap(); // Initialize the map with the user's location
         },
         (error) => {
-          console.error("Geolocation error:", error);
+          logger.error("Geolocation error:", error);
           this.initializeMap(); // Fallback to default location if geolocation fails
         }
       );
     } else {
-      console.warn("Geolocation is not supported by this browser.");
+      logger.warn("Geolocation is not supported by this browser.");
       this.initializeMap(); // Fallback if geolocation is not supported
     }
   }
   getUserDetail(id: number): void {
     this.userService.getUserById(id).subscribe({
       next: (response) => {
-        console.log("response.user.company_id", response.user.company_id)
+        logger.log("response.user.company_id", response.user.company_id)
         this.getLocationsByCompany(response.user.company_id);
-        console.log("USER_GROUP_USER this.isUserRole, company_id", this.isUserRole)
+        logger.log("USER_GROUP_USER this.isUserRole, company_id", this.isUserRole)
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }
@@ -156,7 +157,7 @@ export class GoogleComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -186,7 +187,7 @@ export class GoogleComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -199,7 +200,7 @@ export class GoogleComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -294,19 +295,19 @@ export class GoogleComponent implements OnInit {
 
     this.map.loadImage('../assets/img/cpmappinoffline.png', (errorOffline, offlineImage) => {
       if (errorOffline) {
-        console.error('Error loading offline pin image:', errorOffline);
+        logger.error('Error loading offline pin image:', errorOffline);
         return;
       }
 
       this.map.loadImage('../assets/img/cpmappinavaible.png', (errorAvailable, availableImage) => {
         if (errorAvailable) {
-          console.error('Error loading available pin image:', errorAvailable);
+          logger.error('Error loading available pin image:', errorAvailable);
           return;
         }
 
         this.map.loadImage('../assets/img/cpmappbusy.png', (errorBusy, busyImage) => {
           if (errorBusy) {
-            console.error('Error loading busy pin image:', errorBusy);
+            logger.error('Error loading busy pin image:', errorBusy);
             return;
           }
 
@@ -566,7 +567,7 @@ export class GoogleComponent implements OnInit {
                 }
               },
               (error) => {
-                console.error(`Failed to fetch chargers for location ${location.location_id}:`, error);
+                logger.error(`Failed to fetch chargers for location ${location.location_id}:`, error);
               }
             );
           });

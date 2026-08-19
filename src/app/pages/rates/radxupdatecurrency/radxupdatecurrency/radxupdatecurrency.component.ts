@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,7 +29,7 @@ export class RadxupdatecurrencyComponent implements OnInit {
   ngOnInit(): void {
     this.currencyId = this.route.snapshot.params['id'];
     this.getCurrencyById(this.currencyId);
-    console.log('this.currencyId:', this.currencyId);
+    logger.log('this.currencyId:', this.currencyId);
     // throw new Error('Method not implemented.');
   }
 
@@ -39,19 +40,19 @@ export class RadxupdatecurrencyComponent implements OnInit {
       return;
     }
     const currencyData = this.currencyForm.value;
-    console.log('Submitting currencyData:', currencyData);
+    logger.log('Submitting currencyData:', currencyData);
 
     this.currencyService.updateCurrency(this.currencyId, currencyData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('Currency  updated successfully:', response);
+          logger.log('Currency  updated successfully:', response);
           this.router.navigate(['/rates/currency']);
         } else {
-          console.error('Failed to update currency:', response);
+          logger.error('Failed to update currency:', response);
         }
       },
       error: (error) => {
-        console.error('Error updating currency:', error);
+        logger.error('Error updating currency:', error);
       }
     });
   }
@@ -59,8 +60,8 @@ export class RadxupdatecurrencyComponent implements OnInit {
   getCurrencyById(id: number): void {
     this.currencyService.getCurrency(id).subscribe({
       next: (response) => {
-        console.log('ID:', id);
-        console.log('API response:', response);
+        logger.log('ID:', id);
+        logger.log('API response:', response);
         const currency = response.currency;
 
         // Ensure the response data matches the form structure
@@ -70,7 +71,7 @@ export class RadxupdatecurrencyComponent implements OnInit {
 
       },
       error: (error) => {
-        console.error('Error fetching charger details:', error);
+        logger.error('Error fetching charger details:', error);
       }
     });
   }

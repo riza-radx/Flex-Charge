@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConnectorService } from 'src/app/services/connectorService/connector.service';
@@ -30,14 +31,14 @@ export class QrCodePopupComponent implements OnInit {
   fetchQRCodeUrl() {
     this.connectorService.getConnector(this.connectorId).subscribe(
       (data: any) => {
-        console.log('Connector:', data);
+        logger.log('Connector:', data);
         this.qrCodeUrl = data.connector.qrCodeUrl;
         this.chargerId = data.connector.charger_id
         this.connectorName = data.connector.connector_name;
         this.connectorNo = data.connector.connector_no;
       },
       (error) => {
-        console.error('Error fetching QR Code URL', error);
+        logger.error('Error fetching QR Code URL', error);
       }
     );
   }
@@ -72,7 +73,7 @@ export class QrCodePopupComponent implements OnInit {
         window.URL.revokeObjectURL(url);
       })
       .catch(error => {
-        console.error('Error downloading QR code', error);
+        logger.error('Error downloading QR code', error);
       });
   }
 

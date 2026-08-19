@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../services/userService/user.service'
@@ -70,10 +71,10 @@ export class PartneruserComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const partner_id = parsedCugpCred.partner_id;
-      console.log('User Group ID:', partner_id);
+      logger.log('User Group ID:', partner_id);
       this.getPartnerMembers(partner_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getUsers()
   }
@@ -81,7 +82,7 @@ export class PartneruserComponent implements OnInit {
   getPartnerMembers(partnerId: number) {
     this.partnerMemberService.getPartnerMemberByUser(partnerId).subscribe(
       (response: any) => {
-        console.log(response);
+        logger.log(response);
         if (response && response.success && Array.isArray(response.partnerMembers)) {
           this.rows = [];
           response.partnerMembers.forEach(member => {
@@ -90,20 +91,20 @@ export class PartneruserComponent implements OnInit {
                 // console.log(userData.user);
                 this.rows.push(userData.user);
                 this.temp = [...this.rows];
-                console.log(this.temp);
+                logger.log(this.temp);
               },
               (error) => {
-                console.error(`Error fetching user with ID ${member.user_id}:`, error);
+                logger.error(`Error fetching user with ID ${member.user_id}:`, error);
               }
             );
           });
         } else {
-          console.error('Unexpected response structure:', response);
+          logger.error('Unexpected response structure:', response);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -113,12 +114,12 @@ export class PartneruserComponent implements OnInit {
       (data) => {
         this.rows = data.users;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

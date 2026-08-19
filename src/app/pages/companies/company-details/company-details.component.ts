@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CompanyService } from "../../../services/companyService/company.service";
@@ -142,7 +143,7 @@ export class CompanyDetailsComponent {
         this.router.navigate([`/partners/partner/${this.activeRow.partner_id}`]);
       } 
       
-      console.log('activeRow', this.activeRow);
+      logger.log('activeRow', this.activeRow);
     }
   }
 
@@ -151,7 +152,7 @@ export class CompanyDetailsComponent {
     if (documentUrl) {
       window.open(documentUrl, '_blank');
     } else {
-      console.error('Document URL is not available');
+      logger.error('Document URL is not available');
     }
   }
 
@@ -164,17 +165,17 @@ export class CompanyDetailsComponent {
   getDocuments(id: string) {
     this.documentService.getDocumentByCompany(id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.documents)) {
           this.documents = data.documents;
           this.tempDocuments = [...this.documents];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -184,12 +185,12 @@ export class CompanyDetailsComponent {
       async (data) => {
         this.companyDetails = data;
 
-        console.log("companydettails", data);
+        logger.log("companydettails", data);
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -209,14 +210,14 @@ export class CompanyDetailsComponent {
             };
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.tempCompanyMembers = [];
         }
-        console.log(this.tempCompanyMembers);
+        logger.log(this.tempCompanyMembers);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching company members:', error);
+        logger.log('Error fetching company members:', error);
       }
     );
   }
@@ -227,19 +228,19 @@ export class CompanyDetailsComponent {
     this.chargerService.getChargerByCompany(this.id).subscribe(
       (data) => {
         // this.chargers = data;
-        console.log(data);
+        logger.log(data);
         // console.log(data);
         if (data && Array.isArray(data.charger)) {
           this.chargers = data.charger;
           this.tempChargers = [...this.chargers];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -249,18 +250,18 @@ export class CompanyDetailsComponent {
     this.partnerService.getPartnerByCompany(this.id).subscribe(
       (data) => {
         // this.partners = data;
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.partner)) {
           this.partners = data.partner;
           this.tempPartners = [...this.partners];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -270,18 +271,18 @@ export class CompanyDetailsComponent {
     this.userGroupService.getUserGroupByCompany(this.id).subscribe(
       (data) => {
         // this.userGroups = data;
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.userGroup)) {
           this.userGroups = data.userGroup;
           this.tempUserGroups = [...this.userGroups];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -318,17 +319,17 @@ export class CompanyDetailsComponent {
       //   console.log(error);
       // }
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.chargingHistory)) {
           this.chargingHistory = data.chargingHistory;
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -351,24 +352,24 @@ export class CompanyDetailsComponent {
       //   console.log(error);
       // }
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.vehicles)) {
           this.vehicles = data.vehicles;
           this.tempVehicles = [...this.vehicles];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
   getVReports() {
     this.reportService.getAllReportByCompany(this.id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.reports)) {
           // If data.report is an array
           this.reports = data.reports;
@@ -376,14 +377,14 @@ export class CompanyDetailsComponent {
           // If data.report is a single object
           this.reports = [data.reports];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -391,21 +392,21 @@ export class CompanyDetailsComponent {
   getCards() {
     this.cardService.getCardByCompany(this.id).subscribe(
       (data: any) => {
-        console.log('API response:', data);
+        logger.log('API response:', data);
 
         // Check if the response contains the 'card' array
         if (data && data.success && Array.isArray(data.card)) {
           this.rfidCards = data.card;
           this.tempRfidCards = [...this.rfidCards]; // Create a shallow copy for the table
-          console.log('RFID Cards:', this.tempRfidCards);
+          logger.log('RFID Cards:', this.tempRfidCards);
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
           this.tempRfidCards = []; // Ensure the table is empty if data format is incorrect
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching card data:', error);
+        logger.error('Error fetching card data:', error);
         this.tempRfidCards = []; // Ensure the table is empty on error
       }
     );
@@ -414,25 +415,25 @@ export class CompanyDetailsComponent {
   getCard() {
     this.cardService.getCardByCompany(this.id).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         if (Array.isArray(data.card)) {
           this.rfidCards = data.card;
           this.rfidCards.forEach((card) => {
-            console.log('Card Id', card.card_id);
+            logger.log('Card Id', card.card_id);
             // this.getchargingHistory(card.card_id);
           });
         } else if (data.card) {
           this.rfidCards = [data.card];
           this.tempRfidCards = [...this.rfidCards];
-          console.log('Single Card Id', data.card.card_id);
+          logger.log('Single Card Id', data.card.card_id);
           // this.getchargingHistory(data.card.card_id);
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching card data:', error);
+        logger.log('Error fetching card data:', error);
       }
     );
   }

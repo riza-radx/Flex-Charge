@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { PartnerMemberService } from '../../../../services/partner-member.service';
@@ -63,7 +64,7 @@ export class UpdatePartnermembersComponent implements OnInit {
       this.companyId = parsedCugpCred.company_id;
       this.loadRatesbyCompany(this.companyId);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // Retrieve userGroupId from the route
@@ -80,11 +81,11 @@ export class UpdatePartnermembersComponent implements OnInit {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -175,12 +176,12 @@ export class UpdatePartnermembersComponent implements OnInit {
       customer_number: this.user.customer_number
     };
 
-    console.log('Submitting user update:', userUpdatePayload);
+    logger.log('Submitting user update:', userUpdatePayload);
 
     // Update user
     this.userService.updateUser(this.userId, userUpdatePayload).subscribe({
       next: (response: any) => {
-        console.log('User updated successfully:', response);
+        logger.log('User updated successfully:', response);
 
         // Prepare the partner member payload
         const partnerMemberPayload = {
@@ -192,7 +193,7 @@ export class UpdatePartnermembersComponent implements OnInit {
         // Update partner member
         this.partnerMemberService.updatePartnerMember(this.partnerMemberId, partnerMemberPayload).subscribe({
           next: (memberResponse: any) => {
-            console.log('Partner member role updated successfully:', memberResponse);
+            logger.log('Partner member role updated successfully:', memberResponse);
             this.successMessage = 'Partner member updated successfully.';
             setTimeout(() => {
               this.successMessage = '';
@@ -200,14 +201,14 @@ export class UpdatePartnermembersComponent implements OnInit {
             }, 3000);
           },
           error: (error) => {
-            console.error('Error updating partner member role:', error);
+            logger.error('Error updating partner member role:', error);
             this.errorMessage = this.getErrorMessage(error);
             setTimeout(() => this.errorMessage = '', 5000);
           }
         });
       },
       error: (error) => {
-        console.error('Error updating user:', error);
+        logger.error('Error updating user:', error);
         this.errorMessage = this.getErrorMessage(error);
         setTimeout(() => this.errorMessage = '', 5000);
       }
@@ -238,7 +239,7 @@ export class UpdatePartnermembersComponent implements OnInit {
   getPartnerMemberById(userId: string): void {
     this.partnerMemberService.getPartnerMemberByUser(userId).subscribe(
       (response: any) => {
-        console.log(response.partnerMembers[0])
+        logger.log(response.partnerMembers[0])
         const partnerMember = response.partnerMembers[0]; // Get the first element of the array
         const userData = partnerMember?.User;
         this.partnerId = partnerMember?.partner_id
@@ -261,11 +262,11 @@ export class UpdatePartnermembersComponent implements OnInit {
             customer_number: userData.customer_number
           };
         } else {
-          console.error('No user data found');
+          logger.error('No user data found');
         }
       },
       (error) => {
-        console.error('Error fetching user group member:', error);
+        logger.error('Error fetching user group member:', error);
       }
     );
   }

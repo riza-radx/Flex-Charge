@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -58,11 +59,11 @@ export class RadxcreateconnectorsComponent implements OnInit {
     // Retrieve connectorId and chargerId from the route
     this.route.paramMap.subscribe(params => {
       this.chargerId = params.get('id');
-      console.log('chargerId:', this.chargerId);
+      logger.log('chargerId:', this.chargerId);
       if (!this.chargerId) {
-        console.error('chargerId not found in the route');
+        logger.error('chargerId not found in the route');
       } else {
-        console.log('chargerId:', this.chargerId);
+        logger.log('chargerId:', this.chargerId);
         this.connectorForm.patchValue({ chargerId: this.chargerId });
       }
     });
@@ -95,7 +96,7 @@ export class RadxcreateconnectorsComponent implements OnInit {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      console.log('File selected:', file.name); // Log the selected file name
+      logger.log('File selected:', file.name); // Log the selected file name
       this.selectedFileName = file.name; // Store the file name
       // Optionally, you could directly set the file here if sending the file
       this.connectorForm.patchValue({
@@ -105,9 +106,9 @@ export class RadxcreateconnectorsComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('Form submission triggered');
+    logger.log('Form submission triggered');
     if (this.connectorForm.invalid) {
-      console.log('Form is invalid');
+      logger.log('Form is invalid');
       this.connectorForm.markAllAsTouched();
       this.errorMessage = 'Please fill out all required fields.';
       setTimeout(() => this.errorMessage = '', 5000); // Hide error message after 5 seconds
@@ -125,17 +126,17 @@ export class RadxcreateconnectorsComponent implements OnInit {
       connectorImage: this.connectorForm.get('connectorImage')?.value // Send the actual image path
     };
   
-    console.log('Connector Data:', connectorData);
+    logger.log('Connector Data:', connectorData);
   
     // Send JSON data
     this.connectorService.addConnector(connectorData).subscribe({
       next: (response) => {
-        console.log('Connector created successfully', response);
+        logger.log('Connector created successfully', response);
         // Redirect after successful creation
         this.router.navigate(['/assets/chargers', this.chargerId]);
       },
       error: (error) => {
-        console.error('Error creating connector', error);
+        logger.error('Error creating connector', error);
         this.errorMessage = error.message || 'An error occurred while creating the connector.';
         setTimeout(() => this.errorMessage = '', 5000); // Hide error message after 5 seconds
       }

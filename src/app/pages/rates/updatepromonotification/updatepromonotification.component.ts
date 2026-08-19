@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -47,7 +48,7 @@ export class UpdatePromoNotificationComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    console.error(err);
+                    logger.error(err);
                     this.errorMessage = 'Failed to load notification';
                 }
             });
@@ -72,7 +73,7 @@ export class UpdatePromoNotificationComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    console.error('Error updating notification:', err);
+                    logger.error('Error updating notification:', err);
                     this.errorMessage = 'Failed to update notification';
                 }
             });

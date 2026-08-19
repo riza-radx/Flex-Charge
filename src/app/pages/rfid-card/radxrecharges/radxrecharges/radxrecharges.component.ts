@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RechargeService } from '../../../../services/rechargeService/recharge.service'
@@ -80,13 +81,13 @@ export class RadxrechargesComponent implements OnInit {
       (data) => {
         this.rows = data.recharges;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         this.rows.forEach((row, index) => {
           this.cardService.getCard(row.card_id).subscribe(
             (cardData) => {
               this.rows[index].card = cardData.card.serial_no;  
               if(cardData.card.user_id != null){
-              console.log("row.card.user_id",cardData.card.user_id);
+              logger.log("row.card.user_id",cardData.card.user_id);
               this.userService.getUserById(cardData.card.user_id).subscribe(
                 (userData) => {
                   this.rows[index].user = userData.user.username; 
@@ -94,7 +95,7 @@ export class RadxrechargesComponent implements OnInit {
                 },
                 (error) => {
                   this.errorMessage = error.message;
-                  console.log(error);
+                  logger.log(error);
                 }
               );}
               else{
@@ -105,7 +106,7 @@ export class RadxrechargesComponent implements OnInit {
                   },
                   (error) => {
                     this.errorMessage = error.message;
-                    console.log(error);
+                    logger.log(error);
                   }
                 );
               }
@@ -113,7 +114,7 @@ export class RadxrechargesComponent implements OnInit {
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
          
@@ -121,7 +122,7 @@ export class RadxrechargesComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

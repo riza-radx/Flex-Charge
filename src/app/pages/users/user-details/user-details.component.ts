@@ -194,6 +194,7 @@
 // }
 
 
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from "../../../services/userService/user.service";
@@ -321,7 +322,7 @@ export class UserDetailsComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
@@ -384,15 +385,15 @@ export class UserDetailsComponent implements OnInit {
             this.isUser = true;
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.getUser();
@@ -419,7 +420,7 @@ export class UserDetailsComponent implements OnInit {
     if (documentUrl) {
       window.open(documentUrl, '_blank');
     } else {
-      console.error('Document URL is not available');
+      logger.error('Document URL is not available');
     }
   }
   onActivate(event: any) {
@@ -443,12 +444,12 @@ export class UserDetailsComponent implements OnInit {
           this.documents = data.documents;
           this.tempDocuments = [...this.documents];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -474,7 +475,7 @@ export class UserDetailsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching user details:', error);
+        logger.log('Error fetching user details:', error);
       }
     );
   }
@@ -486,10 +487,10 @@ export class UserDetailsComponent implements OnInit {
         this.logedInUser = data.user;
         this.logedInUserId = data.user.id;
         this.allowTransfer = data.user.allow_money_transfert;
-        console.log("data.user", data.user)
+        logger.log("data.user", data.user)
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     )
   }
@@ -537,7 +538,7 @@ export class UserDetailsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -556,7 +557,7 @@ export class UserDetailsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching charging history:', error);
+        logger.log('Error fetching charging history:', error);
       }
     );
   }
@@ -577,7 +578,7 @@ export class UserDetailsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message || 'Failed to load recharges';
-        console.log('Error:', error); // Log any errors that occur
+        logger.log('Error:', error); // Log any errors that occur
       }
     );
   }
@@ -590,12 +591,12 @@ export class UserDetailsComponent implements OnInit {
           this.tempTransactions = [...this.transactions]; // Kopje për filter
         } else {
           this.transactions = [];
-          console.log("No transactions available or response format is incorrect.");
+          logger.log("No transactions available or response format is incorrect.");
         }
       },
       (error) => {
         this.errorMessage = error.message || 'Failed to load transactions';
-        console.log('Error:', error);
+        logger.log('Error:', error);
       }
     );
   }
@@ -615,7 +616,7 @@ export class UserDetailsComponent implements OnInit {
               this.isUserGroupRole = true;
               // console.log('User Group role:', this.isUserGroupRole);
             },
-            (error) => console.log('Error fetching user group:', error)
+            (error) => logger.log('Error fetching user group:', error)
           );
           return; // Stop execution if user is in a User Group
         }
@@ -633,7 +634,7 @@ export class UserDetailsComponent implements OnInit {
                   this.isPartnerRole = true;
                   // console.log('Partner Role:', this.isPartnerRole);
                 },
-                (error) => console.log('Error fetching partner:', error)
+                (error) => logger.log('Error fetching partner:', error)
               );
               return; // Stop execution if user is in a Partner
             }
@@ -662,19 +663,19 @@ export class UserDetailsComponent implements OnInit {
 
                       // console.log('Company role:', this.isCompanyRole, this.isRadXRole, this.isUserRole);
                     },
-                    (error) => console.log('Error fetching company:', error)
+                    (error) => logger.log('Error fetching company:', error)
                   );
                 } else {
                   // console.log('User is not part of any Company.');
                 }
               },
-              (error) => console.log('Error checking company membership:', error)
+              (error) => logger.log('Error checking company membership:', error)
             );
           },
-          (error) => console.log('Error checking partner membership:', error)
+          (error) => logger.log('Error checking partner membership:', error)
         );
       },
-      (error) => console.log('Error checking user group membership:', error)
+      (error) => logger.log('Error checking user group membership:', error)
     );
   }
 
@@ -694,7 +695,7 @@ export class UserDetailsComponent implements OnInit {
       return Object.keys(d).some(key => {
         if (typeof d[key] === 'string') {
           const match = d[key].toLowerCase().includes(val); // Check if the property contains the search value
-          if (match) console.log(`Matched: ${d[key]} for ${key}`); // Debug log for matching values
+          if (match) logger.log(`Matched: ${d[key]} for ${key}`); // Debug log for matching values
           return match;
         }
         return false; // Ignore non-string properties

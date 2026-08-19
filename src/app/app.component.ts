@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from "@angular/core";
 import { Router, Event, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
 
@@ -24,7 +25,7 @@ export class AppComponent {
         // Hide loading indicator
 
         // Present error to user
-        console.log(event.error);
+        logger.log(event.error);
       }
     });
   }

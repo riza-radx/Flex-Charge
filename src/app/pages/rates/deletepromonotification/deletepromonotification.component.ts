@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PromoService } from 'src/app/services/promoService/promo.service';
@@ -22,7 +23,7 @@ export class DeletepromonotificationComponent implements OnInit {
   ngOnInit(): void {
     this.notificationId = this.route.snapshot.params['id'];
     this.getNotificationDetails(this.notificationId);
-    console.log('Notification ID:', this.notificationId);
+    logger.log('Notification ID:', this.notificationId);
   }
 
   getNotificationDetails(id: number): void {
@@ -30,10 +31,10 @@ export class DeletepromonotificationComponent implements OnInit {
       next: (res: any) => {
         this.notificationTitle = res.promoNotification?.title || '';
         this.promo_id = res.promoNotification?.promo_id;
-        console.log('Notification details:', res);
+        logger.log('Notification details:', res);
       },
       error: (err) => {
-        console.error('Error fetching notification:', err);
+        logger.error('Error fetching notification:', err);
       }
     });
   }
@@ -41,12 +42,12 @@ export class DeletepromonotificationComponent implements OnInit {
   confirmDelete(): void {
     this.promoService.deletePromoNotification(this.notificationId).subscribe({
       next: (res) => {
-        console.log('Notification deleted:', res);
+        logger.log('Notification deleted:', res);
         this.closePopupHandler();
         this.router.navigate(['/rates/promo', this.promo_id]); // redirect tek promo details
       },
       error: (err) => {
-        console.error('Error deleting notification:', err);
+        logger.error('Error deleting notification:', err);
       }
     });
   }

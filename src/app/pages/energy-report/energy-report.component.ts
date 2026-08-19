@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import { jsPDF } from 'jspdf';
@@ -82,7 +83,7 @@ export class EnergyReportComponent implements OnInit {
         this.chargers = data?.chargers || [];
       },
       (err: any) => {
-        console.warn('getAllChargers failed, trying by company');
+        logger.warn('getAllChargers failed, trying by company');
         this.chargers = [];
       }
     );
@@ -134,7 +135,7 @@ export class EnergyReportComponent implements OnInit {
         this.loading = false;
       },
       (err: any) => {
-        console.error('Energy report load failed:', err);
+        logger.error('Energy report load failed:', err);
         this.reset();
         this.loading = false;
       }
@@ -352,7 +353,7 @@ export class EnergyReportComponent implements OnInit {
           doc.addImage(imgData, 'PNG', 14, y, imgW, imgH);
           y += imgH + 8;
         } catch (err) {
-          console.warn('Chart to image failed:', err);
+          logger.warn('Chart to image failed:', err);
         }
       }
     }

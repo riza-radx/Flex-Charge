@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargingHistoryService } from "../../../../services/chargingHistoryService/charging-history.service";
@@ -292,7 +293,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
           this.pendingChargingIds = new Set(res?.chargingHistoryIds || []);
         },
         (err: any) => {
-          console.warn('S\'mund te merren pending fiscal IDs:', err?.message || err);
+          logger.warn('S\'mund te merren pending fiscal IDs:', err?.message || err);
         }
       );
     }
@@ -417,15 +418,15 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
             this.loadUsersByUserGroups(this.usergroup_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
   }
@@ -471,7 +472,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       this.totalRows = this.rows.length;
     } catch (error) {
       this.errorMessage = (error && error.message) || 'Failed to load charging history';
-      console.error(error);
+      logger.error(error);
     }
   }
 
@@ -487,17 +488,17 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
     while (aggregated.length < total && aggregated.length < HARD_LIMIT) {
       iterations++;
       const filters = this.buildExportFilters(PAGE_SIZE, offset);
-      console.log(`[MonthLoad] iter=${iterations} year=${year} month=${month} offset=${offset} filters=`, filters);
+      logger.log(`[MonthLoad] iter=${iterations} year=${year} month=${month} offset=${offset} filters=`, filters);
       const data: any = await this.fetchPageForExport(year, month, filters);
       const gotRows = Array.isArray(data?.chargingHistory) ? data.chargingHistory.length : 0;
-      console.log(`[MonthLoad] response: rows=${gotRows} backendTotal=${data?.total}`);
+      logger.log(`[MonthLoad] response: rows=${gotRows} backendTotal=${data?.total}`);
       if (!data || !Array.isArray(data.chargingHistory)) break;
       aggregated = aggregated.concat(data.chargingHistory);
       total = typeof data.total === 'number' ? data.total : aggregated.length;
       if (data.chargingHistory.length < PAGE_SIZE) break;
       offset += PAGE_SIZE;
     }
-    console.log(`[MonthLoad] DONE — aggregated ${aggregated.length} rows in ${iterations} request(s), backend total=${total}`);
+    logger.log(`[MonthLoad] DONE — aggregated ${aggregated.length} rows in ${iterations} request(s), backend total=${total}`);
     return aggregated;
   }
 
@@ -578,7 +579,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -590,7 +591,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -601,7 +602,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -613,7 +614,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -624,7 +625,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -636,7 +637,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -673,7 +674,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -696,12 +697,12 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
                 },
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
@@ -709,7 +710,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -732,20 +733,20 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
                 },
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -877,7 +878,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
           this.chargingHistory = [...this.rows];
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.chargingHistory = [];
           this.tempChargingHistory = [];
           this.totalRows = 0;
@@ -885,7 +886,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -963,7 +964,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
   // }
   getChargingHistoryByCompany() {
     const filters: any = { limit: this.pageSize, offset: this.currentOffset };
-    console.log('[FETCH] getChargingHistoryByCompany filters=', filters);
+    logger.log('[FETCH] getChargingHistoryByCompany filters=', filters);
 
     // Add selected filter values if present
     if (this.selectedCompany) {
@@ -989,11 +990,11 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       filters.roaming_type = this.selectedRoamingType;
     }
 
-    console.log("getChargingHistoryByCompany - filters",filters)
+    logger.log("getChargingHistoryByCompany - filters",filters)
     const { year, month } = this.getSelectedYearMonth();
     this.chargingHistoryService.getChargingByMonthForCompany(this.company_id, year, month, filters).subscribe(
       (data: any) => {
-        console.log('[RESPONSE] rows received=', data?.chargingHistory?.length, 'total=', data?.total, 'first row id=', data?.chargingHistory?.[0]?.charging_history_id, 'last row id=', data?.chargingHistory?.[data?.chargingHistory?.length - 1]?.charging_history_id);
+        logger.log('[RESPONSE] rows received=', data?.chargingHistory?.length, 'total=', data?.total, 'first row id=', data?.chargingHistory?.[0]?.charging_history_id, 'last row id=', data?.chargingHistory?.[data?.chargingHistory?.length - 1]?.charging_history_id);
         if (data && Array.isArray(data.chargingHistory)) {
           this.totalRows = typeof data.total === 'number' ? data.total : data.chargingHistory.length;
           this.rows = data.chargingHistory.map((row) => ({
@@ -1029,7 +1030,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
           this.chargingHistory = [...this.rows];
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.chargingHistory = [];
           this.tempChargingHistory = [];
           this.totalRows = 0;
@@ -1037,7 +1038,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
     
@@ -1107,7 +1108,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
           this.chargingHistory = [...this.rows];
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.chargingHistory = [];
           this.tempChargingHistory = [];
           this.totalRows = 0;
@@ -1115,7 +1116,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1182,7 +1183,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
           this.chargingHistory = [...this.rows];
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.chargingHistory = [];
           this.tempChargingHistory = [];
           this.totalRows = 0;
@@ -1190,7 +1191,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1258,7 +1259,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
           this.chargingHistory = [...this.rows];
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.chargingHistory = [];
           this.tempChargingHistory = [];
           this.totalRows = 0;
@@ -1266,7 +1267,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1382,7 +1383,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
     try {
       allRows = await this.loadAllRowsForExport();
     } catch (err) {
-      console.error('Export PDF — fetch failed:', err);
+      logger.error('Export PDF — fetch failed:', err);
       this.exportingInProgress = false;
       return;
     }
@@ -1435,7 +1436,7 @@ export class AllChargingHistoryDataComponent implements AfterViewInit {
     try {
       allRows = await this.loadAllRowsForExport();
     } catch (err) {
-      console.error('Export Excel — fetch failed:', err);
+      logger.error('Export Excel — fetch failed:', err);
       this.exportingInProgress = false;
       return;
     }

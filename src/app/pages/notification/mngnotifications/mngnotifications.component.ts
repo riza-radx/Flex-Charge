@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -119,15 +120,15 @@ export class MngnotificationsComponent {
             this.loadUsersByCompany(this.company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -151,7 +152,7 @@ export class MngnotificationsComponent {
       },
       error: (err) => {
         this.errorMessage = err.message;
-        console.error(err);
+        logger.error(err);
       }
     });
   }
@@ -159,7 +160,7 @@ export class MngnotificationsComponent {
   loadUsers(): void {
     this.userService.getAllUsers().subscribe({
       next: users => this.allUsers = users,
-      error: err => console.error('Failed to load users', err)
+      error: err => logger.error('Failed to load users', err)
     });
   }
 
@@ -591,7 +592,7 @@ export class MngnotificationsComponent {
         time
       };
 
-      console.log("payload",payload)
+      logger.log("payload",payload)
 
       this.notificationService.createLocalNotification(payload).subscribe({
         next: (res: any) => {
@@ -668,7 +669,7 @@ export class MngnotificationsComponent {
             sendNextBatch();
           },
           error: (err) => {
-            console.error(`❌ Error sending batch ${batchIndex + 1}:`, err);
+            logger.error(`❌ Error sending batch ${batchIndex + 1}:`, err);
             failureCount += tokenBatches[batchIndex].length;
             batchIndex++;
             sendNextBatch();
@@ -689,7 +690,7 @@ export class MngnotificationsComponent {
       },
       error: (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     });
   }
@@ -701,7 +702,7 @@ export class MngnotificationsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -713,7 +714,7 @@ export class MngnotificationsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -727,7 +728,7 @@ export class MngnotificationsComponent {
             .map((member: any) => member.User)  // <-- only take the User field
             .filter((user: any) => !!user);     // remove null/undefined entries
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.userGroupUsers = [];
         }
 
@@ -735,7 +736,7 @@ export class MngnotificationsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching user group members:', error);
+        logger.error('Error fetching user group members:', error);
       }
     );
   }
@@ -750,13 +751,13 @@ export class MngnotificationsComponent {
               const userResponse = await this.userService.getUserById(member.user_id).toPromise();
               return userResponse.user; // Return only the user object
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return null; // Skip or handle error case
             }
           }));
           this.partnerUsers = this.partnerUsers.filter(user => user !== null);
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.partnerUsers = [];
         }
 
@@ -764,7 +765,7 @@ export class MngnotificationsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching partner members:', error);
+        logger.error('Error fetching partner members:', error);
       }
     );
   }
@@ -824,7 +825,7 @@ export class MngnotificationsComponent {
           this.totalRecipients = this.allUsers.length;
           // console.log('[loadAllUsers] local + remote → remote users only:', this.allUsers);
         },
-        error: err => console.error('Error loading remote users:', err)
+        error: err => logger.error('Error loading remote users:', err)
       });
     } else if (isRemote) {
       this.userService.getUsersAndRegisterDevices(this.company_id).subscribe({
@@ -833,7 +834,7 @@ export class MngnotificationsComponent {
           this.totalRecipients = this.allUsers.length;
           // console.log('[loadAllUsers] remote only:', this.allUsers);
         },
-        error: err => console.error('Error loading remote users:', err)
+        error: err => logger.error('Error loading remote users:', err)
       });
     } else if (isLocal) {
       this.userService.getUserByCompany(this.company_id).subscribe({
@@ -842,7 +843,7 @@ export class MngnotificationsComponent {
           this.totalRecipients = this.allUsers.length;
           // console.log('[loadAllUsers] local only:', this.allUsers);
         },
-        error: err => console.error('Error loading local users:', err)
+        error: err => logger.error('Error loading local users:', err)
       });
     } else {
       this.allUsers = [];
@@ -866,14 +867,14 @@ export class MngnotificationsComponent {
         next: (res: any) => {
           this.availableUsers = this.normalizeUsers(res.data, true);
         },
-        error: err => console.error('Error loading remote users (custom):', err)
+        error: err => logger.error('Error loading remote users (custom):', err)
       });
     } else if (isLocal) {
       this.userService.getUserByCompany(this.company_id).subscribe({
         next: (res: any) => {
           this.availableUsers = this.normalizeUsers(res.users, false);
         },
-        error: err => console.error('Error loading local users (custom):', err)
+        error: err => logger.error('Error loading local users (custom):', err)
       });
     }
   }
@@ -892,7 +893,7 @@ export class MngnotificationsComponent {
         next: (res: any) => {
           this.userGroupUsers = this.normalizeUsers(res.data, true);
         },
-        error: err => console.error('Error loading remote group users:', err)
+        error: err => logger.error('Error loading remote group users:', err)
       });
     } else if (isLocal) {
       this.loadUsersByUserGroups(groupId);
@@ -932,7 +933,7 @@ export class MngnotificationsComponent {
         next: (res: any) => {
           this.partnerUsers = this.normalizeUsers(res.data, true);
         },
-        error: err => console.error('Error loading remote partner users:', err)
+        error: err => logger.error('Error loading remote partner users:', err)
       });
     } else if (isLocal) {
       this.loadUsersByPartner(partnerId);

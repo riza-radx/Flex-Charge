@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PromoService } from "../../../../services/promoService/promo.service";
@@ -88,7 +89,7 @@ export class PromodetailsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -168,7 +169,7 @@ export class PromodetailsComponent implements OnInit {
         this.filterNotifications();
       },
       error: (err) => {
-        console.error('Error fetching notifications:', err);
+        logger.error('Error fetching notifications:', err);
         this.promoNotifications = [];
         // this.updatePagedNotifications();
       }
@@ -219,7 +220,7 @@ export class PromodetailsComponent implements OnInit {
         // this.updatePagedUserOffers();
       },
       error: (error) => {
-        console.error('❌ Error loading user offers:', error);
+        logger.error('❌ Error loading user offers:', error);
         this.userOffers = [];
         // this.updatePagedUserOffers();
       }

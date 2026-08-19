@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { UserGroupMembersService } from '../../../../services/userGroupMembersService/user-group-members.service';
@@ -70,7 +71,7 @@ export class UsergroupmembersComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       this.companyId = parsedCugpCred.company_id;
-      console.log('Company ID:', this.companyId);
+      logger.log('Company ID:', this.companyId);
       this.getCompanyDetails(this.companyId);
       this.loadRatesbyCompany(this.companyId);
 
@@ -81,9 +82,9 @@ export class UsergroupmembersComponent implements OnInit {
       this.userGroupId = params.get('id');
       this.getUserGroupDetails(this.userGroupId)
       if (!this.userGroupId) {
-        console.error('User Group ID not found in the route');
+        logger.error('User Group ID not found in the route');
       } else {
-        console.log('User Group ID:', this.userGroupId);
+        logger.log('User Group ID:', this.userGroupId);
       }
     });
   }
@@ -91,11 +92,11 @@ export class UsergroupmembersComponent implements OnInit {
   getCompanyDetails(companyId: string) {
     this.companyService.getCompany(companyId).subscribe(
       (company) => {
-        console.log('Company:', company);
+        logger.log('Company:', company);
         this.companyName = company.company.company_name;
       },
       (error) => {
-        console.error('Error fetching company details', error);
+        logger.error('Error fetching company details', error);
       }
     );
   }
@@ -103,7 +104,7 @@ export class UsergroupmembersComponent implements OnInit {
   getUserGroupDetails(id: string): void {
     this.userGroupService.getUserGroup(id).subscribe({
       next: (response) => {
-        console.log('response:', response);
+        logger.log('response:', response);
         this.rate_id = response.userGroup.rate_id;
         this.customer_number = response.userGroup.customer_number;
         this.dimension_value = response.userGroup.dimension_value;
@@ -111,11 +112,11 @@ export class UsergroupmembersComponent implements OnInit {
         this.send_invoice_by_email = response.userGroup.send_invoice_by_email;
         const splitWalletValue = response.userGroup.split_wallet;
         this.isSplitWallet = splitWalletValue === '1' || splitWalletValue === 'true'; 
-        console.log(" this.send_invoice_by_email", this.send_invoice_by_email)
+        logger.log(" this.send_invoice_by_email", this.send_invoice_by_email)
         this.getRateNameById(this.rate_id);
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }
@@ -123,24 +124,24 @@ export class UsergroupmembersComponent implements OnInit {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
-        console.log("Rates after loading:", this.rates);
+        logger.log("Rates after loading:", this.rates);
         this.getRateNameById(this.rate_id);
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
 
 
   getRateNameById(rateId: string): string {
-    console.log("Searching for rateId:", rateId);
-    console.log("Rates available:", this.rates);
+    logger.log("Searching for rateId:", rateId);
+    logger.log("Rates available:", this.rates);
 
     const rate = this.rates.find(r => r.rate_id === rateId);
-    console.log("Found rate:", rate);
+    logger.log("Found rate:", rate);
 
     if (rate) {
       this.rateName = rate.rate_name;
@@ -155,11 +156,11 @@ export class UsergroupmembersComponent implements OnInit {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
-        console.log("Fetched companies:", data.company);
+        logger.log("Fetched companies:", data.company);
         this.companies = data.company.filter(company => company.is_whitelabel === 'false');
       },
       (error) => {
-        console.log("Error fetching companies:", error);
+        logger.log("Error fetching companies:", error);
       }
     );
   }
@@ -177,11 +178,11 @@ export class UsergroupmembersComponent implements OnInit {
     this.user.allowPayAsYouGo = this.allowPayAsYouGo;
     this.user.send_invoice_by_email = this.send_invoice_by_email;
     this.user.created_date = new Date().toISOString();
-    console.log('Submitting user registration:', this.user);
+    logger.log('Submitting user registration:', this.user);
 
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
         const userId = response.tokenUser?.userId;
 
         if (!userId) {
@@ -190,33 +191,33 @@ export class UsergroupmembersComponent implements OnInit {
         }
 
         if (!this.userGroupId) {
-          console.error('User Group ID not found');
+          logger.error('User Group ID not found');
           this.errorMessage = 'User Group ID is missing. Please try again.';
           return;
         }
 
-        console.log('User Group ID:', this.userGroupId); // Log the User Group ID
+        logger.log('User Group ID:', this.userGroupId); // Log the User Group ID
         const userGroupMember = {
           userGroupId: this.userGroupId,  // Use the userGroupId from the route
           userId: userId,
           type: this.user.role
         };
 
-        console.log('Creating user group member with data:', userGroupMember);
+        logger.log('Creating user group member with data:', userGroupMember);
 
         this.userGroupMemberService.addUserGroupMember(userGroupMember).subscribe(
           (memberResponse) => {
-            console.log('User Group member created successfully', memberResponse);
+            logger.log('User Group member created successfully', memberResponse);
             this.router.navigate([`/users/user/${userId}`]);
           },
           (error) => {
-            console.error('Error creating user group member', error);
+            logger.error('Error creating user group member', error);
             this.handleError(error);
           }
         );
       },
       (error) => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
         this.handleError(error);
       }
     );

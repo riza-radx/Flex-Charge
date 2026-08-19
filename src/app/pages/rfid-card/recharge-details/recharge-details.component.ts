@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RechargeService } from "../../../services/rechargeService/recharge.service";
@@ -40,12 +41,12 @@ export class RechargeDetailsComponent {
     this.rechargeService.getRechargeByCard(this.id).subscribe(
       (data) => {
         this.recharge = data;
-        console.log(data);
+        logger.log(data);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

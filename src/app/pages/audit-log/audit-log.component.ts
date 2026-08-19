@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuditLogService } from '../../services/auditLogService/audit-log.service';
@@ -78,8 +79,8 @@ export class AuditLogComponent implements OnInit {
         }
         this.totalRecords = data?.total ?? data?.count ?? this.rows.length;
         if (this.rows.length > 0) {
-          console.log('[AuditLog] first row keys:', Object.keys(this.rows[0]));
-          console.log('[AuditLog] first row:', this.rows[0]);
+          logger.log('[AuditLog] first row keys:', Object.keys(this.rows[0]));
+          logger.log('[AuditLog] first row:', this.rows[0]);
         }
       },
       (error) => {

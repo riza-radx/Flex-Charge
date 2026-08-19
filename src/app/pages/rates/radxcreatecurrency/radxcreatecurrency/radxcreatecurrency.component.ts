@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { CurrencyService } from "../../../../services/currencyService/currency.service";
 import { CompanyService } from "../../../../services/companyService/company.service";
@@ -46,7 +47,7 @@ export class RadxcreatecurrencyComponent {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -90,15 +91,15 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -109,10 +110,10 @@ case 'COMPANY_USER':
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
         this.companies = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -126,11 +127,11 @@ case 'COMPANY_USER':
     }
     this.currencyService.addCurrency(this.currency).subscribe(
       (response) => {
-        console.log('Currency created successfully:', response);
+        logger.log('Currency created successfully:', response);
         this.router.navigate(['/rates/currency']);  // Adjust the navigation as needed
       },
       (error) => {
-        console.error('Error creating currency:', error);
+        logger.error('Error creating currency:', error);
       }
     );
   }

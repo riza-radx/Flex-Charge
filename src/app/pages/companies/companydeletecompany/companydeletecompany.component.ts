@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CompanyService } from 'src/app/services/companyService/company.service';
@@ -22,8 +23,8 @@ export class CompanydeletecompanyComponent implements OnInit {
   ngOnInit(): void {
     this.companyId = this.route.snapshot.params['id'];
     this.getCompanyDetails(this.companyId);
-    console.log('companyId ID:', this.companyId);
-    console.log('company Name:', this.companyName);  // Debugging line
+    logger.log('companyId ID:', this.companyId);
+    logger.log('company Name:', this.companyName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -35,14 +36,14 @@ export class CompanydeletecompanyComponent implements OnInit {
   confirmDelete(): void {
     this.companyService.deleteCompany(this.companyId).subscribe({
       next: (response) => {
-        console.log('company deleted successfully:', response);
+        logger.log('company deleted successfully:', response);
         // this.closePopupHandler();
         // this.router.navigate(['/companies/company']);
         this.closePopupHandler();
         this.closePopup.emit();
       },
       error: (error) => {
-        console.error('Error deleting location:', error);
+        logger.error('Error deleting location:', error);
       }
     });
   }
@@ -51,11 +52,11 @@ export class CompanydeletecompanyComponent implements OnInit {
     this.companyService.getCompany(id).subscribe({
       next: (response) => {
         this.companyName = response.company.company_name;
-        console.log('response:', response);
-        console.log('companyName:', this.companyName);
+        logger.log('response:', response);
+        logger.log('companyName:', this.companyName);
       },
       error: (error) => {
-        console.error('Error fetching company details:', error);
+        logger.error('Error fetching company details:', error);
       }
     });
   }

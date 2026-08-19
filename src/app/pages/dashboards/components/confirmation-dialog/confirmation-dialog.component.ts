@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, Inject, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -32,10 +33,10 @@ export class ConfirmationDialogComponent {
     this.message = bsModalRef?.content?.message;
     this.choices = bsModalRef?.content?.choices || [];
     this.filteredChoices = [...this.choices]; // Initially, no filtering
-    console.log('Choices:', this.choices); // Check the values of choices
+    logger.log('Choices:', this.choices); // Check the values of choices
   }
   ngOnInit(): void {
-    console.log('Choices onInit:', this.choices); // Log to confirm data
+    logger.log('Choices onInit:', this.choices); // Log to confirm data
     // Trigger filtering logic to populate filtered choices on initial load
     this.filterChoices();
 
@@ -46,7 +47,7 @@ export class ConfirmationDialogComponent {
   }
 
 onConfirm(): void {
-  console.log('onConfirm called');
+  logger.log('onConfirm called');
   if (this.title === 'Confirm Start Remote Charging') {
     if (!this.selectedChoice || !this.remoteStartReason?.trim()) {
       this.showValidationError = true;

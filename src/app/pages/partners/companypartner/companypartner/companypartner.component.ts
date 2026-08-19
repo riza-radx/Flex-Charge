@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PartnerService } from '../../../../services/partnerService/partner.service'
@@ -68,12 +69,12 @@ export class CompanypartnerComponent implements OnInit {
       (data) => {
         this.rows = data.partners;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

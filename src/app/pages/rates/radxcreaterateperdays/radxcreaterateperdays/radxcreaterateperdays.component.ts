@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RatePerDaysService } from "../../../../services/ratePerDaysService/rate-per-days.service";
@@ -73,7 +74,7 @@ export class RadxcreaterateperdaysComponent {
     this.maxYear = this.currentYear + 50;
     this.route.paramMap.subscribe(params => {
       this.rateId = params.get('id');
-      console.log(this.rateId);
+      logger.log(this.rateId);
       if (this.rateId) {
         this.ratePerDays.rateId = this.rateId;
       }
@@ -115,20 +116,20 @@ export class RadxcreaterateperdaysComponent {
         rateType: this.ratePerDays.rateType
       };
   
-      console.log('Rate Data:', rateData);
+      logger.log('Rate Data:', rateData);
   
       // Make the API call to add the rate per day
       this.ratePerDaysService.addRatePerDay(rateData).subscribe(
         (response) => {
           if (response) {
-            console.log('Rate per day created successfully:', response);
+            logger.log('Rate per day created successfully:', response);
           } else {
             this.errorMessage = 'Rate Per Day ID not returned from server. Please try again.';
             setTimeout(() => this.errorMessage = '', 5000);  // Clear error message after 5 seconds
           }
         },
         (error) => {
-          console.error('Error creating rate per day:', error);
+          logger.error('Error creating rate per day:', error);
           this.errorMessage = error.message || 'An unexpected error occurred. Please try again later.';
           setTimeout(() => this.errorMessage = '', 5000);  // Clear error message after 5 seconds
         }
@@ -197,16 +198,16 @@ export class RadxcreaterateperdaysComponent {
   //   );
   // }
   getRate() {
-    console.log(this.rateId);
+    logger.log(this.rateId);
     this.rateService.getRate(this.rateId).subscribe(
       (data) => {
         // this.users = data;
         // this.getUserGroups(data.rate.company_id)
-        console.log(data);
+        logger.log(data);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

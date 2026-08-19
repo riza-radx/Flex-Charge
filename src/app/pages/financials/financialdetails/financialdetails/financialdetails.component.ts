@@ -1,4 +1,5 @@
 
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReportService } from "../../../../services/reportService/report.service";
@@ -211,7 +212,7 @@ export class FinancialdetailsComponent implements OnInit {
       (data: any) => {
         this.reports = data.reportMetadata;
         this.reportColumns = this.reports;
-        console.log(this.reportColumns)
+        logger.log(this.reportColumns)
         this.startDate = this.reports?.from_date
         this.endDate = this.reports?.to_date
         this.startTime = this.reports?.from_time
@@ -284,10 +285,10 @@ export class FinancialdetailsComponent implements OnInit {
           });
 
           this.tempReports = [...this.reportMetadata];
-          console.log('tempReports:', this.tempReports);
+          logger.log('tempReports:', this.tempReports);
           const reportType = data.reportMetadata?.report_type?.toLowerCase() || '';
-          console.log('Report Type:', reportType);
-          console.log('this.reports:', this.reports);
+          logger.log('Report Type:', reportType);
+          logger.log('this.reports:', this.reports);
           this.reportType = reportType;
           switch (reportType) {
             case 'daily user group':
@@ -295,7 +296,7 @@ export class FinancialdetailsComponent implements OnInit {
             case 'user group report':
             case 'user_group_report':
               this.isUserGroupReport = true;
-              console.log('Processing User Group Report...');
+              logger.log('Processing User Group Report...');
               const usergr_id = this.reports?.usergr_id
               this.getUserGroupDetails(usergr_id);
               this.enrichWithIdleFee('userGroup', usergr_id);
@@ -303,7 +304,7 @@ export class FinancialdetailsComponent implements OnInit {
             case 'rfid_card_report':
             case 'RFID_Card_Report':
               this.isCardReport = true;
-              console.log('Processing User Group Report...');
+              logger.log('Processing User Group Report...');
               const cardId = this.reports?.cardId
               this.getCardDetails(cardId);
               this.enrichWithIdleFee('card', cardId);
@@ -313,14 +314,14 @@ export class FinancialdetailsComponent implements OnInit {
             case 'company report':
             case 'company_report':
               this.isCompanyReport = true;
-              console.log('Processing Company Report...');
+              logger.log('Processing Company Report...');
               this.company_id = this.reports?.company_id
               this.getCompanyDetails(this.company_id);
               break;
             case 'time split report':
             case 'time_split_report':
               this.isTimeSplitReport = true;
-              console.log('Processing Time Split Report...');
+              logger.log('Processing Time Split Report...');
               this.company_id = this.reports?.company_id
               this.getCompanyDetails(this.company_id);
               break;
@@ -329,7 +330,7 @@ export class FinancialdetailsComponent implements OnInit {
             case 'user report':
             case 'user_report':
               this.isUserReport = true;
-              console.log('Processing User Report...');
+              logger.log('Processing User Report...');
               this.getUserDetails(this.reports?.user_id);
               this.enrichWithIdleFee('user', this.reports?.user_id);
               break;
@@ -339,7 +340,7 @@ export class FinancialdetailsComponent implements OnInit {
             case 'partner report':
             case 'partner_report':
               this.isPartnerReport = true;
-              console.log('Processing Partner Report...');
+              logger.log('Processing Partner Report...');
               this.getPartnerDetails(this.reports?.partner_id);
               break;
 
@@ -359,52 +360,52 @@ export class FinancialdetailsComponent implements OnInit {
             case 'avarage_sessions_per_active_user':
             case 'avarage_sessions_per_user':
               this.isGeneralpReport = true;
-              console.log('Processing General Report...');
+              logger.log('Processing General Report...');
               break;
             default:
-              console.log('Unknown report type:', reportType);
+              logger.log('Unknown report type:', reportType);
           }
 
-          console.log('Report Data:', this.reportMetadata);
-          console.log('Report Columns:', this.tempReports);
+          logger.log('Report Data:', this.reportMetadata);
+          logger.log('Report Columns:', this.tempReports);
         } else {
-          console.log('No Report Data available.');
+          logger.log('No Report Data available.');
         }
         this.stopReportLoading();
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching report data:', error);
+        logger.log('Error fetching report data:', error);
         this.stopReportLoading();
       }
     );
   }
 
   calculateTotalCost() {
-    console.log("calculateTotalCost");
+    logger.log("calculateTotalCost");
 
     if (this.isUserReport) {
       this.totalCost = this.tempReports.reduce((sum, row) => sum + (parseFloat(row["Cost"]) || 0), 0);
       this.totalCost = parseFloat(this.totalCost.toFixed(3)); // Ensures 3 decimal places
-      console.log("this.tempReports", this.tempReports);
-      console.log("isUserReport this.totalCost", this.totalCost);
+      logger.log("this.tempReports", this.tempReports);
+      logger.log("isUserReport this.totalCost", this.totalCost);
     } else if (this.isUserGroupReport) {
       this.totalCost = this.tempReports.reduce((sum, row) => sum + (parseFloat(row["Total Amount"]) || 0), 0);
       this.totalCost = parseFloat(this.totalCost.toFixed(3)); // Ensures 3 decimal places
-      console.log("this.tempReports", this.tempReports);
-      console.log("isUserGroupReport this.totalCost", this.totalCost);
+      logger.log("this.tempReports", this.tempReports);
+      logger.log("isUserGroupReport this.totalCost", this.totalCost);
     } else if (this.isCardReport) {
       this.totalCost = this.tempReports.reduce((sum, row) => sum + (parseFloat(row["Total Amount"]) || 0), 0);
       this.totalCost = parseFloat(this.totalCost.toFixed(3)); // Ensures 3 decimal places
-      console.log("this.tempReports", this.tempReports);
-      console.log("isUserGroupReport this.totalCost", this.totalCost);
+      logger.log("this.tempReports", this.tempReports);
+      logger.log("isUserGroupReport this.totalCost", this.totalCost);
     } else if (this.isPartnerReport || this.isCompanyReport || this.isTimeSplitReport) {
       // 🆕 Company/Partner Report tashme perdor 'Net Profit (Lek)' — kolona e vjeter 'Total Cost' i mbetet fallback.
       // Emri i variablit 'totalCost' ka mbetur si eshte (referohet nga UI), po vlera qe mban tashme quhet "Total Net Profit".
       this.totalCost = this.tempReports.reduce((sum, row) => sum + (parseFloat(row["Net Profit (Lek)"] ?? row["Total Cost"]) || 0), 0);
       this.totalCost = parseFloat(this.totalCost.toFixed(3)); // Ensures 3 decimal places
-      console.log("this.tempReports", this.tempReports);
-      console.log("isPartnerReport this.totalCost", this.totalCost);
+      logger.log("this.tempReports", this.tempReports);
+      logger.log("isPartnerReport this.totalCost", this.totalCost);
     }
   }
 
@@ -412,14 +413,14 @@ export class FinancialdetailsComponent implements OnInit {
   getUserGroupDetails(id: number): void {
     this.userGroupService.usergroupbyidForTheReport(id).subscribe({
       next: (response) => {
-        console.log('response:', response);
+        logger.log('response:', response);
         this.name = response.userGroup.usergr_name;
         this.email = response.userGroup.usergr_email;
         this.phone_number = response.userGroup.usergr_phone_no
-        console.log('userGroupName:', this.name);
+        logger.log('userGroupName:', this.name);
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }
@@ -430,11 +431,11 @@ export class FinancialdetailsComponent implements OnInit {
         this.name = response.company.company_name;
         this.email = response.company.company_email;
         this.phone_number = response.company.company_phone_no;
-        console.log('response:', response);
-        console.log('companyName:', this.name);
+        logger.log('response:', response);
+        logger.log('companyName:', this.name);
       },
       error: (error) => {
-        console.error('Error fetching company details:', error);
+        logger.error('Error fetching company details:', error);
       }
     });
   }
@@ -513,7 +514,7 @@ export class FinancialdetailsComponent implements OnInit {
         }
       },
       (error) => {
-        console.error('enrichWithIdleFee error:', error);
+        logger.error('enrichWithIdleFee error:', error);
       }
     );
   }
@@ -524,11 +525,11 @@ export class FinancialdetailsComponent implements OnInit {
         this.name = response.user.name;
         this.email = response.user.email;
         this.phone_number = response.user.phone_number;
-        console.log('response:', response);
-        console.log('userName:', this.name);
+        logger.log('response:', response);
+        logger.log('userName:', this.name);
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }
@@ -556,11 +557,11 @@ export class FinancialdetailsComponent implements OnInit {
         // 🆕 Kap energy_invoicing_source — kontrollon shfaqjen e rreshtit ENERGJI ELEKTRIKE
         // tek "FATURIM PARTNER NDAJ VEGA CHARGING" (default 'OSHEE' → hiqet).
         this.energyInvoicingSource = String(response.partner.energy_invoicing_source || 'OSHEE');
-        console.log('response:', response);
-        console.log('partnerName:', this.name);
+        logger.log('response:', response);
+        logger.log('partnerName:', this.name);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }
@@ -1051,7 +1052,7 @@ export class FinancialdetailsComponent implements OnInit {
         break;
 
       default:
-        console.error('Unknown report type for export');
+        logger.error('Unknown report type for export');
         return;
     }
 
@@ -1190,7 +1191,7 @@ export class FinancialdetailsComponent implements OnInit {
             saveCompanyReport(workbook, `${sheetName}.xlsx`);
           },
           error: (err) => {
-            console.warn('⚠️ S\'u marren dot rechargers per Company Report Excel:', err);
+            logger.warn('⚠️ S\'u marren dot rechargers per Company Report Excel:', err);
             saveCompanyReport(workbook, `${sheetName}.xlsx`);
           }
         });
@@ -1386,7 +1387,7 @@ export class FinancialdetailsComponent implements OnInit {
         break;
 
       default:
-        console.error('Unknown report type for PDF export');
+        logger.error('Unknown report type for PDF export');
         return;
     }
 
@@ -1547,7 +1548,7 @@ export class FinancialdetailsComponent implements OnInit {
     const seconds = totalSeconds % 60;
 
     this.totalDuration = `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
-    console.log('Total Duration:', this.totalDuration);
+    logger.log('Total Duration:', this.totalDuration);
   }
 
   // calculateTotalDuration() {
@@ -1680,11 +1681,11 @@ export class FinancialdetailsComponent implements OnInit {
       next: (response) => {
         this.cardSerial = response.card.serial_no;
 
-        console.log('response:', response);
-        console.log('cardSerial:', this.cardSerial);
+        logger.log('response:', response);
+        logger.log('cardSerial:', this.cardSerial);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }
@@ -1779,7 +1780,7 @@ export class FinancialdetailsComponent implements OnInit {
       error: (err: any) => {
         this.isGeneratingPI = false;
         this.showGeneratePIConfirm = false;
-        console.error('generatePI error:', err);
+        logger.error('generatePI error:', err);
         this.generatePIMessage = err?.error?.message || err?.message || 'Deshtim ne API. Financa dhe RadX jane njoftuar me email.';
         this.generatePIMessageClass = 'alert-danger';
       },

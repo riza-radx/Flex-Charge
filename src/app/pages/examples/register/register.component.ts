@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit, ViewChild } from "@angular/core";
 import { Router } from '@angular/router'; // Import Router for navigation
 import { AuthService } from "../../../services/authService/auth.service";
@@ -69,13 +70,13 @@ export class RegisterComponent implements OnInit {
 
   // }
   public resolved(captchaResponse: string): void {
-    console.log(`Resolved captcha with response: ${captchaResponse}`);
+    logger.log(`Resolved captcha with response: ${captchaResponse}`);
     this.isValidRecaptcha = !!captchaResponse; // Properly update the flag
   }
   
 
   public onError(errorDetails: RecaptchaErrorParameters): void {
-    console.log(`reCAPTCHA error encountered; details:`, errorDetails);
+    logger.log(`reCAPTCHA error encountered; details:`, errorDetails);
   }
 
   register() {
@@ -94,15 +95,15 @@ export class RegisterComponent implements OnInit {
       created_date: new Date().toISOString()
     };
 
-    console.log("before submitting", userData)
+    logger.log("before submitting", userData)
 
     this.authService.userRegister(userData).subscribe(
       (response: any) => {
-        console.log(response);
+        logger.log(response);
         // Handle successful registration, possibly navigate to login or dashboard
         // this.router.navigate(['/examples/login']);
         if (response.token) {
-          console.log("response.tokenUser.userId", response.tokenUser.userId)
+          logger.log("response.tokenUser.userId", response.tokenUser.userId)
           this.openVerifyPhonePopup(response.tokenUser.userId);
           // Handle successful registration
           this.router.navigate(['/login']);
@@ -114,7 +115,7 @@ export class RegisterComponent implements OnInit {
       (error) => {
         // Handle error
         this.errorMessage = error.error.message || 'Registration failed. Please try again.';
-        console.error('Registration error', error);
+        logger.error('Registration error', error);
       }
     );
   }
@@ -138,16 +139,16 @@ export class RegisterComponent implements OnInit {
         // Sending verification code to backend
         this.authService.userVerifyPhone(userId, body).subscribe(
           (response) => {
-            console.log('Verification successful', response);
+            logger.log('Verification successful', response);
             // Handle success (e.g., navigate or show a success message)
           },
           (error) => {
             this.errorMessage = error.message || 'Verification failed. Please try again.';
-            console.log('Verification error', error);
+            logger.log('Verification error', error);
           }
         );
       } else {
-        console.log('Phone verification canceled or no verification code provided');
+        logger.log('Phone verification canceled or no verification code provided');
       }
     });
   }

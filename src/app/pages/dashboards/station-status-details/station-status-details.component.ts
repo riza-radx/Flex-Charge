@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerService } from "../../../services/chargerService/charger.service";
@@ -75,11 +76,11 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     const cugpCred = localStorage.getItem('cugpCred');
     const token = localStorage.getItem('authToken');
-    console.log('LocalStorage contents:', localStorage);
-    console.log('User details:', localStorage.getItem('user'));
+    logger.log('LocalStorage contents:', localStorage);
+    logger.log('User details:', localStorage.getItem('user'));
     this.id = this.route.snapshot.paramMap.get('id') as string;
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
@@ -157,25 +158,25 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
             break;
           case 'USER':
           case 'SUPER_USER':
-            console.log('SUPER_USER is set to true');
+            logger.log('SUPER_USER is set to true');
             this.isUserRole = true;
             this.getCurrentUser();
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.getCurrentUser();
     this.getCurrentUserDetail();
-    console.log("token: ", token);
+    logger.log("token: ", token);
     this.getchargers();
     this.getLocations();
 
@@ -196,7 +197,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
         this.users = data.users
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -221,31 +222,31 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
                 },
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
   getCurrentUser() {
     this.authService.getCurrentUser().subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.userId = data.user.userId;
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     )
   }
@@ -254,7 +255,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
     return this.userService.getUserById(id).pipe(
       map(response => response.user), // Extract user data directly
       catchError(error => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
         return of(null); // Return null in case of error
       })
     );
@@ -263,7 +264,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
   getCurrentUserDetail() {
     this.authService.getCurrentUserDetails().subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.userDetails = data.user;
         this.userDetailsId = data.user.id;
         this.userDetailsCId = data.user.company_id;
@@ -273,19 +274,19 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
         this.allowPayAsYouGo = Number(data.user.allow_pay_as_you_go);
 
         this.checkDisableButton();
-        console.log("balance , allowPayAsYouGo", this.balance, this.allowPayAsYouGo);
+        logger.log("balance , allowPayAsYouGo", this.balance, this.allowPayAsYouGo);
         this.connectToWebSocket();
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     );
   }
 
 
   checkDisableButton() {
-    console.log("Checking button status...");
-    console.log("Converted balance:", this.balance, "Converted allowPayAsYouGo:", this.allowPayAsYouGo);
+    logger.log("Checking button status...");
+    logger.log("Converted balance:", this.balance, "Converted allowPayAsYouGo:", this.allowPayAsYouGo);
 
     if (this.balance === 0 && this.allowPayAsYouGo === 0) {
       this.isButtonDisabled = true; // Disable the button
@@ -293,25 +294,25 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       this.isButtonDisabled = false; // Enable the button
     }
 
-    console.log("this.isButtonDisabled", this.isButtonDisabled);
+    logger.log("this.isButtonDisabled", this.isButtonDisabled);
   }
   getchargers() {
     this.chargerService.getChargerByLocation(this.id).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         if (Array.isArray(data.charger)) {
           this.chargers = data.charger;
           this.chargers.forEach((charger: any, index: number) => {
             this.getConnectorsByCharger(charger.charger_id, index);
           });
-          console.log("Chargers", this.chargers);
+          logger.log("Chargers", this.chargers);
         } else {
-          console.error('Unexpected data structure:', data);
+          logger.error('Unexpected data structure:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -319,33 +320,33 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
   getConnectorsByCharger(chargerId: string, index: number) {
     this.connectorService.getConnectorByCharger(chargerId).subscribe(
       (connectorData) => {
-        console.log(connectorData);
-        console.log(connectorData);
+        logger.log(connectorData);
+        logger.log(connectorData);
         if (Array.isArray(connectorData.connector)) {
           this.chargers[index].connectors = connectorData.connector;  // Add connectors to the charger
         } else {
-          console.error('Unexpected connector data structure:', connectorData);
+          logger.error('Unexpected connector data structure:', connectorData);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
   getLocations() {
     this.chargerLocationService.getAllChargerLocations().subscribe(
       (data) => {
-        console.log(data.location);
+        logger.log(data.location);
         if (Array.isArray(data.location)) {
           this.locations = data.location
         } else {
-          console.error('Unexpected data structure:', data);
+          logger.error('Unexpected data structure:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -357,7 +358,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
 
     // Handle WebSocket connection open
     this.socket.onopen = (event) => {
-      console.log('WebSocket is open now.');
+      logger.log('WebSocket is open now.');
     };
 
     // Handle incoming messages from WebSocket
@@ -379,12 +380,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
 
     // Handle WebSocket errors
     this.socket.onerror = (error) => {
-      console.error('WebSocket Error:', error);
+      logger.error('WebSocket Error:', error);
     };
 
     // Handle WebSocket closure
     this.socket.onclose = (event) => {
-      console.log('WebSocket is closed now.');
+      logger.log('WebSocket is closed now.');
     };
   }
 
@@ -393,9 +394,9 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
     const charger = this.chargers.find((charger: any) => charger.charger_id === chargerId);
     if (charger) {
       charger.status = chargerStatus;
-      console.log(`Charger ID ${chargerId} status updated to ${chargerStatus}`);
+      logger.log(`Charger ID ${chargerId} status updated to ${chargerStatus}`);
     } else {
-      console.log(`Charger ID ${chargerId} not found`);
+      logger.log(`Charger ID ${chargerId} not found`);
     }
   }
 
@@ -410,12 +411,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       const connector = charger.connectors.find((connector: any) => connector.connector_id === connectorId);
       if (connector) {
         connector.status = status;
-        console.log(`Connector ID ${connectorId} status updated to ${status}`);
+        logger.log(`Connector ID ${connectorId} status updated to ${status}`);
       } else {
-        console.log(`Connector ID ${connectorId} not found in charger ID ${charger.charger_id}`);
+        logger.log(`Connector ID ${connectorId} not found in charger ID ${charger.charger_id}`);
       }
     } else {
-      console.log(`Charger with connector ID ${connectorId} not found`);
+      logger.log(`Charger with connector ID ${connectorId} not found`);
     }
   }
 
@@ -424,9 +425,9 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
   sendMessageToWebSocket(message: string) {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(message);
-      console.log('Message sent:', message);
+      logger.log('Message sent:', message);
     } else {
-      console.log('WebSocket is not open.');
+      logger.log('WebSocket is not open.');
     }
   }
 
@@ -477,14 +478,14 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
     modalRef.content.onClose.subscribe((result: { confirmed: boolean; choice?: any }) => {
       if (result.confirmed && result.choice) {
         // Proceed with the action if the user confirms and selects a choice
-        console.log(`Triggering message: ${result.choice}`);
+        logger.log(`Triggering message: ${result.choice}`);
         this.chargerService.triggerMessage(ocppId, result.choice).subscribe(
           (data) => {
-            console.log(data);
+            logger.log(data);
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       }
@@ -503,12 +504,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       if (result.confirmed) {
         this.chargerService.getCompositeSchedule(ocppId).subscribe(
           (data) => {
-            console.log(data);
+            logger.log(data);
             // Process data as needed
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       }
@@ -527,12 +528,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       if (result.confirmed) {
         this.chargerService.dataTransfer(ocppId).subscribe(
           (data) => {
-            console.log(data);
+            logger.log(data);
             // Process data as needed
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       }
@@ -551,12 +552,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       if (result.confirmed) {
         this.chargerService.localList(ocppId).subscribe(
           (data) => {
-            console.log(data);
+            logger.log(data);
             // Process data as needed
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       }
@@ -575,12 +576,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       if (result.confirmed) {
         this.chargerService.clearCache(ocppId).subscribe(
           (data) => {
-            console.log(data);
+            logger.log(data);
             // Process data as needed
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       }
@@ -599,12 +600,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       if (result.confirmed) {
         this.chargerService.changeAvailability(ocppId).subscribe(
           (data) => {
-            console.log(data);
+            logger.log(data);
             // Process data as needed
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       }
@@ -623,12 +624,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       if (result.confirmed) {
         this.chargerService.reboot(ocppId).subscribe(
           (data) => {
-            console.log(data);
+            logger.log(data);
             // Process data as needed
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       }
@@ -647,7 +648,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
       if (result.confirmed && result.payload) {
         this.chargerService.getDiagnostics(ocppId, result.payload).subscribe(
           (data) => {
-            console.log('GetDiagnostics sent:', data);
+            logger.log('GetDiagnostics sent:', data);
             swal.fire({
               title: 'GetDiagnostics dërguar',
               text: 'Po pres përgjigjen nga charger-i…',
@@ -659,7 +660,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
             swal.fire({
               title: 'Gabim',
               text: error?.error?.error || error?.message || 'Dështoi dërgimi i komandës.',
@@ -890,14 +891,14 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
     this.getUsersByRole().pipe(
       switchMap((users) => {
         // Log the entire users array to check its structure
-        console.log('Users Array:', users);
+        logger.log('Users Array:', users);
 
         const formattedUsers = users.map(userWrapper => {
           // Ensure that the user object is properly extracted
           const user = userWrapper?.user || userWrapper?.User || userWrapper;
 
           // Debugging: Check the structure of the user object
-          console.log('Extracted user:', user);
+          logger.log('Extracted user:', user);
 
           // Check if user.id is available before mapping it
           const label = `${user?.name ?? 'N/A'} | Balance: ${user?.balance ?? '0'} |
@@ -912,7 +913,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
         });
 
         // Log the formatted users array to inspect it
-        console.log('Formatted Users:', formattedUsers);
+        logger.log('Formatted Users:', formattedUsers);
 
         const modalRef: BsModalRef = this.modalService.show(ConfirmationDialogComponent, {
           initialState: {
@@ -944,21 +945,21 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
             .startTransaction(ocppId, result.choice, connectorNo, result.reason)
             .subscribe(
               (data) => {
-                console.log("Charging started:", data);
+                logger.log("Charging started:", data);
               },
               (error) => {
                 this.errorMessage = error.message;
-                console.error(error);
+                logger.error(error);
               }
             );
         } else {
-          console.warn('Missing user choice or reason for remote charging.');
+          logger.warn('Missing user choice or reason for remote charging.');
         }
       }
       ,
       
       error: (error) => {
-        console.error('Error loading users:', error);
+        logger.error('Error loading users:', error);
       }
     });
   }
@@ -967,7 +968,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
     if (this.isCompanyRole) {
       return this.userService.getUserByCompany(this.company_id).pipe(
         map((data) => {
-          console.log('Company Users:', data);
+          logger.log('Company Users:', data);
           return data.users || []; // Ensure it returns an array
         })
       );
@@ -977,12 +978,12 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
     } else if (this.isUserRole) {
       return this.userService.getUserById(this.user_id).pipe(
         map((response) => {
-          console.log('User Details:', response);
+          logger.log('User Details:', response);
           return [response.user]; // Return an array of user
         })
       );
     } else {
-      console.error('Unknown user role');
+      logger.error('Unknown user role');
       return of([]); // Return an empty array for unknown role
     }
   }
@@ -993,7 +994,7 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
     // Validate input fields
     if (!this.userId || !connectorId) {
       this.errorMessage = 'Please fill in all required fields before submitting.';
-      console.error('Form is incomplete. Please fill in all fields.');
+      logger.error('Form is incomplete. Please fill in all fields.');
       return;
     }
 
@@ -1014,16 +1015,16 @@ export class StationStatusDetailsComponent implements OnInit, OnDestroy {
 
     modalRef.content.onClose.subscribe((result: { confirmed: boolean; choice?: string }) => {
       if (result.confirmed) {
-        console.log("Confirmed Reservation: ", ocppId, body);
+        logger.log("Confirmed Reservation: ", ocppId, body);
         this.errorMessage = null;
 
         this.chargerService.addReservation(ocppId, body).subscribe({
           next: (response) => {
-            console.log('Reservation created successfully:', response);
+            logger.log('Reservation created successfully:', response);
             this.router.navigate(['/monitoring/reservation']);
           },
           error: (error) => {
-            console.error('Error creating reservation:', error);
+            logger.error('Error creating reservation:', error);
             this.errorMessage = this.handleRechargeError(error);
           }
         });

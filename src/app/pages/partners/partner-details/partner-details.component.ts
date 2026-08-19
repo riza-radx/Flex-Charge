@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerService } from "../../../services/chargerService/charger.service";
@@ -106,7 +107,7 @@ export class PartnerDetailsComponent {
     this.id = this.route.snapshot.paramMap.get('id') as string;
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     // this.loadCompanies();
     //   this.fetchCurrentMonthCount();
     const cugpCred = localStorage.getItem('cugpCred');
@@ -186,15 +187,15 @@ export class PartnerDetailsComponent {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getPartners()
@@ -215,7 +216,7 @@ export class PartnerDetailsComponent {
     if (documentUrl) {
       window.open(documentUrl, '_blank');
     } else {
-      console.error('Document URL is not available');
+      logger.error('Document URL is not available');
     }
   }
 
@@ -333,24 +334,24 @@ export class PartnerDetailsComponent {
       } else if (this.activeRow.location_id) {
         this.router.navigate([`/assets/locations/${this.activeRow.location_id}`]);
       }
-      console.log('activeRow', this.activeRow);
+      logger.log('activeRow', this.activeRow);
     }
   }
 
   getDocuments(id: string) {
     this.documentService.getDocumentByPartner(id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.documents)) {
           this.documents = data.documents;
           this.tempDocuments = [...this.documents];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -419,7 +420,7 @@ export class PartnerDetailsComponent {
   getVReports() {
     this.reportService.getAllReportByPartner(this.id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.reports)) {
           // If data.report is an array
           this.reports = data.reports;
@@ -427,14 +428,14 @@ export class PartnerDetailsComponent {
           // If data.report is a single object
           this.reports = [data.reports];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -447,11 +448,11 @@ export class PartnerDetailsComponent {
         // } else {
         //   console.error("Chargers data is not an array:", data);
         // }
-        console.log(data);
+        logger.log(data);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -481,13 +482,13 @@ export class PartnerDetailsComponent {
           this.chargerLocations = data.location;
           this.tempChargerLocations = [...this.chargerLocations];
         } else {
-          console.error("Charger locations data is not an array:", data);
+          logger.error("Charger locations data is not an array:", data);
         }
-        console.log(data);
+        logger.log(data);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -496,12 +497,12 @@ export class PartnerDetailsComponent {
     this.partnerService.getPartner(this.id).subscribe(
       (data) => {
         this.partner = data;
-        console.log(data);
+        logger.log(data);
         this.getCompany(data.partner.company_id)
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -509,11 +510,11 @@ export class PartnerDetailsComponent {
     this.companyService.getCompany(companyId).subscribe(
       (data) => {
         this.company = data.company.company_name;
-        console.log(data);
+        logger.log(data);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -555,7 +556,7 @@ export class PartnerDetailsComponent {
   getPartnerMembers() {
     this.partnerMemberService.getPartnerMemberByPartner(this.id).subscribe(
       async (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.partnerMember)) {
           this.tempPartnerMembers = await Promise.all(data.partnerMember.map(async (member: any) => {
             const userResponse = await this.userService.getUserById(member.user_id).toPromise();
@@ -567,14 +568,14 @@ export class PartnerDetailsComponent {
             };
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.tempPartnerMembers = [];
         }
-        console.log(this.tempPartnerMembers);
+        logger.log(this.tempPartnerMembers);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching partner members:', error);
+        logger.log('Error fetching partner members:', error);
       }
     );
   }
@@ -582,17 +583,17 @@ export class PartnerDetailsComponent {
   getchargingHistory(id: string) {
     this.chargingHistoryService.getChargingByPartner(id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.chargingHistory)) {
           this.chargingHistory = data.chargingHistory;
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -612,7 +613,7 @@ export class PartnerDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

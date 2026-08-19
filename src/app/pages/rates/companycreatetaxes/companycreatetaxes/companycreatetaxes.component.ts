@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TaxService } from 'src/app/services/taxService/tax.service';
@@ -24,11 +25,11 @@ export class CompanycreatetaxesComponent {
   onSubmit() {
     this.taxService.addTax(this.tax).subscribe({
       next: (response) => {
-        console.log('Tax created successfully', response);
+        logger.log('Tax created successfully', response);
         this.router.navigate(['/taxes']);
       },
       error: (error) => {
-        console.error('Error creating tax', error);
+        logger.error('Error creating tax', error);
       }
     });
   }

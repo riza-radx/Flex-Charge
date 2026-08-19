@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserGroupService } from "../../../../services/userGroupService/user-group.service";
@@ -134,7 +135,7 @@ export class RadxusergroupComponent implements OnInit {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     //this.fetchCurrentMonthCount();
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -205,15 +206,15 @@ export class RadxusergroupComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getUserGroups()
@@ -242,7 +243,7 @@ export class RadxusergroupComponent implements OnInit {
         this.currentMonthCountEntry = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -254,7 +255,7 @@ export class RadxusergroupComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -269,7 +270,7 @@ export class RadxusergroupComponent implements OnInit {
         );
       },
       (error) => {
-        console.log("Error fetching partners for filter:", error);
+        logger.log("Error fetching partners for filter:", error);
       }
     );
   }
@@ -305,14 +306,14 @@ export class RadxusergroupComponent implements OnInit {
           this.cities = data.cities.map((cityObj: any) => cityObj.usergr_city);
           this.countries = data.countries.map((countryObj: any) => countryObj.usergr_country);
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
           this.rows = [];
           this.temp = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching user groups:', error);
+        logger.log('Error fetching user groups:', error);
       }
     );
   }
@@ -328,7 +329,7 @@ export class RadxusergroupComponent implements OnInit {
         },
         (error) => {
           this.errorMessage = error.message;
-          console.log(error);
+          logger.log(error);
         }
       );
     } else {
@@ -380,14 +381,14 @@ export class RadxusergroupComponent implements OnInit {
           this.temp = [...this.rows];
           // console.log("data.userGroup", data.userGroup)
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
           this.rows = [];
           this.temp = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching user groups:', error);
+        logger.log('Error fetching user groups:', error);
       }
     );
   }

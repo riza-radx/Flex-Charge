@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerStatusService } from "../../../../services/chargerStatusService/charger-status.service";
@@ -68,38 +69,38 @@ export class CompanystationstatusComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const company_id = parsedCugpCred.company_id;
-      console.log('User Group ID:', company_id);
+      logger.log('User Group ID:', company_id);
       this.getChargers(company_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getChargerStatus();
   }
 
   getChargers(companyId: number) {
-    console.log('Requesting chargers for company ID:', companyId);
+    logger.log('Requesting chargers for company ID:', companyId);
   
     this.chargerService.getChargerByCompany(companyId).subscribe(
       (response) => {
-        console.log('Charger response:', response);
+        logger.log('Charger response:', response);
   
         if (response && response.success && Array.isArray(response.charger)) {
           if (response.charger.length === 0) {
-            console.log('No chargers found for company ID:', companyId);
+            logger.log('No chargers found for company ID:', companyId);
           } else {
             // Process each charger and fetch its charging history
             response.charger.forEach((charger) => {
-              console.log('Processing charger:', charger);
+              logger.log('Processing charger:', charger);
               this.getChargerStatus(charger.charger_id); // Assuming charger_id exists
             });
           }
         } else {
-          console.error('Expected an array but got:', response.charger);
+          logger.error('Expected an array but got:', response.charger);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching chargers:', error);
+        logger.error('Error fetching chargers:', error);
       }
     );
   }
@@ -109,19 +110,19 @@ export class CompanystationstatusComponent implements OnInit {
       (data) => {
         this.rows = data.charger_status;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
 
         // Fetch charger details for each charging entry
         this.rows.forEach((row, index) => {
           this.chargerService.getCharger(row.charger_id).subscribe(
             (chargerData) => {
-              console.log(chargerData);
+              logger.log(chargerData);
               this.rows[index].charger = chargerData.charger.charger_name;  // Add charger details to the row
               this.temp = [...this.rows];  // Update temp to reflect changes
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
         });
@@ -129,7 +130,7 @@ export class CompanystationstatusComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

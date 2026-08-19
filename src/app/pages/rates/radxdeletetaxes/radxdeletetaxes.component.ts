@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaxService } from 'src/app/services/taxService/tax.service';
@@ -22,7 +23,7 @@ export class RadxdeletetaxesComponent implements OnInit {
   ngOnInit(): void {
     this.taxId = this.route.snapshot.params['id'];
     this.getTaxDetails(this.taxId); 
-    console.log('tax ID:', this.taxId);
+    logger.log('tax ID:', this.taxId);
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class RadxdeletetaxesComponent implements OnInit {
   confirmDelete(): void {
     this.taxService.deleteTax(this.taxId).subscribe({
       next: (response) => {
-        console.log('Tax deleted successfully:', response);
+        logger.log('Tax deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/rates/taxes']);
       },
       error: (error) => {
-        console.error('Error deleting Tax:', error);
+        logger.error('Error deleting Tax:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class RadxdeletetaxesComponent implements OnInit {
     this.taxService.getTax(id).subscribe({
       next: (response) => {
         this.taxName = response.tax.tax_name; 
-        console.log('response:',response);  
-        console.log('tax_name:', this.taxName); 
+        logger.log('response:',response);  
+        logger.log('tax_name:', this.taxName); 
       },
       error: (error) => {
-        console.error('Error fetching tax details:', error);
+        logger.error('Error fetching tax details:', error);
       }
     });
   }

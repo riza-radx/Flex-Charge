@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VoucherService } from 'src/app/services/voucherService/voucher.service';
@@ -26,7 +27,7 @@ export class UsergroupusevoucherComponent implements OnInit{
       }
     });
     this.usergrId = this.route.snapshot.params['id'];
-    console.log('User ID from UsergroupusevoucherComponent:', this.usergrId);  // Debugging line
+    logger.log('User ID from UsergroupusevoucherComponent:', this.usergrId);  // Debugging line
   }
 
   onSubmit() {
@@ -52,7 +53,7 @@ export class UsergroupusevoucherComponent implements OnInit{
   
       this.voucherService.userGroupUseVoucher(this.usergrId, voucherData).subscribe({
         next: (response) => {
-          console.log('Voucher applied successfully:', response);
+          logger.log('Voucher applied successfully:', response);
           if (this.fromUserGroupDetail) {
           this.router.navigate([`/users/usergroup/${this.usergrId}`]);
           }
@@ -61,11 +62,11 @@ export class UsergroupusevoucherComponent implements OnInit{
           }
         },
         error: (error) => {
-          console.error('Error applying voucher:', error);
+          logger.error('Error applying voucher:', error);
         },
       });
     } else {
-      console.error('User ID not found in route parameters.');
+      logger.error('User ID not found in route parameters.');
     }
   }
 }

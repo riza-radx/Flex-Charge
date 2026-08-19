@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
@@ -32,18 +33,18 @@ export class VerifyPhonePopupComponent {
     // Pass the body along with the userId to the service method
     this.authService.userVerifyPhone(this.userId, body).subscribe(
       response => {
-        console.log('Verification successful', response);
+        logger.log('Verification successful', response);
         // Phone is verified, proceed with fetching CUGP data
         this.authService.getCUGPBasedOnUserRole().subscribe(
           (cugpResponse: any) => {
-            console.log('CUGP Response:', cugpResponse);
+            logger.log('CUGP Response:', cugpResponse);
             localStorage.setItem('cugpCred', JSON.stringify(cugpResponse));
             // Navigate to the dashboard
-            console.log('Navigating to dashboard...');
+            logger.log('Navigating to dashboard...');
             this.router.navigate(['/dashboard']);
           },
           (cugpError) => {
-            console.error('CUGP error:', cugpError);
+            logger.error('CUGP error:', cugpError);
             this.errorMessage = 'Error fetching CUGP data. Please try again.';
           }
         );
@@ -51,7 +52,7 @@ export class VerifyPhonePopupComponent {
         this.bsModalRef.hide();
       },
       error => {
-        console.error('Verification failed', error);
+        logger.error('Verification failed', error);
       }
     );
   }

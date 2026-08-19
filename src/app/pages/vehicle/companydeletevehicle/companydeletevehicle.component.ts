@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VehicleService } from 'src/app/services/vehicleService/vehicle.service';
@@ -21,8 +22,8 @@ export class CompanydeletevehicleComponent implements OnInit {
   ngOnInit(): void {
     this.vehicleId = this.route.snapshot.params['id'];
     this.getVehicleDetails(this.vehicleId);
-    console.log('Charger ID:', this.vehicleId);
-    console.log('vehicleVinCode:', this.vehicleVinCode);  // Debugging line
+    logger.log('Charger ID:', this.vehicleId);
+    logger.log('vehicleVinCode:', this.vehicleVinCode);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class CompanydeletevehicleComponent implements OnInit {
   confirmDelete(): void {
     this.vehicleService.deleteVehicle(this.vehicleId).subscribe({
       next: (response) => {
-        console.log('Vehicle deleted successfully:', response);
+        logger.log('Vehicle deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/assets/vehicle']);
       },
       error: (error) => {
-        console.error('Error deleting Vehicle:', error);
+        logger.error('Error deleting Vehicle:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class CompanydeletevehicleComponent implements OnInit {
     this.vehicleService.getVehicle(id).subscribe({
       next: (response) => {
         this.vehicleVinCode = response.vehicle.vin_code;
-        console.log('response:', response);
-        console.log('VehicleName:', this.vehicleVinCode);
+        logger.log('response:', response);
+        logger.log('VehicleName:', this.vehicleVinCode);
       },
       error: (error) => {
-        console.error('Error fetching Vehicle details:', error);
+        logger.error('Error fetching Vehicle details:', error);
       }
     });
   }

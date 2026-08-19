@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { RechargeService } from "../../../../services/rechargeService/recharge.service";
 import { ActivatedRoute, Router } from '@angular/router';
@@ -112,7 +113,7 @@ export class CreaterechargesComponent implements OnInit {
             this.forAdminRecharge = false;
             this.getPaymentMethodByCurrentUser();
             this.getCurrentUser();
-            console.log('User ID:', this.userdetailId);
+            logger.log('User ID:', this.userdetailId);
 
             break;
           case 'PARTNER_ADMIN':
@@ -122,15 +123,15 @@ export class CreaterechargesComponent implements OnInit {
             this.getCurrentUser();
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -157,11 +158,11 @@ export class CreaterechargesComponent implements OnInit {
           this.card = null;
           this.errorMessage = 'Card not found.';
         }
-        console.log(this.card);
+        logger.log(this.card);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -169,28 +170,28 @@ export class CreaterechargesComponent implements OnInit {
   getCurrentUser() {
     this.authService.getCurrentUser().subscribe(
       (data) => {
-        console.log("Current User", data.user.userId);
+        logger.log("Current User", data.user.userId);
         this.getUser(data.user.userId)
         this.user_id = data.user.userId;
-        console.log("Current user_id" + this.user_id);
+        logger.log("Current user_id" + this.user_id);
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
   }
   getUser(userId: number) {
-    console.log("User Id On getUser Function", userId)
+    logger.log("User Id On getUser Function", userId)
     this.userService.getUserById(userId).subscribe(
       (data) => {
-        console.log("User Details", data)
+        logger.log("User Details", data)
         this.user = data;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -202,12 +203,12 @@ export class CreaterechargesComponent implements OnInit {
       (response) => {
         if (response.success && response.paymentMethod) {
           this.paymentMethods = response.paymentMethod;
-          console.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
+          logger.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
           this.populatePaymentMethodOptions();
         }
       },
       (error) => {
-        console.log('Error fetching payment methods for user:', error);
+        logger.log('Error fetching payment methods for user:', error);
       }
     );
   }
@@ -217,12 +218,12 @@ export class CreaterechargesComponent implements OnInit {
       (response) => {
         if (response.success && response.paymentMethod) {
           this.paymentMethods = response.paymentMethod;
-          console.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
+          logger.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
           this.populatePaymentMethodOptions();
         }
       },
       (error) => {
-        console.log('Error fetching payment methods for user:', error);
+        logger.log('Error fetching payment methods for user:', error);
       }
     );
   }
@@ -237,7 +238,7 @@ export class CreaterechargesComponent implements OnInit {
         }
       },
       (error) => {
-        console.log('Error fetching payment methods for user group:', error);
+        logger.log('Error fetching payment methods for user group:', error);
       }
     );
   }
@@ -276,12 +277,12 @@ export class CreaterechargesComponent implements OnInit {
       totalAmount: 0,
     };
 
-    console.log("rechargeData", rechargeData);
+    logger.log("rechargeData", rechargeData);
 
     if (this.fromProfile) {
       this.rechargeService.addRechargeForUserAdmin(this.user_id, rechargeData).subscribe(
         (response) => {
-          console.log('Recharge created successfully from profile onSubmitAdmin', response);
+          logger.log('Recharge created successfully from profile onSubmitAdmin', response);
           // window.open(response.retreiveOrder, '_blank');
           this.router.navigate([`/profile`]);
         },
@@ -310,13 +311,13 @@ export class CreaterechargesComponent implements OnInit {
       total_amount: totalAmount
     };
 
-    console.log("rechargeData", rechargeData);
+    logger.log("rechargeData", rechargeData);
 
     if (this.fromProfile) {
       this.rechargeService.addRechargeForUser(this.user_id, rechargeData).subscribe(
         (response) => {
-          console.log('Recharge created successfully from profile', response);
-          console.log('Recharge created successfully from profile', this.user_id);
+          logger.log('Recharge created successfully from profile', response);
+          logger.log('Recharge created successfully from profile', this.user_id);
           window.open(response.retreiveOrder, '_blank');
           this.router.navigate(['/profile']);
         },
@@ -327,8 +328,8 @@ export class CreaterechargesComponent implements OnInit {
     } else if (this.fromUserDetail) {
       this.rechargeService.addRechargeForUser(this.userdetailId, rechargeData).subscribe(
         (response) => {
-          console.log('Recharge created successfully from user detail', response);
-          console.log('Recharge created successfully from user detail', this.userdetailId);
+          logger.log('Recharge created successfully from user detail', response);
+          logger.log('Recharge created successfully from user detail', this.userdetailId);
           window.open(response.retreiveOrder, '_blank');
           this.router.navigate(['/users/user', this.userdetailId]);
         },
@@ -348,7 +349,7 @@ export class CreaterechargesComponent implements OnInit {
     } else {
       this.errorMessage = 'Failed to process the recharge. Please try again.';
     }
-    console.error('Recharge error:', error);
+    logger.error('Recharge error:', error);
   }
 
   updateTotalAmount() {

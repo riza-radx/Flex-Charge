@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 
@@ -407,7 +408,7 @@ export class ChargerService {
   startTransaction(ocppId: any, userId: any, connectorNo: any, reason: string) {
     const token = localStorage.getItem('authToken');
     const url = `${this.apiUrl}/api/v1/charger/handleRemoteStartTransaction/${ocppId}/${userId}/${connectorNo}`;
-    console.log("startTransaction URL + reason: ", url, reason);
+    logger.log("startTransaction URL + reason: ", url, reason);
 
     const body = { reason };
 

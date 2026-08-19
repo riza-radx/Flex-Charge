@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerService } from "../../../services/chargerService/charger.service";
@@ -263,15 +264,15 @@ export class ChargerDetailsComponent {
             this.getLogsByCharger('UTC');
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getChargers();
@@ -483,7 +484,7 @@ export class ChargerDetailsComponent {
           return;
         }
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -498,7 +499,7 @@ export class ChargerDetailsComponent {
         this.bursaTodayLoaded = true;
       },
       (err) => {
-        console.error('Bursa today prices load failed:', err);
+        logger.error('Bursa today prices load failed:', err);
         this.bursaTodayPrices = [];
         this.bursaTodayLoaded = true;
       }
@@ -516,10 +517,10 @@ export class ChargerDetailsComponent {
         this.rateName = response.rate.rate_name; // Set the rate name
         // console.log('Rate Name:', this.rateName);
       } else {
-        console.warn('Rate not found in response:', response);
+        logger.warn('Rate not found in response:', response);
       }
     } catch (error) {
-      console.error('Error fetching rate:', error);
+      logger.error('Error fetching rate:', error);
     }
   }
 
@@ -546,13 +547,13 @@ export class ChargerDetailsComponent {
           this.energyTariffHourlyPricesLoaded = true;
         },
         (err: any) => {
-          console.error('Error loading rate_per_days for energy tariff:', err);
+          logger.error('Error loading rate_per_days for energy tariff:', err);
           this.energyTariffHourlyPrices = new Array(24).fill(0);
           this.energyTariffHourlyPricesLoaded = false;
         }
       );
     } catch (error) {
-      console.error('Error fetching energy tariff rate:', error);
+      logger.error('Error fetching energy tariff rate:', error);
       this.energyTariffRateName = null;
       this.energyTariffHourlyPrices = [];
     }
@@ -637,7 +638,7 @@ export class ChargerDetailsComponent {
           this.rebillAvailableRates = raw;
         },
         (err: any) => {
-          console.error('Error loading rates for rebill modal:', err);
+          logger.error('Error loading rates for rebill modal:', err);
           this.rebillAvailableRates = [];
         }
       );
@@ -716,7 +717,7 @@ export class ChargerDetailsComponent {
       error: (err: any) => {
         this.rebillLoading = false;
         this.showRebillConfirm = false;
-        console.error('rebill error:', err);
+        logger.error('rebill error:', err);
         this.rebillMessage = err?.error?.message || err?.message || 'Deshtim ne API.';
         this.rebillMessageClass = 'alert-danger';
       },
@@ -740,7 +741,7 @@ export class ChargerDetailsComponent {
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
 
@@ -749,7 +750,7 @@ export class ChargerDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -763,7 +764,7 @@ export class ChargerDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -785,7 +786,7 @@ export class ChargerDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -798,7 +799,7 @@ export class ChargerDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -850,7 +851,7 @@ export class ChargerDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log("Error:", error);
+        logger.log("Error:", error);
       }
     );
   }
@@ -866,7 +867,7 @@ export class ChargerDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -886,7 +887,7 @@ export class ChargerDetailsComponent {
       return Object.keys(d).some(key => {
         if (typeof d[key] === 'string') {
           const match = d[key].toLowerCase().includes(val); // Check if the property contains the search value
-          if (match) console.log(`Matched: ${d[key]} for ${key}`); // Debug log for matching values
+          if (match) logger.log(`Matched: ${d[key]} for ${key}`); // Debug log for matching values
           return match;
         }
         return false; // Ignore non-string properties
@@ -1002,7 +1003,7 @@ export class ChargerDetailsComponent {
         this.energyLoading = false;
       },
       (err) => {
-        console.error('Energy report load error:', err);
+        logger.error('Energy report load error:', err);
         this.energyLoading = false;
         this.energyTotal = 0;
         this.energyBreakdown = [];
@@ -1164,7 +1165,7 @@ export class ChargerDetailsComponent {
         doc.addImage(imgData, 'PNG', 40, cursorY, imgWidth, imgHeight);
         cursorY += imgHeight + 20;
       } catch (e) {
-        console.warn('Could not embed chart image:', e);
+        logger.warn('Could not embed chart image:', e);
       }
     }
 

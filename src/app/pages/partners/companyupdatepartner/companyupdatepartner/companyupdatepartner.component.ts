@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -88,7 +89,7 @@ export class CompanyupdatepartnerComponent implements OnInit {
     this.getPartnerById(this.partnerId);
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -134,15 +135,15 @@ export class CompanyupdatepartnerComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.loadCompanies();
@@ -156,7 +157,7 @@ export class CompanyupdatepartnerComponent implements OnInit {
         this.companies = response.company;
       },
       error: (error) => {
-        console.error('Error fetching companies', error);
+        logger.error('Error fetching companies', error);
       }
     });
   }
@@ -174,7 +175,7 @@ export class CompanyupdatepartnerComponent implements OnInit {
         this.companies = [response.company];
       },
       error: (error) => {
-        console.error('Error fetching company by ID', error);
+        logger.error('Error fetching company by ID', error);
       }
     });
   }
@@ -229,16 +230,16 @@ export class CompanyupdatepartnerComponent implements OnInit {
     this.partnerService.updatePartner(this.partnerId, formData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('Partner updated successfully:', response);
+          logger.log('Partner updated successfully:', response);
           this.router.navigate(['/partners/partner']);  // Navigate on success
         } else {
-          console.error('Failed to update partner:', response);
+          logger.error('Failed to update partner:', response);
           this.errorMessage = 'Failed to update partner. Please try again later.';
           setTimeout(() => this.errorMessage = '', 5000); // Clear error message after 5 seconds
         }
       },
       error: (error) => {
-        console.error('Error updating partner:', error);
+        logger.error('Error updating partner:', error);
         this.errorMessage = error.message || 'An error occurred while updating the partner.';
         setTimeout(() => this.errorMessage = '', 5000); // Clear error message after 5 seconds
       }
@@ -250,7 +251,7 @@ export class CompanyupdatepartnerComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.partnerLogo = file;
-      console.log('File selected:', file);
+      logger.log('File selected:', file);
     }
   }
 
@@ -258,11 +259,11 @@ export class CompanyupdatepartnerComponent implements OnInit {
     try {
       // Fetch the partner details
       const response = await this.partnerService.getPartner(id).toPromise();
-      console.log('ID:', id);
-      console.log('API response:', response);
+      logger.log('ID:', id);
+      logger.log('API response:', response);
 
       const partner = response.partner;
-      console.log(partner);
+      logger.log(partner);
 
       // Set allowPayAsYouGo checkbox based on the API response
       const allow_pay_as_you_go = partner.allow_pay_as_you_go;
@@ -298,7 +299,7 @@ export class CompanyupdatepartnerComponent implements OnInit {
 
 
     } catch (error) {
-      console.error('Error fetching partner or related details:', error);
+      logger.error('Error fetching partner or related details:', error);
     }
   }
 

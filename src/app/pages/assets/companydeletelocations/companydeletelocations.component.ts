@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerLocationService } from 'src/app/services/chargerLocationService/charger-location.service';
@@ -21,8 +22,8 @@ export class CompanydeletelocationsComponent implements OnInit {
   ngOnInit(): void {
     this.locationId = this.route.snapshot.params['id'];
     this.getLocationDetails(this.locationId);
-    console.log('Charger ID:', this.locationId);
-    console.log('Charger Name:', this.locationName);  // Debugging line
+    logger.log('Charger ID:', this.locationId);
+    logger.log('Charger Name:', this.locationName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class CompanydeletelocationsComponent implements OnInit {
   confirmDelete(): void {
     this.locationService.deleteChargerLocation(this.locationId).subscribe({
       next: (response) => {
-        console.log('Location deleted successfully:', response);
+        logger.log('Location deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/assets/locations']);
       },
       error: (error) => {
-        console.error('Error deleting location:', error);
+        logger.error('Error deleting location:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class CompanydeletelocationsComponent implements OnInit {
     this.locationService.getChargerLocation(id).subscribe({
       next: (response) => {
         this.locationName = response.location.location_name;
-        console.log('response:', response);
-        console.log('locationName:', this.locationName);
+        logger.log('response:', response);
+        logger.log('locationName:', this.locationName);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -67,7 +68,7 @@ export class RadxupdatepromoComponent implements OnInit {
     this.getPromoById(this.promoId);
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -109,15 +110,15 @@ export class RadxupdatepromoComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -129,7 +130,7 @@ export class RadxupdatepromoComponent implements OnInit {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
   loadCompaniesById(companyId: number) {
@@ -137,10 +138,10 @@ export class RadxupdatepromoComponent implements OnInit {
       (data: any) => {
         this.company = data.company;
         this.company_name = this.company.company_name
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -148,11 +149,11 @@ export class RadxupdatepromoComponent implements OnInit {
   loadRatesbyCompany(companyId: number) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -215,22 +216,22 @@ export class RadxupdatepromoComponent implements OnInit {
       // modified_by: this.promoForm.value.modifiedBy || ''
     };
 
-    console.log('Submitting promoData:', promoData);
+    logger.log('Submitting promoData:', promoData);
 
     // Send update request
     this.promoService.updatePromo(this.promoId, promoData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('✅ Promo updated successfully:', response);
+          logger.log('✅ Promo updated successfully:', response);
           this.router.navigate(['/rates/promo', this.promoId]);
         } else {
-          console.error('❌ Failed to update promo:', response);
+          logger.error('❌ Failed to update promo:', response);
           this.errorMessage = 'Failed to update promo. Please try again later.';
           setTimeout(() => (this.errorMessage = ''), 5000);
         }
       },
       error: (error) => {
-        console.error('❌ Error updating promo:', error);
+        logger.error('❌ Error updating promo:', error);
         this.errorMessage = error.message || 'An error occurred while updating the promo.';
         setTimeout(() => (this.errorMessage = ''), 5000);
       }
@@ -241,8 +242,8 @@ export class RadxupdatepromoComponent implements OnInit {
   getPromoById(id: number): void {
     this.promoService.getPromo(id).subscribe({
       next: (response) => {
-        console.log('ID:', id);
-        console.log('API response:', response);
+        logger.log('ID:', id);
+        logger.log('API response:', response);
 
         const promo = response.promo;
 
@@ -267,7 +268,7 @@ export class RadxupdatepromoComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.error('❌ Error fetching promo details:', error);
+        logger.error('❌ Error fetching promo details:', error);
       }
     });
   }

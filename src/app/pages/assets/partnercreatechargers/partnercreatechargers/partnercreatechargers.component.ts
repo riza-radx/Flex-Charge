@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerService } from 'src/app/services/chargerService/charger.service';
@@ -82,11 +83,11 @@ export class PartnercreatechargersComponent {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const partner_id = parsedCugpCred.partner_id;
-      console.log('User Group ID:', partner_id);
+      logger.log('User Group ID:', partner_id);
       this.getChargerLocations(partner_id);
     this.getPartners(partner_id);
   } else {
-    console.error('No cugpCred found in localStorage');
+    logger.error('No cugpCred found in localStorage');
   }
   this.getCompanies();
   }
@@ -94,12 +95,12 @@ export class PartnercreatechargersComponent {
   getChargerLocations(partnerId: number) {
     this.chargerLocationService.getChargerLocationByPartner(partnerId).subscribe(
       (data) => {
-        console.log(data.location);
+        logger.log(data.location);
         this.chargerLocations = data.location;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )
@@ -107,12 +108,12 @@ export class PartnercreatechargersComponent {
   getCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
-        console.log(data.company);
+        logger.log(data.company);
         this.companies = data.company;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )
@@ -120,12 +121,12 @@ export class PartnercreatechargersComponent {
   getPartners(partnerId: number) {
     this.partnerService.getPartner(partnerId).subscribe(
       (data) => {
-        console.log(data.partners);
+        logger.log(data.partners);
         this.partners = data.partners;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )
@@ -204,11 +205,11 @@ export class PartnercreatechargersComponent {
     connectorsData.forEach((connectorData: any) => {
       this.connectorService.addConnector(connectorData).subscribe({
         next: (response) => {
-          console.log('Connector created successfully:', response);
+          logger.log('Connector created successfully:', response);
           // Navigate or show success message if needed
         },
         error: (error) => {
-          console.error('Error creating connector:', error);
+          logger.error('Error creating connector:', error);
         }
       });
     });

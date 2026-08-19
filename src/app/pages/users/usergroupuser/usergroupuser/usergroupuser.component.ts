@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../services/userService/user.service'
@@ -112,10 +113,10 @@ export class UsergroupuserComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const usergr_id = parsedCugpCred.usergr_id;
-      console.log('User Group ID:', usergr_id);
+      logger.log('User Group ID:', usergr_id);
       this.getUserGroupMembers(usergr_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
   }
 
@@ -130,20 +131,20 @@ export class UsergroupuserComponent implements OnInit {
                 // console.log(userData.user);
                 this.rows.push(userData.user);
                 this.temp = [...this.rows];
-                console.log(this.temp);
+                logger.log(this.temp);
               },
               (error) => {
-                console.error(`Error fetching user with ID ${member.user_id}:`, error);
+                logger.error(`Error fetching user with ID ${member.user_id}:`, error);
               }
             );
           });
         } else {
-          console.error('Unexpected response structure:', response);
+          logger.error('Unexpected response structure:', response);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

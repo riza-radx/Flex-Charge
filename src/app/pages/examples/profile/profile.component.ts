@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from "@angular/core";
 import { AuthService } from "../../../services/authService/auth.service";
 import { CardService } from "../../../services/cardService/card.service";
@@ -87,7 +88,7 @@ export class ProfileComponent implements OnInit {
           case 'USER_GROUP_ADMIN':
             this.isUserGroupAdmin = true;
             this.isUserGroupRole = true;
-            console.log("isUserGroupAdmin",this.isUserGroupAdmin)
+            logger.log("isUserGroupAdmin",this.isUserGroupAdmin)
             this.getUserGroupDetails(this.usergr_id);
             this.getCurrentUser();
             this.getChargingHistory();
@@ -98,11 +99,11 @@ export class ProfileComponent implements OnInit {
          break;
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.getCurrentUser();
@@ -119,7 +120,7 @@ export class ProfileComponent implements OnInit {
         if(!this.isUserGroupRole){
           this.isSplitWallet = true
         }
-        console.log("Current User", data.user.userId);
+        logger.log("Current User", data.user.userId);
         this.getUser(data.user.userId)
         this.getRFIDCard(data.user.userId)
         this.checkMembership(data.user.userId)
@@ -127,21 +128,21 @@ export class ProfileComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
   }
   getUser(userId: number) {
-    console.log("User Id On getUser Function", userId)
+    logger.log("User Id On getUser Function", userId)
     this.userService.getUserById(userId).subscribe(
       (data) => {
-        console.log("User Details", data)
+        logger.log("User Details", data)
         this.user = data;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -149,23 +150,23 @@ export class ProfileComponent implements OnInit {
   getRFIDCard(userId: number) {
     this.cardService.getCardUser(userId).subscribe(
       (data) => {
-        console.log("RFID Card", data);
+        logger.log("RFID Card", data);
   
         // Kontrollojmë nëse `data.card` ekziston dhe ka të paktën një element
         if (data?.card?.length) {
           this.card = data.card[0];
-          console.log("RFID Card ID:", this.card?.card_id ?? 'No Card Available');
+          logger.log("RFID Card ID:", this.card?.card_id ?? 'No Card Available');
   
           this.getChargingHistory();
           // this.redirectToRecharge(this.card?.card_id)
         } else {
-          console.warn("No RFID Card found for this user.");
+          logger.warn("No RFID Card found for this user.");
           this.card = null; // Vendosim `null` nëse nuk ka kartë
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error("Error fetching RFID Card:", error);
+        logger.error("Error fetching RFID Card:", error);
       }
     );
   }
@@ -235,74 +236,74 @@ export class ProfileComponent implements OnInit {
     // Check if the user is a User Group Member
     this.userGroupMemberService.getUserGroupMemberByUser(userId).subscribe(
       (response) => {
-        console.log(response);
+        logger.log(response);
         if (response?.userGroupMembers?.length) {
           const userGroupId = response.userGroupMembers[0]?.usergr_id;
           if (userGroupId) {
             this.userGroupService.getUserGroup(userGroupId).subscribe(
               (userGroupData) => {
                 this.userGroupName = userGroupData?.userGroup?.usergr_name ?? null;
-                console.log('User belongs to User Group:', this.userGroupName);
+                logger.log('User belongs to User Group:', this.userGroupName);
               },
-              (error) => console.error('UserGroup Error:', error)
+              (error) => logger.error('UserGroup Error:', error)
             );
           }
         }
       },
-      (error) => console.error('UserGroupMember Error:', error)
+      (error) => logger.error('UserGroupMember Error:', error)
     );
   
     // Check if the user is a Company Member
     this.companyMemberService.getCompanyMemberByUser(userId).subscribe(
       (response) => {
-        console.log(response);
+        logger.log(response);
         if (response?.company_member?.length) {
           const companyId = response.company_member[0]?.company_id;
           if (companyId) {
             this.companyService.getCompany(companyId).subscribe(
               (companyData) => {
                 this.companyName = companyData?.company?.company_name ?? null;
-                console.log('User belongs to Company:', this.companyName);
+                logger.log('User belongs to Company:', this.companyName);
               },
-              (error) => console.error('Company Error:', error)
+              (error) => logger.error('Company Error:', error)
             );
           }
         }
       },
-      (error) => console.error('CompanyMember Error:', error)
+      (error) => logger.error('CompanyMember Error:', error)
     );
   
     // Check if the user is a Partner Member
     this.partnerMemberService.getPartnerMemberByUser(userId).subscribe(
       (response) => {
-        console.log(response);
+        logger.log(response);
         if (response?.partnerMembers?.length) {
           const partnerId = response.partnerMembers[0]?.partner_id;
           if (partnerId) {
             this.partnerService.getPartner(partnerId).subscribe(
               (partnerData) => {
                 this.partnerName = partnerData?.partner?.partner_name ?? null;
-                console.log('User belongs to Partner:', this.partnerName);
+                logger.log('User belongs to Partner:', this.partnerName);
               },
-              (error) => console.error('Partner Error:', error)
+              (error) => logger.error('Partner Error:', error)
             );
           }
         }
       },
-      (error) => console.error('PartnerMember Error:', error)
+      (error) => logger.error('PartnerMember Error:', error)
     );
   }
   
   getChargingHistory() { 
     this.chargingHistoryService.getChargingByCurrentUser().subscribe(
       (data) => {
-        console.log("Current User", data)
+        logger.log("Current User", data)
         this.chargingHistory = data.chargingHistory;
         this.calculateTotalPower();
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -310,13 +311,13 @@ export class ProfileComponent implements OnInit {
   getChargerLocation(chargerId: number) {
     this.chargerLocationService.getChargerLocationByCharger(chargerId).subscribe(
       (data) => {
-        console.log("Charger Location", data)
+        logger.log("Charger Location", data)
         this.chargingHistory = data.chargingHistory;
         // this.calculateTotalPower();
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -325,21 +326,21 @@ export class ProfileComponent implements OnInit {
   getRecharges(userId: number) {
     this.rechargeService.getRechargesByUserId(userId).subscribe(
       (response) => {
-        console.log('API response:', response); // Log the entire response object
+        logger.log('API response:', response); // Log the entire response object
 
         if (response.success && Array.isArray(response.recharge)) {
           this.recharges = response.recharge;
-          console.log("recharers", this.recharges);
+          logger.log("recharers", this.recharges);
           this.tempRecharges = [...this.recharges]; // Make a copy for filtering
-          console.log("Fetched recharges:", this.recharges); // Log the actual recharges
+          logger.log("Fetched recharges:", this.recharges); // Log the actual recharges
         } else {
           this.recharges = [];
-          console.log("No recharges available or response format is incorrect.");
+          logger.log("No recharges available or response format is incorrect.");
         }
       },
       (error) => {
         this.errorMessage = error.message || 'Failed to load recharges';
-        console.log('Error:', error); // Log any errors that occur
+        logger.log('Error:', error); // Log any errors that occur
       }
     );
   }
@@ -352,7 +353,7 @@ export class ProfileComponent implements OnInit {
       const power = Number(history.total_power) || 0; // Convert to a number and handle invalid cases
       return sum + power;
     }, 0);
-    console.log("Total Power:", this.totalPower);
+    logger.log("Total Power:", this.totalPower);
   }
 
 
@@ -395,23 +396,23 @@ export class ProfileComponent implements OnInit {
   getUserGroupDetails(id: number): void {
     this.userGroupService.getUserGroup(id).subscribe({
       next: (response) => {
-        console.log('response:', response);
+        logger.log('response:', response);
         this.userGroups = response.userGroup;
         // Normalize split_wallet to a boolean
         const splitWalletValue = response.userGroup.split_wallet;
         this.isSplitWallet = splitWalletValue === '1' || splitWalletValue === 'true';
   
-        console.log('this.isSplitWallet (boolean):', this.isSplitWallet);
-        console.log('this.isUserGroupAdmin:', this.isUserGroupAdmin);
+        logger.log('this.isSplitWallet (boolean):', this.isSplitWallet);
+        logger.log('this.isUserGroupAdmin:', this.isUserGroupAdmin);
         if (this.userGroups.company_id) {
           this.companyService.getCompany(this.userGroups.company_id).subscribe(
             (companyData) => {
-              console.log("Company data:", companyData);
+              logger.log("Company data:", companyData);
               this.userGroups.company_name = companyData.company.company_name;
-              console.log(" this.userGroups.company_name:", this.userGroups.company_name);
+              logger.log(" this.userGroups.company_name:", this.userGroups.company_name);
             },
             (error) => {
-              console.log("Error fetching company data:", error);
+              logger.log("Error fetching company data:", error);
             }
           );
         }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserGroupService } from 'src/app/services/userGroupService/user-group.service';
@@ -21,8 +22,8 @@ export class CompanydeleteusergroupComponent {
   ngOnInit(): void {
     this.userGroupId = this.route.snapshot.params['id'];
     this.getUserGroupDetails(this.userGroupId);
-    console.log('Charger ID:', this.userGroupId);
-    console.log('Charger Name:', this.userGroupName);  // Debugging line
+    logger.log('Charger ID:', this.userGroupId);
+    logger.log('Charger Name:', this.userGroupName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class CompanydeleteusergroupComponent {
   confirmDelete(): void {
     this.userGroupService.deleteUserGroup(this.userGroupId).subscribe({
       next: (response) => {
-        console.log('User deleted successfully:', response);
+        logger.log('User deleted successfully:', response);
         this.closePopupHandler();
         // this.router.navigate(['/users/user']);
       },
       error: (error) => {
-        console.error('Error deleting user:', error);
+        logger.error('Error deleting user:', error);
       }
     });
   }
@@ -47,12 +48,12 @@ export class CompanydeleteusergroupComponent {
   getUserGroupDetails(id: number): void {
     this.userGroupService.getUserGroup(id).subscribe({
       next: (response) => {
-        console.log('response:', response);
+        logger.log('response:', response);
         this.userGroupName = response.userGroup.usergr_name;
-        console.log('userGroupName:', this.userGroupName);
+        logger.log('userGroupName:', this.userGroupName);
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }

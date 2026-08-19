@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { CompanyMemberService } from '../../../../services/companyMemberService/company-member.service';
@@ -24,12 +25,12 @@ export class CompanycreateuserComponent {
   onSubmit() {
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
         const userId = response.id;  // Assume the API returns the user ID in the response
         const companyId = localStorage.getItem('companyId');  // Retrieve the company ID from local storage
 
         if (!companyId) {
-          console.error('Company ID not found in local storage');
+          logger.error('Company ID not found in local storage');
           return;
         }
 
@@ -41,16 +42,16 @@ export class CompanycreateuserComponent {
 
         this.companyMemberService.addCompanyMember(companyMember).subscribe(
           memberResponse => {
-            console.log('Company member created successfully', memberResponse);
+            logger.log('Company member created successfully', memberResponse);
             this.router.navigate(['/users/user']);
           },
           error => {
-            console.error('Error creating company member', error);
+            logger.error('Error creating company member', error);
           }
         );
       },
       error => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
       }
     );
   }

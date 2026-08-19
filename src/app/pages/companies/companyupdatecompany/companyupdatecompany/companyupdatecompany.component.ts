@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,7 +45,7 @@ export class CompanyupdatecompanyComponent implements OnInit {
     this.companyId = this.route.snapshot.params['id'];
     this.getCompanyById(this.companyId);
 
-    console.log('this.locationId:', this.companyId);
+    logger.log('this.locationId:', this.companyId);
   }
 
   onFileSelected(event: any) {
@@ -89,7 +90,7 @@ export class CompanyupdatecompanyComponent implements OnInit {
   // }
   onSubmit() {
     if (this.companyForm.invalid) {
-      console.log('Form is invalid');
+      logger.log('Form is invalid');
       this.companyForm.markAllAsTouched();
       return;
     }
@@ -113,15 +114,15 @@ export class CompanyupdatecompanyComponent implements OnInit {
       formData.append('companyLogo', this.originalCompanyLogo); // Retain the original logo
     }
   
-    console.log('Submitting company data:', formData);
+    logger.log('Submitting company data:', formData);
   
     this.companyService.updateCompany(this.companyId, formData).subscribe({
       next: (response) => {
-        console.log('Company updated successfully:', response);
+        logger.log('Company updated successfully:', response);
         this.router.navigate([`/companies/company/${this.companyId}`]);
       },
       error: (error) => {
-        console.error('Error updating company:', error);
+        logger.error('Error updating company:', error);
       },
     });
   }
@@ -131,8 +132,8 @@ export class CompanyupdatecompanyComponent implements OnInit {
     try {
       // Fetch the company details
       const response = await this.companyService.getCompany(id).toPromise();
-      console.log('ID:', id);
-      console.log('API response:', response);
+      logger.log('ID:', id);
+      logger.log('API response:', response);
 
       const company = response.company;
 
@@ -156,7 +157,7 @@ export class CompanyupdatecompanyComponent implements OnInit {
 
 
     } catch (error) {
-      console.error('Error fetching company or related details:', error);
+      logger.error('Error fetching company or related details:', error);
     }
   }
 

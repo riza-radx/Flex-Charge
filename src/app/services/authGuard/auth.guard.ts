@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -19,9 +20,9 @@ export class AuthGuard implements CanActivate {
     const token = localStorage.getItem('authToken');
 
     if (token) {
-      console.log(token);
+      logger.log(token);
       const user = this.decodeToken(token);
-      console.log(user)
+      logger.log(user)
       if (user && user.role) {
         return true;
       }

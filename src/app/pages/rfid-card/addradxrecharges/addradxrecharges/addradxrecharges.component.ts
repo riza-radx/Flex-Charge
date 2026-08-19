@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardService } from '../../../../services/cardService/card.service'
@@ -25,13 +26,13 @@ export class AddradxrechargesComponent {
   onSubmit() {
     this.rechargeService.addRecharge(this.recharge).subscribe(
       (response) => {
-        console.log('Recharge added successfully:', response);
+        logger.log('Recharge added successfully:', response);
         // window.open(response.retreiveOrder, '_blank');
         this.router.navigate(['/profile']);  // Adjust the navigation as needed
 
       },
       (error) => {
-        console.error('Error adding recharge:', error);
+        logger.error('Error adding recharge:', error);
       }
     );
   }

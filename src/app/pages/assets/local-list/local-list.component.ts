@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -82,7 +83,7 @@ export class LocalListComponent {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       this.company_id = parsedCugpCred.company_id;
-      console.log(" this.company_id", this.company_id)
+      logger.log(" this.company_id", this.company_id)
       const partner_id = parsedCugpCred.partner_id;
 
       if (this.userRole) {
@@ -111,15 +112,15 @@ export class LocalListComponent {
             this.getUserGroups(this.company_id);
             break
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -150,16 +151,16 @@ export class LocalListComponent {
   }
   onBelongsToChange(value: string): void {
     this.localList.belongsTo = value;
-    console.log("this.localList.belongsTo", this.localList.belongsTo)
+    logger.log("this.localList.belongsTo", this.localList.belongsTo)
     if (value === 'company' && this.company?.company_id) {
-      console.log("this.company?.company_id", this.company?.company_id)
+      logger.log("this.company?.company_id", this.company?.company_id)
       this.fetchCompanyData(this.company.company_id);
     }
   }
 
   onCreateForChange(value: string): void {
     this.localList.createFor = value;
-    console.log("Selected createFor:", this.localList.createFor);
+    logger.log("Selected createFor:", this.localList.createFor);
     if (this.localList.belongsTo === 'company') {
       this.fetchCompanyData(this.company.company_id);
     }
@@ -170,7 +171,7 @@ export class LocalListComponent {
 
   onUserGroupChange(userGroupId: string): void {
     this.localList.userGroupId = userGroupId;
-    console.log("Selected User Group ID:", userGroupId);
+    logger.log("Selected User Group ID:", userGroupId);
 
     if (userGroupId) {
       this.fetchUserGroupData(userGroupId);
@@ -198,23 +199,23 @@ export class LocalListComponent {
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
         this.companies = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
   getUserGroups(companyId: number) {
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.userGroups = data.userGroup;
-        console.log(this.userGroups);
+        logger.log(this.userGroups);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -225,7 +226,7 @@ export class LocalListComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -265,7 +266,7 @@ export class LocalListComponent {
       .subscribe(
         async res => {
           if (!res?.success || !Array.isArray(res.userGroupMembers)) {
-            console.error('Unexpected response structure:', res);
+            logger.error('Unexpected response structure:', res);
             this.availableUsers = [];
             this.applyUserFilter(this.userSearch);  // 🔹 keep list in sync
             return;
@@ -282,7 +283,7 @@ export class LocalListComponent {
               .map(u => u?.user)
               .filter(Boolean);                   // remove nulls
           } catch (fetchErr) {
-            console.error('Error fetching individual users:', fetchErr);
+            logger.error('Error fetching individual users:', fetchErr);
             this.availableUsers = [];
           }
 
@@ -295,10 +296,10 @@ export class LocalListComponent {
     this.companyService.getCompany(companyId).subscribe(
       (data: any) => {
         this.company = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -306,23 +307,23 @@ export class LocalListComponent {
   getCards(id: string) {
     this.cardService.getCardByCompany(id).subscribe(
       (data: any) => {
-        console.log('API response:', data);
+        logger.log('API response:', data);
 
         // Check if the response contains the 'card' array
         if (data && data.success && Array.isArray(data.card)) {
           this.rfidCards = data.card;
           this.availableCards = [...this.rfidCards]; // Create a shallow copy for the table
-          console.log('RFID Cards:', this.availableCards);
+          logger.log('RFID Cards:', this.availableCards);
           this.applyCardFilter(this.cardSearch);
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
           this.availableCards = []; // Ensure the table is empty if data format is incorrect
           this.filteredCards = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching card data:', error);
+        logger.error('Error fetching card data:', error);
         this.availableCards = []; // Ensure the table is empty on error
       }
     );
@@ -335,7 +336,7 @@ export class LocalListComponent {
         this.applyUserFilter(this.userSearch);
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -343,7 +344,7 @@ export class LocalListComponent {
   getCardsByUserGroup(usergr_id: number) {
     this.cardService.getCardByUserGroup(usergr_id).subscribe(
       (data: any) => {
-        console.log('API response getCardsByUserGroup:', data);
+        logger.log('API response getCardsByUserGroup:', data);
         // this.availableCards = data.card;
         this.availableCards = data?.card ?? data?.cards ?? [];
 
@@ -352,7 +353,7 @@ export class LocalListComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching card data:', error);
+        logger.error('Error fetching card data:', error);
       }
     );
   }
@@ -360,7 +361,7 @@ export class LocalListComponent {
 
   async addSelectedCardOrUser(): Promise<void> {
     if (this.localList.createFor === 'card' && this.selectedCard) {
-      console.log('Fetching card details for ID:', this.selectedCard);
+      logger.log('Fetching card details for ID:', this.selectedCard);
       if (this.selectedCard === 'all') {
         this.availableCards.forEach(c => {
           const alreadyAdded = this.selectedItems.some(si => si.card_id === c.card_id);
@@ -373,13 +374,13 @@ export class LocalListComponent {
       if (this.selectedCard) {
         try {
           const cardData = await this.getCard(this.selectedCard);
-          console.log('Fetched card data:', cardData);
+          logger.log('Fetched card data:', cardData);
           if (cardData && cardData.card) {
             this.selectedItems.push({ name: cardData.card.serial_no, card_id: cardData.card.card_id });
-            console.log('Updated selectedItems:', this.selectedItems);
+            logger.log('Updated selectedItems:', this.selectedItems);
           }
         } catch (error) {
-          console.error('Error fetching card:', error);
+          logger.error('Error fetching card:', error);
         }
       }
     }
@@ -422,7 +423,7 @@ export class LocalListComponent {
             });
           }
         } catch (err) {
-          console.error('Error fetching user:', err);
+          logger.error('Error fetching user:', err);
         }
       }
     }
@@ -472,16 +473,16 @@ export class LocalListComponent {
       // status: this.localList.status
     }));
 
-    console.log("Submitting Data:", this.id, formattedData);
+    logger.log("Submitting Data:", this.id, formattedData);
 
     this.localListService.addChargerLocalList(this.id, [...formattedData]).subscribe(
       response => {
-        console.log('Successfully submitted:', response);
+        logger.log('Successfully submitted:', response);
         this.router.navigate([`/assets/chargers/${this.id}`]);
       },
       error => {
         this.errorMessage = 'Failed to submit the local list.';
-        console.error(error);
+        logger.error(error);
       }
     );
   }

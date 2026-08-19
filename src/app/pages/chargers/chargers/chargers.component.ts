@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerService } from "../../../services/chargerService/charger.service";
@@ -132,7 +133,7 @@ case 'COMPANY_USER':
           this.isUser = true;
           break;
         default:
-          console.error('Unknown user role:', this.userRole);
+          logger.error('Unknown user role:', this.userRole);
           this.router.navigate(['/login']); // Redirect to login or error page
       }
     }
@@ -145,12 +146,12 @@ case 'COMPANY_USER':
       (data) => {
         this.rows = data.chargers;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )

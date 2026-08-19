@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargingService } from "../../../../services/chargingService/charging.service";
@@ -66,17 +67,17 @@ fetchAllData(): void {
         // console.log('Charging records fetched successfully:', this.chargings);
         // console.log('cardSerial :', this.cardSerial);
       } else {
-        console.error('Error fetching charging records:', response.message);
+        logger.error('Error fetching charging records:', response.message);
       }
     },
-    error: (err) => console.error('Error fetching charging records:', err)
+    error: (err) => logger.error('Error fetching charging records:', err)
   });
 }
 
 fetchUserNames(): void {
   this.chargerService.getCharger(this.chargings).subscribe({
     next: (names) => this.userNames = names,
-    error: (err) => console.error('Error fetching user names:', err)
+    error: (err) => logger.error('Error fetching user names:', err)
   });
 }
 
@@ -88,7 +89,7 @@ fetchCardSerial(): void {
       next: (serial) => {
         this.cardSerial[index] = serial.card.serial_no; // Ensure this.cardSerial is an array
       },
-      error: (err) => console.error('Error fetching card serial:', err)
+      error: (err) => logger.error('Error fetching card serial:', err)
     });
   });
 }
@@ -101,10 +102,10 @@ fetchChargingTimes(): void {
           started_time: new Date(charging.strted_time)
         }));
       } else {
-        console.error('Error fetching charging times:', data.message);
+        logger.error('Error fetching charging times:', data.message);
       }
     },
-    error: (err) => console.error('Error fetching charging times:', err)
+    error: (err) => logger.error('Error fetching charging times:', err)
   });
 }
 
@@ -139,10 +140,10 @@ fetchAllChargingDetails(): void {
         this.chargingDetails = response.chargings;
         // console.log('this.chargingDetails', this.chargingDetails);
       } else {
-        console.error('Error fetching charging details:', response.message);
+        logger.error('Error fetching charging details:', response.message);
       }
     },
-    error: (err) => console.error('Error fetching charging details:', err)
+    error: (err) => logger.error('Error fetching charging details:', err)
   });
 }
 

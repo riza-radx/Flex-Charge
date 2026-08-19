@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ElementRef, HostListener, ChangeDetectorRef } from "@angular/core";
 import { ROUTES } from "../sidebar/sidebar.component";
 import { Router, Event, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
@@ -127,7 +128,7 @@ export class NavbarComponent implements OnInit {
         // Hide loading indicator
 
         // Present error to user
-        console.log(event.error);
+        logger.log(event.error);
       }
     });
 
@@ -233,15 +234,15 @@ export class NavbarComponent implements OnInit {
             // this.getNotificationsByUser(user_id)
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.getIpData()
@@ -285,7 +286,7 @@ export class NavbarComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -434,7 +435,7 @@ export class NavbarComponent implements OnInit {
         this.getCurrentUserById(data.user.userId)
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     )
   }
@@ -446,7 +447,7 @@ export class NavbarComponent implements OnInit {
         this.image = data.user.user_image;
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     )
   }
@@ -460,7 +461,7 @@ export class NavbarComponent implements OnInit {
         window.location.reload();
       },
       error => {
-        console.error('Logout failed', error);
+        logger.error('Logout failed', error);
       }
     );
   }
@@ -476,7 +477,7 @@ export class NavbarComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -493,7 +494,7 @@ export class NavbarComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -509,7 +510,7 @@ export class NavbarComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -526,7 +527,7 @@ export class NavbarComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -542,7 +543,7 @@ export class NavbarComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -568,7 +569,7 @@ export class NavbarComponent implements OnInit {
         this.newNotificationCount = 0;
       },
       error: (error) => {
-        console.error("Failed to update notifications in DB:", error);
+        logger.error("Failed to update notifications in DB:", error);
       }
     });
   }
@@ -582,7 +583,7 @@ export class NavbarComponent implements OnInit {
           this.notifications = results;
         },
         (error) => {
-          console.error('Error during search:', error);
+          logger.error('Error during search:', error);
           this.errorMessage = 'Failed to perform search. Please try again later.';
         }
       );
@@ -600,7 +601,7 @@ export class NavbarComponent implements OnInit {
         this.notifications = results; // Update notifications or any other list
       },
       (error) => {
-        console.error('Search error:', error);
+        logger.error('Search error:', error);
       }
     );
   }

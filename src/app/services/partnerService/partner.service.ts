@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
@@ -363,7 +364,7 @@ export class PartnerService {
       }),
       catchError((error) => {
         // Handling HTTP or network errors
-        console.error('Error fetching current month count:', error);
+        logger.error('Error fetching current month count:', error);
         return throwError(() => new Error('An error occurred while fetching the current month count'));
       })
     );

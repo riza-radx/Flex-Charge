@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentService } from "../../../services/documentService/document.service";
@@ -104,8 +105,8 @@ export class DocumentsComponent {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
-    console.log("this.activeRow", this.activeRow);
+    logger.log('User Role:', this.userRole);
+    logger.log("this.activeRow", this.activeRow);
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
@@ -216,15 +217,15 @@ export class DocumentsComponent {
             // this.getCurrencies(company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getVReports();
@@ -269,7 +270,7 @@ export class DocumentsComponent {
     if (documentUrl) {
       window.open(documentUrl, '_blank');
     } else {
-      console.error('Document URL is not available');
+      logger.error('Document URL is not available');
     }
   }
   onActivate(event) {
@@ -288,7 +289,7 @@ export class DocumentsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -300,7 +301,7 @@ export class DocumentsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -311,7 +312,7 @@ export class DocumentsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -323,7 +324,7 @@ export class DocumentsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -334,7 +335,7 @@ export class DocumentsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -343,11 +344,11 @@ export class DocumentsComponent {
     this.userService.getAllUsers().subscribe(
       (data) => {
         this.users = data.users;
-        console.log(" this.users", this.users);
+        logger.log(" this.users", this.users);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -381,7 +382,7 @@ export class DocumentsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -394,7 +395,7 @@ export class DocumentsComponent {
             try {
               const userResponse = await this.userService.getUserById(member.user_id).toPromise();
               const user = userResponse.user; // Extract user details from the response
-              console.log(user)
+              logger.log(user)
 
               // Combine member and user data
               return {
@@ -402,20 +403,20 @@ export class DocumentsComponent {
                 user: user // Include user details in the member object
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -435,20 +436,20 @@ export class DocumentsComponent {
                 user: user // Include user details in the member object
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -471,17 +472,17 @@ export class DocumentsComponent {
       filters.user_id = this.selectedUser;
     }
 
-    console.log('Filters for Documents:', filters);
+    logger.log('Filters for Documents:', filters);
 
     this.documentService.getAllDocuments(filters).subscribe(
       (data: any) => {
-        console.log('API Response for Documents:', data);
+        logger.log('API Response for Documents:', data);
 
         if (data && data.success) {
           if (Array.isArray(data.documents) && data.documents.length > 0) {
             // If documents are returned
             this.documents = data.documents;
-            console.log('Filtered Documents:', this.documents);
+            logger.log('Filtered Documents:', this.documents);
 
             // Process documents to add owner info
             this.tempDocuments = this.documents.map((doc) => {
@@ -507,23 +508,23 @@ export class DocumentsComponent {
               return { ...doc, ownerInfo };
             });
 
-            console.log('Processed Documents:', this.tempDocuments);
+            logger.log('Processed Documents:', this.tempDocuments);
           } else {
             // No documents found
-            console.log('No documents found for the provided filters.');
+            logger.log('No documents found for the provided filters.');
             this.documents = [];
             this.tempDocuments = [];
           }
         } else {
           // API responded with success: false or invalid data
-          console.error('Unexpected API Response:', data);
+          logger.error('Unexpected API Response:', data);
           this.documents = [];
           this.tempDocuments = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching documents:', error);
+        logger.error('Error fetching documents:', error);
         this.documents = [];
         this.tempDocuments = [];
       }
@@ -560,22 +561,22 @@ export class DocumentsComponent {
       filters.toDate = this.formatDate(toDate); // ✅ use toDate (camelCase)
     }
 
-    console.log('Filters sent:', filters);
+    logger.log('Filters sent:', filters);
     this.documentService.getDocumentByCompany(this.company_id, filters).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.documents)) {
           // If this.documents is an array
           this.documents = data.documents;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.documents = []; // Set to an empty array if data is not valid
         }
         this.tempDocuments = [...this.documents];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -605,19 +606,19 @@ export class DocumentsComponent {
     }
     this.documentService.getDocumentByPartner(this.partner_id, filters).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.documents)) {
           // If this.documents is an array
           this.documents = data.documents;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.documents = []; // Set to an empty array if data is not valid
         }
         this.tempDocuments = [...this.documents];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -647,19 +648,19 @@ export class DocumentsComponent {
     }
     this.documentService.getDocumentByUserGroup(this.usergroup_id, filters).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.documents)) {
           // If this.documents is an array
           this.documents = data.documents;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.documents = []; // Set to an empty array if data is not valid
         }
         this.tempDocuments = [...this.documents];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -689,19 +690,19 @@ export class DocumentsComponent {
     }
     this.documentService.getDocumentByUser(userId, filters).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.documents)) {
           // If this.documents is an array
           this.documents = data.documents;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.documents = []; // Set to an empty array if data is not valid
         }
         this.tempDocuments = [...this.documents];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

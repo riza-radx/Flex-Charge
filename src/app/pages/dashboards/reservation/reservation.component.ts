@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservationService } from "../../../services/reservationService/reservation.service";
@@ -96,7 +97,7 @@ export class ReservationComponent implements OnInit {
 
     // this.fetchCurrentMonthReservationCount();
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
@@ -146,7 +147,7 @@ export class ReservationComponent implements OnInit {
           case 'COMPANY_ANALYST':
             this.isCompanyRole = true;
             this.isCompanyAnalyst = true
-            console.log("getReservationsByCompany(company_id)", this.company_id);
+            logger.log("getReservationsByCompany(company_id)", this.company_id);
             this.getReservationsByCompany(this.company_id); // Fetch alarms for the company
             break;
             case 'USER_GROUP_ADMIN':
@@ -176,15 +177,15 @@ export class ReservationComponent implements OnInit {
             this.getReservationsByUser(this.user_id); // Fetch alarms for the partner
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
   }
@@ -194,7 +195,7 @@ export class ReservationComponent implements OnInit {
         this.reservationCountCurrentMonth = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -203,10 +204,10 @@ export class ReservationComponent implements OnInit {
     this.reservationService.getAllReservations().subscribe(
       (data) => {
         this.rows = data.reservation;
-        console.log("this.rows in reservation app", this.rows);
+        logger.log("this.rows in reservation app", this.rows);
         this.rows.sort((a, b) => b.reservation_id - a.reservation_id);
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
 
         // Fetch charger details for each charging entry
         this.rows.forEach((row, index) => {
@@ -217,7 +218,7 @@ export class ReservationComponent implements OnInit {
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
           this.userService.getUserById(row.user_id).subscribe(
@@ -227,7 +228,7 @@ export class ReservationComponent implements OnInit {
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
           this.connectorService.getConnector(row.connector_id).subscribe({
@@ -237,7 +238,7 @@ export class ReservationComponent implements OnInit {
 
             },
             error: (error) => {
-              console.error('Error fetching connectors:', error);
+              logger.error('Error fetching connectors:', error);
               this.errorMessage = 'Error fetching connectors. Please try again.';
             }
           });
@@ -246,7 +247,7 @@ export class ReservationComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -257,17 +258,17 @@ export class ReservationComponent implements OnInit {
     this.reservationService.getReservationsByCompanyId(companyId).subscribe(
       (data) => {
         if (data.success && Array.isArray(data.reservations)) {
-          console.log("data.reservations",data.reservations)
+          logger.log("data.reservations",data.reservations)
           this.rows = data.reservations;
           this.temp = [...this.rows];
         } else {
-          console.error('Invalid response structure:', data);
+          logger.error('Invalid response structure:', data);
           this.errorMessage = 'Failed to load reservations - Invalid response format';
         }
       },
       (error) => {
         this.errorMessage = 'Failed to load reservations';
-        console.error('Reservation fetch error:', error);
+        logger.error('Reservation fetch error:', error);
       }
     );
   }
@@ -279,13 +280,13 @@ export class ReservationComponent implements OnInit {
           this.rows = data.reservations.rows;
           this.temp = [...this.rows];
         } else {
-          console.error('Invalid response structure:', data);
+          logger.error('Invalid response structure:', data);
           this.errorMessage = 'Failed to load reservations - Invalid response format';
         }
       },
       (error) => {
         this.errorMessage = 'Failed to load reservations';
-        console.error('Reservation fetch error:', error);
+        logger.error('Reservation fetch error:', error);
       }
     );
   }
@@ -297,15 +298,15 @@ export class ReservationComponent implements OnInit {
         if (data.success && Array.isArray(data.reservation)) {
           this.rows = data.reservation;
           this.temp = [...this.rows];
-          console.log("getReservationsByUser", this.rows);
+          logger.log("getReservationsByUser", this.rows);
         } else {
-          console.error('Invalid response structure:', data);
+          logger.error('Invalid response structure:', data);
           this.errorMessage = 'Failed to load reservations - Invalid response format';
         }
       },
       (error) => {
         this.errorMessage = 'Failed to load reservations';
-        console.error('Reservation fetch error:', error);
+        logger.error('Reservation fetch error:', error);
       }
     );
   }

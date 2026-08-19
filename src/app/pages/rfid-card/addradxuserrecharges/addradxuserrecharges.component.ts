@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -37,7 +38,7 @@ export class AddradxuserrechargesComponent {
 
   ngOnInit() {
     this.userId = Number(this.route.snapshot.paramMap.get('id'));
-    console.log("this.userId", this.userId)
+    logger.log("this.userId", this.userId)
     if (!this.userId) {
       this.errorMessage = 'User ID is missing!';
     } else {
@@ -51,12 +52,12 @@ export class AddradxuserrechargesComponent {
       (response) => {
         if (response.success && response.paymentMethod) {
           this.paymentMethods = response.paymentMethod;
-          console.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
+          logger.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
           this.populatePaymentMethodOptions();
         }
       },
       (error) => {
-        console.log('Error fetching payment methods for user:', error);
+        logger.log('Error fetching payment methods for user:', error);
       }
     );
   }
@@ -88,12 +89,12 @@ export class AddradxuserrechargesComponent {
       topup_note: (this.rechargeForm.value.topup_note || '').trim()    // 🆕 Arsyeja e TopUp-it
     };
   
-    console.log("rechargeData", rechargeData);
-    console.log("this.userId", this.userId);
+    logger.log("rechargeData", rechargeData);
+    logger.log("this.userId", this.userId);
   
     this.rechargeService.addRechargeForUserAdmin(this.userId, rechargeData).subscribe(
       (response) => {
-        console.log('Recharge successful:', response);
+        logger.log('Recharge successful:', response);
         // window.open(response.retreiveOrder, '_blank');
         this.router.navigate(['/users/user', this.userId]);
       },
@@ -112,6 +113,6 @@ export class AddradxuserrechargesComponent {
     } else {
       this.errorMessage = 'Failed to process the recharge. Please try again.';
     }
-    console.error('Recharge error:', error);
+    logger.error('Recharge error:', error);
   }
 }

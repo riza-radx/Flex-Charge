@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardService } from 'src/app/services/cardService/card.service';
@@ -21,8 +22,8 @@ export class RadxdeleterfidcardComponent implements OnInit {
   ngOnInit(): void {
     this.cardId = this.route.snapshot.params['id'];
     this.getCardDetails(this.cardId);
-    console.log('cardId ID:', this.cardId);
-    console.log('cardSerial:', this.cardSerial);  // Debugging line
+    logger.log('cardId ID:', this.cardId);
+    logger.log('cardSerial:', this.cardSerial);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class RadxdeleterfidcardComponent implements OnInit {
   confirmDelete(): void {
     this.cardService.deleteCard(this.cardId).subscribe({
       next: (response) => {
-        console.log('Card deleted successfully:', response);
+        logger.log('Card deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/rfid-cards/rfidcard']);
       },
       error: (error) => {
-        console.error('Error deleting location:', error);
+        logger.error('Error deleting location:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class RadxdeleterfidcardComponent implements OnInit {
     this.cardService.getCard(id).subscribe({
       next: (response) => {
         this.cardSerial = response.card.serial_no;
-        console.log('response:', response);
-        console.log('cardSerial:', this.cardSerial);
+        logger.log('response:', response);
+        logger.log('cardSerial:', this.cardSerial);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }

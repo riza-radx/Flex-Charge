@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -77,11 +78,11 @@ export class CompanyupdateuserComponent {
       this.companyId = parsedCugpCred.company_id;
       this.loadRatesbyCompany(this.companyId);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.getUserById(this.userId);
-    console.log('this.locationId:', this.userId);
+    logger.log('this.locationId:', this.userId);
   }
 
   // onSubmit() {
@@ -115,7 +116,7 @@ export class CompanyupdateuserComponent {
     this.submitted = true;
   
     if (this.userForm.invalid) {
-      console.log('Form is invalid');
+      logger.log('Form is invalid');
       return;
     }
   
@@ -135,19 +136,19 @@ export class CompanyupdateuserComponent {
     // Normalize rate_id
     userData.rate_id = userData.rate_id === "" ? null : Number(userData.rate_id);
   
-    console.log('Submitting Userdata:', userData);
+    logger.log('Submitting Userdata:', userData);
   
     this.userService.updateUser(this.userId, userData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('User updated successfully:', response);
+          logger.log('User updated successfully:', response);
           this.router.navigate([`/users/user/${this.userId}`]);
         } else {
-          console.error('Failed to update user:', response);
+          logger.error('Failed to update user:', response);
         }
       },
       error: (error) => {
-        console.error('Error updating user:', error);
+        logger.error('Error updating user:', error);
       }
     });
   }
@@ -157,11 +158,11 @@ export class CompanyupdateuserComponent {
   getUserById(id: number): void {
     this.userService.getUserById(id).subscribe({
       next: (response) => {
-        console.log('ID:', id);
-        console.log('API response:', response);
+        logger.log('ID:', id);
+        logger.log('API response:', response);
         const user = response.user;
         this.userRole = user.role;
-        console.log('this.role:', this.userRole);
+        logger.log('this.role:', this.userRole);
 
         if (this.userRole) {
           switch (this.userRole) {
@@ -204,11 +205,11 @@ export class CompanyupdateuserComponent {
               this.isPartnerRole = true;
               break;
             default:
-              console.error('Unknown user role:', this.userRole);
+              logger.error('Unknown user role:', this.userRole);
               this.router.navigate(['/login']); // Redirect to login or error page
           }
         } else {
-          console.error('User role is not defined.');
+          logger.error('User role is not defined.');
           this.router.navigate(['/login']); // Redirect to login or error page
         }
 
@@ -232,7 +233,7 @@ export class CompanyupdateuserComponent {
           customer_number: user.customer_number
         });
 
-        console.log("Role in form after patch:", this.userForm.value.role);
+        logger.log("Role in form after patch:", this.userForm.value.role);
         const companyMemmerData = {
           companyId: id,
           userId: user.id,
@@ -240,7 +241,7 @@ export class CompanyupdateuserComponent {
         }
       },
       error: (error) => {
-        console.error('Error fetching user details:', error);
+        logger.error('Error fetching user details:', error);
       }
     });
   }
@@ -260,11 +261,11 @@ export class CompanyupdateuserComponent {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerService } from 'src/app/services/chargerService/charger.service';
@@ -133,7 +134,7 @@ export class RadxcreatechargersComponent {
 
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -210,15 +211,15 @@ export class RadxcreatechargersComponent {
           // // this.getCurrencies(company_id);
           // break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.chargerForm = this.fb.group({
@@ -290,23 +291,23 @@ export class RadxcreatechargersComponent {
   loadRatesbyCompany(companyId: number) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
   getChargerLocations() {
     this.chargerLocationService.getAllChargerLocations().subscribe(
       (data) => {
-        console.log("data.location", data.location);
+        logger.log("data.location", data.location);
         this.chargerLocations = data.location;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -314,12 +315,12 @@ export class RadxcreatechargersComponent {
   getChargerLocationsByCompany(companyId: number) {
     this.chargerLocationService.getChargerLocationByCompany(companyId).subscribe(
       (data) => {
-        console.log(data.location);
+        logger.log(data.location);
         this.chargerLocations = data.location;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -327,12 +328,12 @@ export class RadxcreatechargersComponent {
   getChargerLocationsByPartner(partnerId: number) {
     this.chargerLocationService.getChargerLocationByPartner(partnerId).subscribe(
       (data) => {
-        console.log(data.location);
+        logger.log(data.location);
         this.chargerLocations = data.location;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -340,12 +341,12 @@ export class RadxcreatechargersComponent {
   getCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
-        console.log(data.company);
+        logger.log(data.company);
         this.company = data.company;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -354,7 +355,7 @@ export class RadxcreatechargersComponent {
     this.companyService.getCompany(companyId).subscribe(
       (data) => {
         this.company = data.company;
-        console.log("data.company getCompaniesByCompany", this.company);
+        logger.log("data.company getCompaniesByCompany", this.company);
 
         // Set the companyId form field value
         this.chargerForm.patchValue({
@@ -363,19 +364,19 @@ export class RadxcreatechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
   getPartners() {
     this.partnerService.getAllPartners().subscribe(
       (data) => {
-        console.log(data.partners);
+        logger.log(data.partners);
         this.partners = data.partners;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -383,12 +384,12 @@ export class RadxcreatechargersComponent {
   getPartnersByCompany(companyId: number) {
     this.partnerService.getPartnerByCompany(companyId).subscribe(
       (data) => {
-        console.log(data.partner);
+        logger.log(data.partner);
         this.partners = data.partner;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -396,13 +397,13 @@ export class RadxcreatechargersComponent {
   getPartnersByPartner(partnerId: number) {
     this.partnerService.getPartner(partnerId).subscribe(
       (data) => {
-        console.log(data.partner);
+        logger.log(data.partner);
         this.partners = [data.partner];
         this.getCompaniesByCompany(data.partner.company_id);
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -435,7 +436,7 @@ export class RadxcreatechargersComponent {
   onConnectorImageSelected(event: any, index: number) {
     const file = event.target.files[0];
     if (file) {
-      console.log('File selected:', file.name);
+      logger.log('File selected:', file.name);
       this.selectedConnectorFileNames[index] = file.name; // Store the selected file name
       this.connectors.at(index).patchValue({ connectorImage: file }); // Patch the form control
     }
@@ -463,7 +464,7 @@ export class RadxcreatechargersComponent {
 
 
   onSubmit() {
-    console.log("Charger form is valid:", this.chargerForm.valid);
+    logger.log("Charger form is valid:", this.chargerForm.valid);
 
     if (this.chargerForm.invalid) {
       this.chargerForm.markAllAsTouched();
@@ -480,19 +481,19 @@ export class RadxcreatechargersComponent {
       is_public: this.chargerForm.value.is_public ? 'true' : 'false',
       isHexReverse: this.chargerForm.value.isHexReverse ? 'true' : 'false'
     });
-    console.log("Charger form values:", this.chargerForm.value);
+    logger.log("Charger form values:", this.chargerForm.value);
     this.chargerService.addCharger(this.chargerForm.value).subscribe(
       (response: any) => {
-        console.log("Response from addCharger:", response);
+        logger.log("Response from addCharger:", response);
         const chargerId = response?.rate?.charger_id;
         if (chargerId) {
           this.addConnectors(chargerId);
         } else {
-          console.error('charger_id not found in the response');
+          logger.error('charger_id not found in the response');
         }
       },
       (error) => {
-        console.error("Error adding charger:", error);
+        logger.error("Error adding charger:", error);
       }
     );
   }
@@ -508,11 +509,11 @@ export class RadxcreatechargersComponent {
     connectorsData.forEach((connectorData: any) => {
       this.connectorService.addConnector(connectorData).subscribe({
         next: (response) => {
-          console.log('Connector created successfully:', response);
+          logger.log('Connector created successfully:', response);
           // Navigate or show success message if needed
         },
         error: (error) => {
-          console.error('Error creating connector:', error);
+          logger.error('Error creating connector:', error);
         }
       });
     });
@@ -521,7 +522,7 @@ export class RadxcreatechargersComponent {
   }
   openPopup(): void {
     this.showPopup = true;
-    console.log(this.showPopup);
+    logger.log(this.showPopup);
   }
 
   // To close the popup
@@ -542,7 +543,7 @@ export class RadxcreatechargersComponent {
 
     this.locationService.createChargerLocation(this.location).subscribe({
       next: (response: any) => {
-        console.log('Location created successfully:', response);
+        logger.log('Location created successfully:', response);
 
         if (!response.success) {
           this.errorMessage = response.message || 'Failed to create location.';
@@ -554,7 +555,7 @@ export class RadxcreatechargersComponent {
           this.location.id = response.location.location_id;
           this.chargerForm.get('locationId')?.setValue(this.location.id);
         } else {
-          console.warn('Location ID is missing from the response.');
+          logger.warn('Location ID is missing from the response.');
         }
 
         // Fetch updated location list based on user role
@@ -577,7 +578,7 @@ export class RadxcreatechargersComponent {
             this.getChargerLocationsByPartner(this.partner_id);
             break;
           default:
-            console.log('Role does not require location fetch');
+            logger.log('Role does not require location fetch');
             break;
         }
 
@@ -588,7 +589,7 @@ export class RadxcreatechargersComponent {
         }, 3000);
       },
       error: (error) => {
-        console.error('Error creating location:', error);
+        logger.error('Error creating location:', error);
         this.handleError(error);
       }
     });
@@ -624,7 +625,7 @@ export class RadxcreatechargersComponent {
     } else {
       // Handle selecting an existing location (if needed)
       const selectedLocationId = selectedValue;
-      console.log('Selected Location ID:', selectedLocationId);
+      logger.log('Selected Location ID:', selectedLocationId);
       // You can add additional logic here for using the selected location ID
     }
   }
