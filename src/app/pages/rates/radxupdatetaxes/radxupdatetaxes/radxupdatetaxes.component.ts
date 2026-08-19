@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -69,7 +70,7 @@ export class RadxupdatetaxesComponent implements OnInit {
     this.getTaxById(this.taxId);
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -120,15 +121,15 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -136,37 +137,37 @@ case 'COMPANY_USER':
     // this.loadUsers();
     // this.loadUserGroups();
     // this.loadPartners();
-    console.log('this.taxId:', this.taxId);
+    logger.log('this.taxId:', this.taxId);
     // throw new Error('Method not implemented.');
   }
 
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
   loadCompaniesByCompany(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       (data: any) => {
         this.companies = [data.company];
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
   loadUsers() {
     this.userService.getAllUsers().subscribe(
       response => this.users = response.users,
-      error => console.error('Error fetching users', error)
+      error => logger.error('Error fetching users', error)
     );
   }
   loadCompanyMembers(companyId: number) {
     this.companyMemberService.getCompanyMemberByCompany(companyId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.company_member)) {
@@ -180,47 +181,47 @@ case 'COMPANY_USER':
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
   loadUserGroups() {
     this.userGroupService.getAllUserGroups().subscribe(
       response => this.userGroups = response.userGroup,
-      error => console.error('Error fetching userGroups', error)
+      error => logger.error('Error fetching userGroups', error)
     );
   }
   loadUserGroupsByCompany(companyId: number) {
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
       (data: any) => {
         this.userGroups = data.userGroup;
-        console.log('usergroups:', this.userGroups);
+        logger.log('usergroups:', this.userGroups);
       },
       error => {
-        console.error('Error fetching usergroups:', error);
+        logger.error('Error fetching usergroups:', error);
       }
     );
   }
   loadPartners() {
     this.partnerService.getAllPartners().subscribe(
       response => this.partners = response.partners,
-      error => console.error('Error fetching partners', error)
+      error => logger.error('Error fetching partners', error)
     );
   }
   loadPartnersByCompany(companyId: number) {
     this.partnerService.getPartnerByCompany(companyId).subscribe(
       (data: any) => {
         this.partners = data.partner;
-        console.log('partners:', this.partners);
+        logger.log('partners:', this.partners);
       },
       error => {
-        console.error('Error fetching partners:', error);
+        logger.error('Error fetching partners:', error);
       }
     );
   }
@@ -235,21 +236,21 @@ case 'COMPANY_USER':
     this.errorMessage = null;
   
     const taxData = this.taxForm.value;
-    console.log('Submitting taxData:', taxData);
+    logger.log('Submitting taxData:', taxData);
   
     // Call updateTax API
     this.taxService.updateTax(this.taxId, taxData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('Tax updated successfully:', response);
+          logger.log('Tax updated successfully:', response);
           this.router.navigate(['/rates/taxes']);
         } else {
-          console.error('Failed to update tax:', response);
+          logger.error('Failed to update tax:', response);
           this.errorMessage = 'Failed to update tax. Please try again.';
         }
       },
       error: (error) => {
-        console.error('Error updating tax:', error);
+        logger.error('Error updating tax:', error);
         this.errorMessage = this.handleError(error);
       }
     });
@@ -275,8 +276,8 @@ case 'COMPANY_USER':
   getTaxById(id: number): void {
     this.taxService.getTax(id).subscribe({
       next: (response) => {
-        console.log('ID:', id);
-        console.log('API response:', response);
+        logger.log('ID:', id);
+        logger.log('API response:', response);
         const tax = response.tax;
 
         // Ensure the response data matches the form structure
@@ -292,7 +293,7 @@ case 'COMPANY_USER':
 
       },
       error: (error) => {
-        console.error('Error fetching charger details:', error);
+        logger.error('Error fetching charger details:', error);
       }
     });
   }

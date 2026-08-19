@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerService } from 'src/app/services/chargerService/charger.service';
@@ -23,12 +24,12 @@ export class DeleteReservationComponent {
   ngOnInit(): void {
     this.reservationId = Number(this.route.snapshot.paramMap.get('reservation_id'));
     this.ocppId = this.route.snapshot.paramMap.get('ocppId') || '';
-    console.log('row reservation_id:', this.reservationId);
-    console.log('row ocppId:', this.ocppId);
+    logger.log('row reservation_id:', this.reservationId);
+    logger.log('row ocppId:', this.ocppId);
   }
 
   openDeletePopup(row: any): void {
-    console.log('row reservation_id:', row);
+    logger.log('row reservation_id:', row);
     this.reservationId = row.reservation_id;
     this.isPopupVisible = true;
   }
@@ -36,11 +37,11 @@ export class DeleteReservationComponent {
   confirmDelete(): void {
     this.chargerService.cancelReservation(this.ocppId , this.reservationId).subscribe({
       next: (response) => {
-        console.log('Reservation canceled successfully:', response);
+        logger.log('Reservation canceled successfully:', response);
         this.closePopupHandler();
       },
       error: (error) => {
-        console.error('Error deleting reservation:', error);
+        logger.error('Error deleting reservation:', error);
       }
     });
   }

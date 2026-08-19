@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import Chart from 'chart.js'; // Updated import to ensure compatibility
 
@@ -247,15 +248,15 @@ export class AdmindashboardComponent implements OnInit {
 
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -318,7 +319,7 @@ export class AdmindashboardComponent implements OnInit {
         }
       },
       (error) => {
-        console.error("Error fetching today's charging count:", error);
+        logger.error("Error fetching today's charging count:", error);
         this.todaysCharging = 0; // Handle errors gracefully
       }
     );
@@ -336,7 +337,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -348,7 +349,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -362,7 +363,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching chargers:', error);
+        logger.error('Error fetching chargers:', error);
       }
     );
   }
@@ -376,7 +377,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching connectors:', error);
+        logger.error('Error fetching connectors:', error);
       }
     );
   }
@@ -389,7 +390,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -414,7 +415,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error("Error fetching charging history:", error);
+        logger.error("Error fetching charging history:", error);
       }
     );
   }
@@ -457,7 +458,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -474,7 +475,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -491,7 +492,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -504,7 +505,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -519,7 +520,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching chargers:', error);
+        logger.error('Error fetching chargers:', error);
       }
     );
   }
@@ -547,7 +548,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -593,7 +594,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -608,7 +609,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching chargers:', error);
+        logger.error('Error fetching chargers:', error);
       }
     );
   }
@@ -661,7 +662,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -704,7 +705,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -748,7 +749,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -762,7 +763,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -775,7 +776,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching card data:', error);
+        logger.error('Error fetching card data:', error);
       }
     );
   }
@@ -819,7 +820,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }
@@ -918,7 +919,7 @@ export class AdmindashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error(error);
+        logger.error(error);
       }
     );
   }

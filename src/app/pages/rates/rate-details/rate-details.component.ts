@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RateService } from "../../../services/rateService/rate.service";
@@ -92,7 +93,7 @@ export class RateDetailsComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     //this.fetchCurrentMonthCount();
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -144,15 +145,15 @@ export class RateDetailsComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
    
@@ -178,22 +179,22 @@ export class RateDetailsComponent implements OnInit {
           this.rate = data.rate; // Make sure data.rate is an object
 
         }
-        console.log("this.rate", this.rate);
+        logger.log("this.rate", this.rate);
         this.companyService.getCompany(this.rate.company_id).subscribe(
           (companyData) => {
             this.rate.company = companyData.company.company_name;
-            console.log("companyData.company.company_name", companyData.company.company_name);
+            logger.log("companyData.company.company_name", companyData.company.company_name);
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
-        console.log("data.rate", data.rate);
+        logger.log("data.rate", data.rate);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -228,12 +229,12 @@ export class RateDetailsComponent implements OnInit {
           this.usageUsers = data.users || [];
           this.usageUserGroups = data.userGroups || [];
         } else {
-          console.warn('getRateUsage response not successful:', data);
+          logger.warn('getRateUsage response not successful:', data);
         }
         this.usageLoaded = true;
       },
       (err: any) => {
-        console.error('Error loading rate usage:', err);
+        logger.error('Error loading rate usage:', err);
         this.usageLoaded = true;
       }
     );
@@ -246,16 +247,16 @@ export class RateDetailsComponent implements OnInit {
           this.ratePerDays = data.ratePerDay;
           this.tempRatePerDays = [...this.ratePerDays];
         }
-        console.log("ratePerDays: " + this.ratePerDays)
+        logger.log("ratePerDays: " + this.ratePerDays)
         this.ratePerDays.forEach((row, index) => {
           this.userService.getUserById(row.user_id).subscribe(
             (userData) => {
               this.ratePerDays[index].user = userData.user.username;
-              console.log("userData.user.name", userData.user.name);
+              logger.log("userData.user.name", userData.user.name);
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
         });
@@ -263,7 +264,7 @@ export class RateDetailsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

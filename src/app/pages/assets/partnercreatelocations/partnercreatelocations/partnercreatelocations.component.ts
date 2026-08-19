@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerLocationService } from "../../../../services/chargerLocationService/charger-location.service";
@@ -89,13 +90,13 @@ export class PartnercreatelocationsComponent {
       this.selectedCountryCode = this.countries[0].prefix;
     });
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       this.company_id = parsedCugpCred.company_id;
-      console.log("this.company_id", this.company_id)
+      logger.log("this.company_id", this.company_id)
       this.partner_id = parsedCugpCred.partner_id;
       const usergroup_id = parsedCugpCred.usergr_id;
       const user_id = parsedCugpCred.user_id || parsedCugpCred.id;
@@ -154,15 +155,15 @@ export class PartnercreatelocationsComponent {
           // // this.getCurrencies(company_id);
           // break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.loadCompanies();
@@ -172,33 +173,33 @@ export class PartnercreatelocationsComponent {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
   loadPartners() {
     this.partnerService.getAllPartners().subscribe(
       response => this.partners = response.partners,
-      error => console.error('Error fetching partners', error)
+      error => logger.error('Error fetching partners', error)
     );
   }
   loadCompaniesByCompany(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => this.company = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
   loadPartnersByCompany(partnerId: number) {
     this.partnerService.getPartnerByCompany(partnerId).subscribe(
       response => this.partners = response.partner,
-      error => console.error('Error fetching partners', error)
+      error => logger.error('Error fetching partners', error)
     );
   }
   loadPartnersByPartner(partnerId: number) {
     this.partnerService.getPartner(partnerId).subscribe(
       response => { this.partners = [response.partner]; this.loadCompaniesByCompany(response.partner.company_id); },
-      error => console.error('Error fetching partners', error)
+      error => logger.error('Error fetching partners', error)
     );
   }
 
@@ -217,7 +218,7 @@ export class PartnercreatelocationsComponent {
 
     this.locationService.createChargerLocation(this.location).subscribe({
       next: (response) => {
-        console.log('Location created successfully:', response);
+        logger.log('Location created successfully:', response);
 
         if (!response.success) {
           this.errorMessage = response.message || 'Failed to create location.';
@@ -232,7 +233,7 @@ export class PartnercreatelocationsComponent {
         }, 3000);
       },
       error: (error) => {
-        console.error('Error creating location:', error);
+        logger.error('Error creating location:', error);
         this.handleError(error);
       }
     });
@@ -268,7 +269,7 @@ export class PartnercreatelocationsComponent {
     } else {
       // Handle selecting an existing location (if needed)
       const selectedLocationId = selectedValue;
-      console.log('Selected Location ID:', selectedLocationId);
+      logger.log('Selected Location ID:', selectedLocationId);
       // You can add additional logic here for using the selected location ID
     }
   }
@@ -311,7 +312,7 @@ export class PartnercreatelocationsComponent {
 
     this.partnerService.createPartner(formData).subscribe(
       response => {
-        console.log('Partner created successfully!', response);
+        logger.log('Partner created successfully!', response);
         const newPartner = response.partner;
 
         // Add the new partner to the partners list
@@ -324,7 +325,7 @@ export class PartnercreatelocationsComponent {
         this.closePopup();
       },
       error => {
-        console.error('Error creating partner:', error);
+        logger.error('Error creating partner:', error);
       }
     );
   }
@@ -346,7 +347,7 @@ export class PartnercreatelocationsComponent {
     if (file && file.size < 5 * 1024 * 1024 && ['image/png', 'image/jpeg'].includes(file.type)) {
       this.selectedFile = file;
     } else {
-      console.error('Invalid file type or size exceeds the limit.');
+      logger.error('Invalid file type or size exceeds the limit.');
       this.selectedFile = null; // Reset if invalid
     }
   }

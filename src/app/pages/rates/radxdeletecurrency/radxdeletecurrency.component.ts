@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyService } from 'src/app/services/currencyService/currency.service';
@@ -22,8 +23,8 @@ export class RadxdeletecurrencyComponent implements OnInit {
   ngOnInit(): void {
     this.currencyId = this.route.snapshot.params['id'];
     this.getCurrencyDetails(this.currencyId);
-    console.log('currency ID:', this.currencyId);
-    console.log('currency Name:', this.currencyName);  // Debugging line
+    logger.log('currency ID:', this.currencyId);
+    logger.log('currency Name:', this.currencyName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -35,12 +36,12 @@ export class RadxdeletecurrencyComponent implements OnInit {
   confirmDelete(): void {
     this.currencyService.deleteCurrency(this.currencyId).subscribe({
       next: (response) => {
-        console.log('Currency deleted successfully:', response);
+        logger.log('Currency deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/rates/currency']);
       },
       error: (error) => {
-        console.error('Error deleting Currency:', error);
+        logger.error('Error deleting Currency:', error);
       }
     });
   }
@@ -49,11 +50,11 @@ export class RadxdeletecurrencyComponent implements OnInit {
     this.currencyService.getCurrency(id).subscribe({
       next: (response) => {
         this.currencyName = response.currency.currency_name;
-        console.log('response:', response);
-        console.log('currencyName:', this.currencyName);
+        logger.log('response:', response);
+        logger.log('currencyName:', this.currencyName);
       },
       error: (error) => {
-        console.error('Error fetching currency details:', error);
+        logger.error('Error fetching currency details:', error);
       }
     });
   }

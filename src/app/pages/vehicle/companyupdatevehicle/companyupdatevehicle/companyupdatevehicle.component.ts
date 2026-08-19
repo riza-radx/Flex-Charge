@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -83,7 +84,7 @@ export class CompanyupdatevehicleComponent implements OnInit {
     this.vehicleId = this.route.snapshot.params['id'];
     this.getVehicleById(this.vehicleId);
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -154,22 +155,22 @@ case 'COMPANY_USER':
             // this.getCurrencies(company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.loadCompanies();
     // this.loadUsers();
     // this.loadUserGroups();
     this.loadEvVehicleBrands();
-    console.log('this.loadUserGroups()', this.loadUserGroups);
+    logger.log('this.loadUserGroups()', this.loadUserGroups);
     //throw new Error('Method not implemented.');
 
   }
@@ -179,38 +180,38 @@ case 'COMPANY_USER':
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
   loadUsers() {
     this.userService.getAllUsers().subscribe(
       response => this.users = response.users,
-      error => console.error('Error fetching users', error)
+      error => logger.error('Error fetching users', error)
     );
   }
 
   loadUserGroups() {
     this.userGroupService.getAllUserGroups().subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = response.userGroup;
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
 
   loadCompaniesByCompany(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => this.companies = [response.company],
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
   loadUsersByCompany(companyId: number) {
     this.companyMemberService.getCompanyMemberByCompany(companyId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.company_member)) {
@@ -224,13 +225,13 @@ case 'COMPANY_USER':
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -238,10 +239,10 @@ case 'COMPANY_USER':
   loadUserGroupsByCompany(companyId: number) {
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = response.userGroup;
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
   // loadCompaniesByUserGroup(userGroupId: number) {
@@ -254,7 +255,7 @@ case 'COMPANY_USER':
   loadUsersByUserGroup(userGroupId: number) {
     this.userGroupMembersService.getUserGroupMember(userGroupId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.userGroupMembers)) {
@@ -268,13 +269,13 @@ case 'COMPANY_USER':
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -282,27 +283,27 @@ case 'COMPANY_USER':
   loadUserGroupsByUserGroup(userGroupId: number) {
     this.userGroupService.getUserGroup(userGroupId).subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = [response.userGroup];
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
 
   loadPartnersByPartner(partnerId: number) {
     this.partnerService.getPartner(partnerId).subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = [response.userGroup];
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
 
   loadUsersByPartner(partnerId: number) {
     this.partnerMemberService.getPartnerMemberByPartner(partnerId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.company_member)) {
@@ -316,13 +317,13 @@ case 'COMPANY_USER':
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -337,7 +338,7 @@ case 'COMPANY_USER':
         this.evVehicleBrands = [...new Set(vehicles.map((vehicle: any) => vehicle.brand))];
       },
       (error) => {
-        console.error('Error fetching EV vehicle brands', error);
+        logger.error('Error fetching EV vehicle brands', error);
       }
     );
   }
@@ -347,12 +348,12 @@ case 'COMPANY_USER':
     if (selectedBrand) {
       this.evVehicleService.getEVVehicleByBrand(selectedBrand).subscribe(
         (response) => {
-          console.log('response: EVVehicle[]', response);
+          logger.log('response: EVVehicle[]', response);
           const vehicles = response.data;
           this.evVehicleModels = [...new Set(vehicles.map((vehicle: any) => vehicle.model))];
           this.evVehicleYears = [];  // Reset years when brand changes
         },
-        (error) => console.error('Error fetching EV vehicle models', error)
+        (error) => logger.error('Error fetching EV vehicle models', error)
       );
     } else {
       this.evVehicleModels = [];
@@ -384,9 +385,9 @@ case 'COMPANY_USER':
           const vehicles = response.data;
           this.evVehicleYears = [...new Set(vehicles.map((v: any) => String(v.year)))];
 
-          console.log('Available years:', this.evVehicleYears);
+          logger.log('Available years:', this.evVehicleYears);
         },
-        (error) => console.error('Error fetching EV vehicle years', error)
+        (error) => logger.error('Error fetching EV vehicle years', error)
       );
     } else {
       this.evVehicleYears = [];
@@ -404,22 +405,22 @@ case 'COMPANY_USER':
     }
   
     const vehicleData = this.vehicleForm.value;
-    console.log('Submitting vehicleData:', vehicleData);
+    logger.log('Submitting vehicleData:', vehicleData);
   
     this.vehicleService.updateVehicle(this.vehicleId, vehicleData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('Vehicle updated successfully:', response);
+          logger.log('Vehicle updated successfully:', response);
           setTimeout(() => {
             this.router.navigate([`/assets/vehicle/${this.vehicleId}`]);
           }, 1000);
         } else {
-          console.error('Failed to update vehicle:', response);
+          logger.error('Failed to update vehicle:', response);
           this.errorMessage = 'Failed to update the vehicle. Please try again.';
         }
       },
       error: (error) => {
-        console.error('Error updating vehicle:', error);
+        logger.error('Error updating vehicle:', error);
         this.errorMessage = this.getErrorMessage(error);
       }
     });
@@ -446,8 +447,8 @@ case 'COMPANY_USER':
   getVehicleById(id: number): void {
     this.vehicleService.getVehicle(id).subscribe({
       next: (response) => {
-        console.log('ID:', id);
-        console.log('API response:', response);
+        logger.log('ID:', id);
+        logger.log('API response:', response);
         const vehicle = response.vehicle;
 
         // Ensure the response data matches the form structure
@@ -468,7 +469,7 @@ case 'COMPANY_USER':
         this.loadEvVehicleYears(vehicle.vehicle_model);
       },
       error: (error) => {
-        console.error('Error fetching vehicle details:', error);
+        logger.error('Error fetching vehicle details:', error);
       }
     });
   }
@@ -484,7 +485,7 @@ case 'COMPANY_USER':
           this.vehicleForm.patchValue({ vehicleModel: selectedModel });
         }
       },
-      (error) => console.error('Error fetching EV vehicle models', error)
+      (error) => logger.error('Error fetching EV vehicle models', error)
     );
   }
 
@@ -495,7 +496,7 @@ case 'COMPANY_USER':
           const vehicles = response.data;
           this.evVehicleYears = [...new Set(vehicles.map((vehicle: any) => vehicle.year))];
         },
-        (error) => console.error('Error fetching EV vehicle years', error)
+        (error) => logger.error('Error fetching EV vehicle years', error)
       );
     } else {
       this.evVehicleYears = [];

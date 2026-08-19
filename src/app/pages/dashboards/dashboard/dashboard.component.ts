@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from "@angular/core";
 import Chart from "chart.js";
 
@@ -102,7 +103,7 @@ case 'COMPANY_USER':
           this.isUser = true;
           break;
         default:
-          console.error('Unknown user role:', this.userRole);
+          logger.error('Unknown user role:', this.userRole);
           this.router.navigate(['/login']); // Redirect to login or error page
       }
     }

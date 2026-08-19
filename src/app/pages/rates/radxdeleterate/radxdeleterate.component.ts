@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RateService } from 'src/app/services/rateService/rate.service';
@@ -21,8 +22,8 @@ export class RadxdeleterateComponent implements OnInit {
   ngOnInit(): void {
     this.rateId = this.route.snapshot.params['id'];
     this.getRateDetails(this.rateId);
-    console.log('rateId ID:', this.rateId);
-    console.log('rate Name:', this.rateName);  // Debugging line
+    logger.log('rateId ID:', this.rateId);
+    logger.log('rate Name:', this.rateName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class RadxdeleterateComponent implements OnInit {
   confirmDelete(): void {
     this.rateService.deleteRate(this.rateId).subscribe({
       next: (response) => {
-        console.log('rate deleted successfully:', response);
+        logger.log('rate deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/rates/rate']);
       },
       error: (error) => {
-        console.error('Error deleting location:', error);
+        logger.error('Error deleting location:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class RadxdeleterateComponent implements OnInit {
     this.rateService.getRate(id).subscribe({
       next: (response) => {
         this.rateName = response.rate.rate_name;
-        console.log('response:', response);
-        console.log('rateName:', this.rateName);
+        logger.log('response:', response);
+        logger.log('rateName:', this.rateName);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }

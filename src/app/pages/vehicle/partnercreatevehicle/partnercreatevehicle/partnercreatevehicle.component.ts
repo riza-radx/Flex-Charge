@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { VehicleService } from 'src/app/services/vehicleService/vehicle.service';
@@ -26,12 +27,12 @@ export class PartnercreatevehicleComponent {
   onSubmit() {
     this.vehicleService.addVehicle(this.vehicle).subscribe({
       next: (response) => {
-        console.log('Vehicle created successfully:', response);
+        logger.log('Vehicle created successfully:', response);
         // Navigate or show success message
         this.router.navigate(['/assets/vehicle']);
       },
       error: (error) => {
-        console.error('Error creating vehicle:', error);
+        logger.error('Error creating vehicle:', error);
       }
     });
   }

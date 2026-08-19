@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -344,7 +345,7 @@ export class SettingComponent implements OnInit {
         }
       },
       error => {
-        console.error('Error fetching payment methods:', error);
+        logger.error('Error fetching payment methods:', error);
       }
     );
   }
@@ -353,7 +354,7 @@ export class SettingComponent implements OnInit {
   
     if (!this.userGroupLogo) {
       this.errorMessage = 'Please select an image to upload.';
-      console.error('No file selected for upload');
+      logger.error('No file selected for upload');
       return;
     }
   
@@ -364,14 +365,14 @@ export class SettingComponent implements OnInit {
     // Call service to update user image
     this.userService.updateUserImage(formData).subscribe({
       next: (response) => {
-        console.log('User image updated successfully:', response);
+        logger.log('User image updated successfully:', response);
         setTimeout(() => {
           this.router.navigate(['/profile']); // Navigate after success
           window.location.reload();
         }, 1000);
       },
       error: (error) => {
-        console.error('Error updating user image:', error);
+        logger.error('Error updating user image:', error);
         this.errorMessage = this.getErrorMessage(error);
       }
     });
@@ -401,9 +402,9 @@ export class SettingComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.userGroupLogo = file;
-      console.log('File selected:', file.name);
+      logger.log('File selected:', file.name);
     } else {
-      console.error('No file selected');
+      logger.error('No file selected');
     }
   }
   
@@ -416,10 +417,10 @@ export class SettingComponent implements OnInit {
           this.temp = [...this.rows];
         }
 
-        console.log("this.user_id",this.user_id);
+        logger.log("this.user_id",this.user_id);
       },
       error => {
-        console.error('Error fetching payment methods:', error);
+        logger.error('Error fetching payment methods:', error);
       }
     );
   }
@@ -452,11 +453,11 @@ export class SettingComponent implements OnInit {
     // Send the collected data to your backend or Stripe API
     this.paymentMethodService.addPokPaymentMethod(cardData).subscribe(
       (response) => {
-        console.log('Payment method saved:', response);
+        logger.log('Payment method saved:', response);
         this.fetchPaymentMethodsByUser();
       },
       (error) => {
-        console.error('Error saving payment method:', error);
+        logger.error('Error saving payment method:', error);
       }
     );
   }

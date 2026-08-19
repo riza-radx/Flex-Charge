@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RatePerDaysService } from 'src/app/services/ratePerDaysService/rate-per-days.service';
@@ -24,8 +25,8 @@ export class DeleterateperdaysComponent implements OnInit {
   ngOnInit(): void {
     this.rateId = this.route.snapshot.params['id'];
     this.getRateDetails(this.rateId);
-    console.log('rateId ID:', this.rateId);
-    console.log('rate Name:', this.rateName);  // Debugging line
+    logger.log('rateId ID:', this.rateId);
+    logger.log('rate Name:', this.rateName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -37,12 +38,12 @@ export class DeleterateperdaysComponent implements OnInit {
   confirmDelete(): void {
     this.ratePerDaysService.deleteRatePerDay(this.rateId).subscribe({
       next: (response) => {
-        console.log('rate deleted successfully:', response);
+        logger.log('rate deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate([`/rates/rate/${this.id}`]);
       },
       error: (error) => {
-        console.error('Error deleting location:', error);
+        logger.error('Error deleting location:', error);
       }
     });
   }
@@ -51,11 +52,11 @@ export class DeleterateperdaysComponent implements OnInit {
     this.ratePerDaysService.getRatePerDay(id).subscribe({
       next: (response) => {
         this.id = response.ratePerDay.rate_id;
-        console.log('response:', response);
-        console.log('Id:', this.id);
+        logger.log('response:', response);
+        logger.log('Id:', this.id);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }

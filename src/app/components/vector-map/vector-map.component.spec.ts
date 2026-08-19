@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { VectorMapComponent } from "./vector-map.component";
+import { VectorMapComponent1 as VectorMapComponent } from "./vector-map.component";
 
 describe("VectorMapComponent", () => {
   let component: VectorMapComponent;

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TaxService } from "../../../../services/taxService/tax.service";
 import { Router } from '@angular/router';
@@ -62,7 +63,7 @@ export class RadxcreatetaxesComponent implements OnInit {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -114,15 +115,15 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -136,10 +137,10 @@ case 'COMPANY_USER':
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
         this.companies = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -181,7 +182,7 @@ case 'COMPANY_USER':
   loadCompanyMembers(companyId: number) {
     this.companyMemberService.getCompanyMemberByCompany(companyId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.company_member)) {
@@ -195,13 +196,13 @@ case 'COMPANY_USER':
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -210,10 +211,10 @@ case 'COMPANY_USER':
     this.companyService.getCompany(companyId).subscribe(
       (data: any) => {
         this.company = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -221,10 +222,10 @@ case 'COMPANY_USER':
     this.userService.getAllUsers().subscribe(
       (data: any) => {
         this.users = data.users;
-        console.log('users:', this.users);
+        logger.log('users:', this.users);
       },
       error => {
-        console.error('Error fetching users:', error);
+        logger.error('Error fetching users:', error);
       }
     );
   }
@@ -232,10 +233,10 @@ case 'COMPANY_USER':
     this.userGroupService.getAllUserGroups().subscribe(
       (data: any) => {
         this.usergroups = data.userGroup;
-        console.log('usergroups:', this.usergroups);
+        logger.log('usergroups:', this.usergroups);
       },
       error => {
-        console.error('Error fetching usergroups:', error);
+        logger.error('Error fetching usergroups:', error);
       }
     );
   }
@@ -243,10 +244,10 @@ case 'COMPANY_USER':
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
       (data: any) => {
         this.usergroups = data.userGroup;
-        console.log('usergroups:', this.usergroups);
+        logger.log('usergroups:', this.usergroups);
       },
       error => {
-        console.error('Error fetching usergroups:', error);
+        logger.error('Error fetching usergroups:', error);
       }
     );
   }
@@ -255,10 +256,10 @@ case 'COMPANY_USER':
     this.partnerService.getAllPartners().subscribe(
       (data: any) => {
         this.partners = data.partners;
-        console.log('partners:', this.partners);
+        logger.log('partners:', this.partners);
       },
       error => {
-        console.error('Error fetching partners:', error);
+        logger.error('Error fetching partners:', error);
       }
     );
   }
@@ -266,10 +267,10 @@ case 'COMPANY_USER':
     this.partnerService.getPartnerByCompany(companyId).subscribe(
       (data: any) => {
         this.partners = data.partner;
-        console.log('partners:', this.partners);
+        logger.log('partners:', this.partners);
       },
       error => {
-        console.error('Error fetching partners:', error);
+        logger.error('Error fetching partners:', error);
       }
     );
   }
@@ -283,23 +284,23 @@ case 'COMPANY_USER':
       this.errorMessage = 'Please fill in all required fields correctly.';
       return;
     }
-    console.log('Before submitting, tax object:', this.tax);
+    logger.log('Before submitting, tax object:', this.tax);
     if (!this.tax.companyId) {
-      console.error('Company ID is missing!');
+      logger.error('Company ID is missing!');
       this.errorMessage = 'Company ID is required to add a tax.';
       return;
     }
     // Clear previous messages
     this.errorMessage = null;
-    console.log(this.taxForm.value);
+    logger.log(this.taxForm.value);
     // Call addTax API
     this.taxService.addTax(this.tax).subscribe({
       next: (response) => {
-        console.log('Tax created successfully:', response);
+        logger.log('Tax created successfully:', response);
         this.router.navigate(['/rates/taxes']);
       },
       error: (error) => {
-        console.error('Error creating tax:', error);
+        logger.error('Error creating tax:', error);
         this.errorMessage = this.handleError(error);
       }
     });

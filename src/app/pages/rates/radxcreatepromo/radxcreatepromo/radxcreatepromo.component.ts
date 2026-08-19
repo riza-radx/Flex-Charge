@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PromoService } from "../../../../services/promoService/promo.service";
 import { Router } from '@angular/router';
@@ -69,7 +70,7 @@ export class RadxcreatepromoComponent implements OnInit {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -112,15 +113,15 @@ export class RadxcreatepromoComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -131,10 +132,10 @@ export class RadxcreatepromoComponent implements OnInit {
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
         this.companies = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -143,10 +144,10 @@ export class RadxcreatepromoComponent implements OnInit {
       (data: any) => {
         this.company = data.company;
         this.company_name = this.company.company_name
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -154,11 +155,11 @@ export class RadxcreatepromoComponent implements OnInit {
   loadRatesbyCompany(companyId: number) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -167,10 +168,10 @@ export class RadxcreatepromoComponent implements OnInit {
       (data: any) => {
         this.promo = data.promo;
 
-        console.log('promo data:', data);
+        logger.log('promo data:', data);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -189,11 +190,11 @@ export class RadxcreatepromoComponent implements OnInit {
 
     this.promoService.addPromo(this.promo).subscribe(
       (response) => {
-        console.log('Promo created successfully', response);
+        logger.log('Promo created successfully', response);
         this.router.navigate(['/rates/promo']);  // Redirect to promos list or another page
       },
       (error) => {
-        console.error('Error creating promo', error);
+        logger.error('Error creating promo', error);
         this.errorMessage = error.message || 'An error occurred while creating the promo.';
         setTimeout(() => this.errorMessage = '', 5000);  // Clear error message after 5 seconds
       }

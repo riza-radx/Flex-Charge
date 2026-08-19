@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import Chart from "chart.js";
 
@@ -167,7 +168,7 @@ export class ModeratordashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -200,7 +201,7 @@ export class ModeratordashboardComponent implements OnInit {
         // this.initializeMultiSeriesPieChart(); // Try initializing the chart after chargers are loaded
       },
       (error) => {
-        console.error('Error fetching chargers:', error);
+        logger.error('Error fetching chargers:', error);
       }
     );
   }
@@ -212,7 +213,7 @@ export class ModeratordashboardComponent implements OnInit {
         // this.initializeMultiSeriesPieChart(); // Try initializing the chart after connectors are loaded
       },
       (error) => {
-        console.error('Error fetching connectors:', error);
+        logger.error('Error fetching connectors:', error);
       }
     );
   }
@@ -282,7 +283,7 @@ export class ModeratordashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -293,7 +294,7 @@ export class ModeratordashboardComponent implements OnInit {
         this.chargingHistory = data.chargingHistory;
         this.todaysCharging = this.chargingHistory.length;
 
-        console.log('Charging history:', this.chargingHistory, 'todays:', this.todaysCharging);
+        logger.log('Charging history:', this.chargingHistory, 'todays:', this.todaysCharging);
 
         // Process data for the chart
         const monthlyData = this.aggregateCostByMonth(this.chargingHistory);
@@ -312,7 +313,7 @@ export class ModeratordashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -358,7 +359,7 @@ export class ModeratordashboardComponent implements OnInit {
   }
 
   updateChartData(labels: string[], data: number[]) {
-    console.log(data)
+    logger.log(data)
     this.salesChart.data.labels = labels;
     this.salesChart.data.datasets[0].data = data;
     this.salesChart.update();
@@ -380,11 +381,11 @@ export class ModeratordashboardComponent implements OnInit {
           company.memberCount = data.company_member.length;
         }
 
-        console.log(`Company ID ${companyId} Members Count:`, data.company_member.length);
+        logger.log(`Company ID ${companyId} Members Count:`, data.company_member.length);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

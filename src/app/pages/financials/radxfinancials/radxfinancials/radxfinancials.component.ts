@@ -616,6 +616,7 @@
 // }
 
 
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReportService } from "../../../../services/reportService/report.service";
@@ -772,7 +773,7 @@ export class RadxfinancialsComponent {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -782,10 +783,10 @@ export class RadxfinancialsComponent {
       this.partner_id = parsedCugpCred.partner_id;
       this.usergroup_id = parsedCugpCred.usergr_id;
       this.user_id = parsedCugpCred.user_id || parsedCugpCred.id;
-      console.log("this.company_id", this.company_id)
-      console.log("this.partner_id", this.partner_id)
-      console.log("this.usergroup_id", this.usergroup_id)
-      console.log("this.user_id", this.user_id)
+      logger.log("this.company_id", this.company_id)
+      logger.log("this.partner_id", this.partner_id)
+      logger.log("this.usergroup_id", this.usergroup_id)
+      logger.log("this.user_id", this.user_id)
       // const partner_id = parsedCugpCred.partner_id;
       // const usergroup_id = parsedCugpCred.usergr_id;
       // const user_id = parsedCugpCred.id;
@@ -984,16 +985,16 @@ export class RadxfinancialsComponent {
             this.getCurrentUserReport();
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
 
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getVReports();
@@ -1051,7 +1052,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1063,7 +1064,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1074,7 +1075,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1086,7 +1087,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1097,7 +1098,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1109,7 +1110,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1146,7 +1147,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -1166,12 +1167,12 @@ export class RadxfinancialsComponent {
                 user: user.name // Include user details in the member object
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
@@ -1179,7 +1180,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -1199,12 +1200,12 @@ export class RadxfinancialsComponent {
                 user: user.name // Include user details in the member object
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
@@ -1212,7 +1213,7 @@ export class RadxfinancialsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -1240,14 +1241,14 @@ export class RadxfinancialsComponent {
           // If data.reports is an array
           this.reports = data.reports;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1297,14 +1298,14 @@ export class RadxfinancialsComponent {
           // If data.reports is an array
           this.reports = data.reports;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1361,14 +1362,14 @@ export class RadxfinancialsComponent {
           // If data.reports is an array
           this.reports = data.reports;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1420,14 +1421,14 @@ export class RadxfinancialsComponent {
           // If data.reports is an array
           this.reports = data.reports;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -1445,19 +1446,19 @@ export class RadxfinancialsComponent {
               // If data.reports is an array
               this.reports = data.reports;
             } else {
-              console.error('Expected an array but got:', data);
+              logger.error('Expected an array but got:', data);
               this.reports = []; // Set to an empty array if data is not valid
             }
             this.tempReports = [...this.reports];
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     )
   }
@@ -1497,14 +1498,14 @@ export class RadxfinancialsComponent {
           // If data.reports is an array
           this.reports = data.reports;
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

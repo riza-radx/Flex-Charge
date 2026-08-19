@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CurrencyService } from "../../../../services/currencyService/currency.service";
@@ -67,12 +68,12 @@ export class CompanycurrencyComponent implements OnInit {
       (data) => {
         this.rows = data.currencies;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

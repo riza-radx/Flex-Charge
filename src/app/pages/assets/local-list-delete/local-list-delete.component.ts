@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalListService } from 'src/app/services/localList/local-list.service';
@@ -23,7 +24,7 @@ export class LocalListDeleteComponent {
     ngOnInit(): void {
       this.cllId = this.route.snapshot.params['cllId'];   
       this.chargerId = this.route.snapshot.params['chargerId'];     
-      console.log('cllId ID:', this.cllId);
+      logger.log('cllId ID:', this.cllId);
     }
 
     openDeletePopup(row: any): void {
@@ -34,13 +35,13 @@ export class LocalListDeleteComponent {
     confirmDelete(): void {
       this.localListService.deleteChargerLocalList(this.cllId).subscribe({
         next: (response) => {
-          console.log('Charger local list deleted successfully:', response);
+          logger.log('Charger local list deleted successfully:', response);
           this.closePopupHandler();
           this.router.navigate([`/assets/chargers/${this.chargerId}`]);
 
         },
         error: (error) => {
-          console.error('Error deleting charger:', error);
+          logger.error('Error deleting charger:', error);
         }
       });
     }

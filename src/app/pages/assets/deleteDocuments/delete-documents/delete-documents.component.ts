@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentService } from 'src/app/services/documentService/document.service';
@@ -25,11 +26,11 @@ export class DeleteDocumentsComponent implements OnInit {
       this.getDocumentDetails(this.documentId);
     }
     
-    console.log('Document Name:', this.documentName);
+    logger.log('Document Name:', this.documentName);
   }
 
   openDeletePopup(row: any): void {
-    console.log('row:', row);
+    logger.log('row:', row);
     this.documentId = row.document_id;
     this.documentName = row.file_name;
     this.isPopupVisible = true;
@@ -38,11 +39,11 @@ export class DeleteDocumentsComponent implements OnInit {
   confirmDelete(): void {
     this.documentService.deleteDocument(this.documentId).subscribe({
       next: (response) => {
-        console.log('Document deleted successfully:', response);
+        logger.log('Document deleted successfully:', response);
         this.closePopupHandler();
       },
       error: (error) => {
-        console.error('Error deleting user:', error);
+        logger.error('Error deleting user:', error);
       }
     });
   }
@@ -58,11 +59,11 @@ export class DeleteDocumentsComponent implements OnInit {
     this.documentService.getDocument(id).subscribe({
       next: (response) => {
         this.documentName = response.document.file_name;
-        console.log('response:', response);
-        console.log('userName:', this.documentName);
+        logger.log('response:', response);
+        logger.log('userName:', this.documentName);
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }

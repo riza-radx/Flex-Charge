@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { CardService } from "../../../../services/cardService/card.service";
 import { Router } from '@angular/router';
@@ -27,11 +28,11 @@ export class CompanycreaterfidcardComponent {
   onSubmit() {
     this.cardService.addCard(this.card).subscribe(
       response => {
-        console.log('RFID Card created successfully', response);
+        logger.log('RFID Card created successfully', response);
         this.router.navigate(['/partners']);
       },
       error => {
-        console.error('Error creating RFID Card', error);
+        logger.error('Error creating RFID Card', error);
         // Handle error response
       }
     );

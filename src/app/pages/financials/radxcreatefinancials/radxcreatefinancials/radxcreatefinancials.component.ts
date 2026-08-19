@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargingHistoryService } from "../../../../services/chargingHistoryService/charging-history.service";
@@ -59,9 +60,9 @@ export class RadxcreatefinancialsComponent implements OnInit {
   // }
   loadUsers() {
     this.userService.getAllUsers().subscribe(
-      (data: any) => { this.users = data.users, console.log(data) },
+      (data: any) => { this.users = data.users, logger.log(data) },
       (error: any) => {
-        console.error('Error loading users:', error);
+        logger.error('Error loading users:', error);
         this.reportErrorMessage = 'Failed to load users.';
       }
     );
@@ -71,22 +72,22 @@ export class RadxcreatefinancialsComponent implements OnInit {
   // Fetch user groups
   loadUserGroups() {
     this.userGroupService.getAllUserGroups().subscribe(
-      (data: any) => { this.userGroups = data.userGroup, console.log(data) },
-      error => console.error('Error loading user groups:', error)
+      (data: any) => { this.userGroups = data.userGroup, logger.log(data) },
+      error => logger.error('Error loading user groups:', error)
     );
   }
 
   // Fetch partners
   loadPartners() {
     this.partnerService.getAllPartners().subscribe(
-      (data: any) => { this.partners = data.partners, console.log(data) },
-      error => console.error('Error loading partners:', error)
+      (data: any) => { this.partners = data.partners, logger.log(data) },
+      error => logger.error('Error loading partners:', error)
     );
   }
 
   // Handle form submission
   onSubmit() {
-    console.log('This works');
+    logger.log('This works');
     this.reportService.createReport(this.reportForm).subscribe(
       response => {
         this.reportSuccessMessage = 'Report created successfully!';

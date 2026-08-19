@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargingHistoryService } from "../../../../services/chargingHistoryService/charging-history.service";
@@ -193,7 +194,7 @@ export class ChargingHistoryDataComponent implements OnInit {
   getChargingHistory() {
     this.chargingHistoryService.getCharging(this.id).subscribe(
       (data) => {
-        console.log(data.chargingHistory);
+        logger.log(data.chargingHistory);
         if (data && data.chargingHistory) {
           this.chargingHistory = data.chargingHistory; // Make sure data.promo is an object
           // this.getCard(data.chargingHistory.card_id)
@@ -204,7 +205,7 @@ export class ChargingHistoryDataComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -270,7 +271,7 @@ export class ChargingHistoryDataComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -291,12 +292,12 @@ export class ChargingHistoryDataComponent implements OnInit {
   getLocation(locationId: number) {
     this.chargerLocationService.getChargerLocation(locationId).subscribe(
       (data) => {
-        console.log(data.location)
+        logger.log(data.location)
         this.chargerLocation = data.location
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PromoService } from "../../../../services/promoService/promo.service";
@@ -67,12 +68,12 @@ export class CompanypromoComponent implements OnInit {
       (data) => {
         this.rows = data.promos;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

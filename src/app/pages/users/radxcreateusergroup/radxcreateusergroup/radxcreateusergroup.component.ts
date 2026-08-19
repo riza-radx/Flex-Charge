@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserGroupService } from "../../../../services/userGroupService/user-group.service";
 import { Router } from '@angular/router';
@@ -104,7 +105,7 @@ export class RadxcreateusergroupComponent implements OnInit {
       this.selectedCountryCode = this.countries[0].prefix;
     });
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -146,15 +147,15 @@ export class RadxcreateusergroupComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.loadCompanies(); 
@@ -166,7 +167,7 @@ export class RadxcreateusergroupComponent implements OnInit {
     if (file && file.size < 5 * 1024 * 1024 && ['image/png', 'image/jpeg'].includes(file.type)) {
       this.selectedFile = file;
     } else {
-      console.error('Invalid file type or size exceeds the limit.');
+      logger.error('Invalid file type or size exceeds the limit.');
       this.selectedFile = null; // Reset if invalid
     }
   }
@@ -174,11 +175,11 @@ export class RadxcreateusergroupComponent implements OnInit {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -196,7 +197,7 @@ export class RadxcreateusergroupComponent implements OnInit {
         this.filteredPartners = [...this.partners];
       },
       (error) => {
-        console.log("Error fetching partners:", error);
+        logger.log("Error fetching partners:", error);
       }
     );
   }
@@ -215,16 +216,16 @@ export class RadxcreateusergroupComponent implements OnInit {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
   loadCompaniesByCompanyId(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => {
-        console.log(response.company);
+        logger.log(response.company);
         this.company = response.company;
       },
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
   // onSubmit() {
@@ -263,8 +264,8 @@ export class RadxcreateusergroupComponent implements OnInit {
     this.errorMessage = null;
 
     if (this.isFormValid()) {
-      console.log('Before submitting - userGroup values:', { ...this.userGroup });
-      console.log(this.userGroup.rate_id)
+      logger.log('Before submitting - userGroup values:', { ...this.userGroup });
+      logger.log(this.userGroup.rate_id)
       const formData = new FormData();
       formData.append('usergr_name', this.userGroup.usergr_name);
       formData.append('usergr_description', this.userGroup.usergr_description);
@@ -294,14 +295,14 @@ export class RadxcreateusergroupComponent implements OnInit {
       }
 
       // Cast FormData to any and use entries()
-      console.log('Before submitting - formData values:');
+      logger.log('Before submitting - formData values:');
       for (const pair of (formData as any).entries()) {
-        console.log(pair[0], pair[1]);
+        logger.log(pair[0], pair[1]);
       }
 
       this.userGroupService.addUserGroup(formData).subscribe({
         next: (response) => {
-          console.log('User group created successfully!', response);
+          logger.log('User group created successfully!', response);
 
           if (response.success === false) {
             this.errorMessage = response.message || 'Failed to create the User Group. Please try again.';
@@ -311,7 +312,7 @@ export class RadxcreateusergroupComponent implements OnInit {
           this.router.navigate(['/users/usergroup']);
         },
         error: (error) => {
-          console.error('Error creating user group:', error);
+          logger.error('Error creating user group:', error);
 
           if (error.status === 400) {
             this.errorMessage = 'Invalid user group details. Please check your inputs and try again.';
@@ -363,7 +364,7 @@ export class RadxcreateusergroupComponent implements OnInit {
     if (!this.userGroup.usergr_name || !this.userGroup.usergr_addres ||
       !this.userGroup.usergr_email || !this.userGroup.usergr_city ||
       !this.userGroup.usergr_country || !this.userGroup.usergr_description) {
-      console.error('Some required fields are missing.');
+      logger.error('Some required fields are missing.');
       return false;
     }
     return true;

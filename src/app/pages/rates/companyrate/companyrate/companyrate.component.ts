@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RateService } from "../../../../services/rateService/rate.service";
@@ -67,12 +68,12 @@ export class CompanyrateComponent implements OnInit {
       (data) => {
         this.rows = data.rates;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

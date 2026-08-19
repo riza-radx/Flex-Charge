@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerService } from "../../../../services/chargerService/charger.service";
@@ -162,7 +163,7 @@ export class RadxchargersComponent implements OnInit {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     //this.fetchCurrentMonthCount();
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -231,15 +232,15 @@ export class RadxchargersComponent implements OnInit {
           // // this.getCurrencies(company_id);
           // break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getChargers()
@@ -250,7 +251,7 @@ export class RadxchargersComponent implements OnInit {
         this.currentMonthCountEntry = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -314,11 +315,11 @@ export class RadxchargersComponent implements OnInit {
         }));
 
         this.temp = [...this.rows];
-        console.log("chargers: ", this.rows);
+        logger.log("chargers: ", this.rows);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -382,11 +383,11 @@ export class RadxchargersComponent implements OnInit {
         }));
 
         this.temp = [...this.rows];
-        console.log(this.rows); // Now includes flattened connector fields
+        logger.log(this.rows); // Now includes flattened connector fields
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
 
@@ -450,11 +451,11 @@ export class RadxchargersComponent implements OnInit {
         }));
 
         this.temp = [...this.rows];
-        console.log(this.rows); // Confirm connector fields are present
+        logger.log(this.rows); // Confirm connector fields are present
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
 
@@ -468,7 +469,7 @@ export class RadxchargersComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -481,7 +482,7 @@ export class RadxchargersComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -493,7 +494,7 @@ export class RadxchargersComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

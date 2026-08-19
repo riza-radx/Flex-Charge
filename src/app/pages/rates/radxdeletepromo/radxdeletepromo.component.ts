@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PromoService } from 'src/app/services/promoService/promo.service';
@@ -21,8 +22,8 @@ export class RadxdeletepromoComponent implements OnInit {
   ngOnInit(): void {
     this.promoId = this.route.snapshot.params['id'];
     this.getPromoDetails(this.promoId);
-    console.log('promoId ID:', this.promoId);
-    console.log('promo Name:', this.promoName);  // Debugging line
+    logger.log('promoId ID:', this.promoId);
+    logger.log('promo Name:', this.promoName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class RadxdeletepromoComponent implements OnInit {
   confirmDelete(): void {
     this.promoService.deletePromo(this.promoId).subscribe({
       next: (response) => {
-        console.log('Promo deleted successfully:', response);
+        logger.log('Promo deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/rates/promo']);
       },
       error: (error) => {
-        console.error('Error deleting location:', error);
+        logger.error('Error deleting location:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class RadxdeletepromoComponent implements OnInit {
     this.promoService.getPromo(id).subscribe({
       next: (response) => {
         this.promoName = response.promo.promo_name;
-        console.log('response:', response);
-        console.log('promoName:', this.promoName);
+        logger.log('response:', response);
+        logger.log('promoName:', this.promoName);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerLocationService } from "../../../services/chargerLocationService/charger-location.service";
@@ -89,7 +90,7 @@ export class LocationDetailsComponent {
     // this.getLocation();
     // this.getChargers();
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -143,15 +144,15 @@ export class LocationDetailsComponent {
             this.getChargers();
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
   }
@@ -185,13 +186,13 @@ export class LocationDetailsComponent {
           this.chargers = data.charger;
           this.tempChargers = [...this.chargers];
         } else {
-          console.error("Chargers data is not an array:", data);
+          logger.error("Chargers data is not an array:", data);
         }
-        console.log(data);
+        logger.log(data);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -200,9 +201,9 @@ export class LocationDetailsComponent {
       (response) => {
         if (response.success && response.location) {
           this.location = response.location;
-          console.log("response.location", response.location);
+          logger.log("response.location", response.location);
           this.companyId = this.location.company_id;
-          console.log(" this.companyId", this.companyId);
+          logger.log(" this.companyId", this.companyId);
           // Roaming detection: a company user viewing a location that belongs
           // to a different company is browsing it via a roaming agreement.
           if (this.isCompanyRole && this.userCompanyId && this.companyId &&
@@ -223,7 +224,7 @@ export class LocationDetailsComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -231,11 +232,11 @@ export class LocationDetailsComponent {
   getCompanyDetails(companyId: string) {
     this.companyService.getCompany(companyId).subscribe(
       (company) => {
-        console.log('Company:', company);
+        logger.log('Company:', company);
         this.companyName = company.company.company_name;
       },
       (error) => {
-        console.error('Error fetching company details', error);
+        logger.error('Error fetching company details', error);
       }
     );
   }
@@ -244,11 +245,11 @@ export class LocationDetailsComponent {
     this.partnerService.getPartner(id).subscribe({
       next: (response) => {
         this.partnerName = response.partner.partner_name;
-        console.log('response:', response);
-        console.log('partnerName:', this.partnerName);
+        logger.log('response:', response);
+        logger.log('partnerName:', this.partnerName);
       },
       error: (error) => {
-        console.error('Error fetching location details:', error);
+        logger.error('Error fetching location details:', error);
       }
     });
   }

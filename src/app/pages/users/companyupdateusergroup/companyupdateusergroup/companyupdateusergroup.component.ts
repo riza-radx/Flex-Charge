@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -123,7 +124,7 @@ export class CompanyupdateusergroupComponent implements OnInit {
     this.usergrId = this.route.snapshot.params['id'];
     this.getUserGroupById(this.usergrId);
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -168,15 +169,15 @@ export class CompanyupdateusergroupComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.loadCompanies();
@@ -185,30 +186,30 @@ export class CompanyupdateusergroupComponent implements OnInit {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate.map(rate => ({
           ...rate,
           rate_id: Number(rate.rate_id) // Ensure it's a number
         }));
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
   loadCompaniesByCompanyId(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => {
-        console.log(response.company);
+        logger.log(response.company);
         this.companies = [response.company];
       },
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
@@ -223,7 +224,7 @@ export class CompanyupdateusergroupComponent implements OnInit {
         this.filteredPartners = [...this.partners];
       },
       (error) => {
-        console.log("Error fetching partners:", error);
+        logger.log("Error fetching partners:", error);
       }
     );
   }
@@ -260,9 +261,9 @@ export class CompanyupdateusergroupComponent implements OnInit {
       const userGroupData = this.userGroupForm.value;
 
       userGroupData.rate_id = userGroupData.rate_id && !isNaN(userGroupData.rate_id) ? Number(userGroupData.rate_id) : null;
-      console.log('userGroupData.rate_id', userGroupData.rate_id);
+      logger.log('userGroupData.rate_id', userGroupData.rate_id);
 
-      console.log('Submitting userGroupData before :', userGroupData);
+      logger.log('Submitting userGroupData before :', userGroupData);
       if (!this.userGroupForm.get('allow_pay_as_you_go').value) {
         userGroupData.allow_pay_as_you_go = false;
       }
@@ -293,19 +294,19 @@ export class CompanyupdateusergroupComponent implements OnInit {
         formData.append('userGroupLogo', this.userGroupLogo, this.userGroupLogo.name);
       }
 
-      console.log('Submitting formData:', formData);
-      console.log('Submitting userGroupData after:', userGroupData);
+      logger.log('Submitting formData:', formData);
+      logger.log('Submitting userGroupData after:', userGroupData);
       this.userGroupService.updateUserGroup(this.usergrId, formData).subscribe({
         next: (response) => {
           if (response) {
-            console.log('User group updated successfully:', response);
+            logger.log('User group updated successfully:', response);
             this.router.navigate([`/users/usergroup/${this.usergrId}`]);
           } else {
             this.errorMessage = 'Failed to update user group.';
           }
         },
         error: (error) => {
-          console.error('Error updating user group:', error);
+          logger.error('Error updating user group:', error);
           this.errorMessage = this.getErrorMessage(error);
         }
       });
@@ -335,7 +336,7 @@ export class CompanyupdateusergroupComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.userGroupLogo = file;
-      console.log('File selected:', file);
+      logger.log('File selected:', file);
     }
   }
 
@@ -343,8 +344,8 @@ export class CompanyupdateusergroupComponent implements OnInit {
     try {
       // Fetch the user group details
       const response = await this.userGroupService.getUserGroup(id).toPromise();
-      console.log('ID:', id);
-      console.log('API response getUserGroupById:', response);
+      logger.log('ID:', id);
+      logger.log('API response getUserGroupById:', response);
 
       const userGroup = response.userGroup;
 
@@ -388,7 +389,7 @@ export class CompanyupdateusergroupComponent implements OnInit {
       });
 
     } catch (error) {
-      console.error('Error fetching userGroup details:', error);
+      logger.error('Error fetching userGroup details:', error);
     }
   }
 

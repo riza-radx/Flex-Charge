@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RateService } from "../../../../services/rateService/rate.service";
@@ -28,7 +29,7 @@ export class CompanycreaterateComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error creating rate:', error);
+        logger.error('Error creating rate:', error);
       }
     );
   }

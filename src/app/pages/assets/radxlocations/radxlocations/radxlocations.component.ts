@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargingStatusService } from "../../../../services/chargingStatusService/charging-status.service";
@@ -132,7 +133,7 @@ export class RadxlocationsComponent implements OnInit {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     // this.fetchCurrentMonthCount();
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -200,15 +201,15 @@ export class RadxlocationsComponent implements OnInit {
           // // this.getCurrencies(company_id);
           // break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getLocations()
@@ -222,7 +223,7 @@ export class RadxlocationsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -233,7 +234,7 @@ export class RadxlocationsComponent implements OnInit {
         this.currentMonthCountEntry = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -246,7 +247,7 @@ export class RadxlocationsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -258,7 +259,7 @@ export class RadxlocationsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -276,18 +277,18 @@ export class RadxlocationsComponent implements OnInit {
     }
     this.chargerLocationService.getAllChargerLocations(filters).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         if (Array.isArray(data.location)) {
           this.rows = data.location;
           this.rebuildCompanyOptions();
           this.applyCompanyFilter();
         } else {
-          console.error('Unexpected data structure:', data);
+          logger.error('Unexpected data structure:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -303,36 +304,36 @@ export class RadxlocationsComponent implements OnInit {
     }
     this.chargerLocationService.getChargerLocationByCompany(this.company_id, filters).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         if (Array.isArray(data.location)) {
           this.rows = data.location;
           this.rebuildCompanyOptions();
           this.applyCompanyFilter();
         } else {
-          console.error('Unexpected data structure:', data);
+          logger.error('Unexpected data structure:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
   getLocationsByPartner(partnerId: number) {
     this.chargerLocationService.getChargerLocationByPartner(partnerId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         if (Array.isArray(data.location)) {
           this.rows = data.location;
           this.rebuildCompanyOptions();
           this.applyCompanyFilter();
         } else {
-          console.error('Unexpected data structure:', data);
+          logger.error('Unexpected data structure:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -52,19 +53,19 @@ export class CompanyupdatelocationsComponent implements OnInit {
     if (this.userRole === 'COMPANY_ANALYST') this.isCompanyAnalyst = true;
     this.getLocationById(this.locationId);
     this.getPartnersByCompany(this.company_id);
-    console.log('this.locationId:', this.locationId);
+    logger.log('this.locationId:', this.locationId);
     // throw new Error('Method not implemented.');
   }
 
   getPartners() {
     this.partnerService.getAllPartners().subscribe(
       (data) => {
-        console.log(data.partners);
+        logger.log(data.partners);
         this.partners = data.partners;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -73,12 +74,12 @@ export class CompanyupdatelocationsComponent implements OnInit {
   getPartnersByCompany(companyId: number) {
     this.partnerService.getPartnerByCompany(companyId).subscribe(
       (data) => {
-        console.log(data.partner);
+        logger.log(data.partner);
         this.partners = data.partner;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -97,12 +98,12 @@ export class CompanyupdatelocationsComponent implements OnInit {
     if (!(this.isCompanyAdmin || this.isCompanyAnalyst)) {
       delete locationData.vendor_number_oshee;
     }
-    console.log('Submitting locationData:', locationData);
+    logger.log('Submitting locationData:', locationData);
 
     this.locationService.updateChargerLocation(this.locationId, locationData).subscribe({
       next: (response: any) => {
         if (response?.success) {
-          console.log('Location updated successfully:', response);
+          logger.log('Location updated successfully:', response);
           
           this.successMessage = 'Location updated successfully!';
           setTimeout(() => {
@@ -110,13 +111,13 @@ export class CompanyupdatelocationsComponent implements OnInit {
             this.router.navigate([`/assets/locations/${this.locationId}`]);
           }, 3000);
         } else {
-          console.error('Failed to update charger:', response);
+          logger.error('Failed to update charger:', response);
           this.errorMessage = response?.message || 'Failed to update location.';
           setTimeout(() => (this.errorMessage = ''), 5000);
         }
       },
       error: (error) => {
-        console.error('Error updating charger:', error);
+        logger.error('Error updating charger:', error);
         this.handleError(error);
       }
     });
@@ -141,8 +142,8 @@ export class CompanyupdatelocationsComponent implements OnInit {
   getLocationById(id: number): void {
     this.locationService.getChargerLocation(id).subscribe({
       next: (response) => {
-        console.log('ID:', id);
-        console.log('API response:', response);
+        logger.log('ID:', id);
+        logger.log('API response:', response);
         const location = response.location;
 
         // Ensure the response data matches the form structure
@@ -160,7 +161,7 @@ export class CompanyupdatelocationsComponent implements OnInit {
 
       },
       error: (error) => {
-        console.error('Error fetching charger details:', error);
+        logger.error('Error fetching charger details:', error);
       }
     });
   }

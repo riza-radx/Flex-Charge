@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlarmService } from "../../../services/alarmService/alarm.service";
@@ -139,7 +140,7 @@ case 'COMPANY_USER':
           this.isUser = true;
           break;
         default:
-          console.error('Unknown user role:', this.userRole);
+          logger.error('Unknown user role:', this.userRole);
           this.router.navigate(['/login']); // Redirect to login or error page
       }
     }
@@ -156,7 +157,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -177,7 +178,7 @@ case 'COMPANY_USER':
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
           this.connectorService.getConnector(row.connector_id).subscribe(
@@ -187,7 +188,7 @@ case 'COMPANY_USER':
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
         });
@@ -195,7 +196,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )

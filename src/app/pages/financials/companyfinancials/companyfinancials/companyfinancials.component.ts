@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReportService } from "../../../../services/reportService/report.service";
@@ -45,10 +46,10 @@ export class CompanyfinancialsComponent {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const company_id = parsedCugpCred.company_id;
-      console.log('User Group ID:', company_id);
+      logger.log('User Group ID:', company_id);
       this.getVReports(company_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getVReports();
     // this.route.paramMap.subscribe(params => {
@@ -77,7 +78,7 @@ export class CompanyfinancialsComponent {
     const id = localStorage.getItem('cugpCred.userId');
     this.reportService.getAllReportByCompany(companyId).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.reports)) {
           // If data.report is an array
           this.reports = data.reports;
@@ -85,14 +86,14 @@ export class CompanyfinancialsComponent {
           // If data.report is a single object
           this.reports = [data.reports];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

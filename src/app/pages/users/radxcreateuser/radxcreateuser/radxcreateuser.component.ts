@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { Router } from '@angular/router';
@@ -68,7 +69,7 @@ export class RadxcreateuserComponent {
       this.selectedCountryCode = this.countries[0].prefix;
     });
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -114,15 +115,15 @@ export class RadxcreateuserComponent {
           case 'PARTNER_MODERATOR':
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -133,11 +134,11 @@ export class RadxcreateuserComponent {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
-        console.log("Fetched companies:", data.company);
+        logger.log("Fetched companies:", data.company);
         this.companies = data.company.filter(company => company.is_whitelabel === 'false');
       },
       (error) => {
-        console.log("Error fetching companies:", error);
+        logger.log("Error fetching companies:", error);
       }
     );
   }
@@ -157,7 +158,7 @@ export class RadxcreateuserComponent {
     if (this.isFormValid()) {
       this.authService.userRegisterFromDashboard(this.user).subscribe(
         (response: any) => {
-          console.log('User created successfully', response);
+          logger.log('User created successfully', response);
           const userId = response.tokenUser?.userId;
 
           if (!userId) {
@@ -168,7 +169,7 @@ export class RadxcreateuserComponent {
           this.router.navigate([`/users/user/${userId}`]);
         },
         (error) => {
-          console.error('Error creating user', error);
+          logger.error('Error creating user', error);
           this.handleError(error);
         }
       );
@@ -179,21 +180,21 @@ export class RadxcreateuserComponent {
     this.user.created_date = new Date().toISOString();
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
 
         this.companyMemberService.addCompanyMember(this.companyData).subscribe(
           (data) => {
-            console.log('Company member added successfully', data);
+            logger.log('Company member added successfully', data);
             this.router.navigate(['/users/user']);
           },
           (error) => {
-            console.error('Error adding company member', error);
+            logger.error('Error adding company member', error);
             this.handleError(error);
           }
         );
       },
       (error) => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
         this.handleError(error);
       }
     );
@@ -203,21 +204,21 @@ export class RadxcreateuserComponent {
     this.user.created_date = new Date().toISOString();
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
 
         this.partnerMemberService.addPartnerMember(this.partnerData).subscribe(
           (data) => {
-            console.log('Partner member added successfully', data);
+            logger.log('Partner member added successfully', data);
             this.router.navigate(['/users/user']);
           },
           (error) => {
-            console.error('Error adding partner member', error);
+            logger.error('Error adding partner member', error);
             this.handleError(error);
           }
         );
       },
       (error) => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
         this.handleError(error);
       }
     );
@@ -227,21 +228,21 @@ export class RadxcreateuserComponent {
     this.user.created_date = new Date().toISOString();
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
 
         this.userGroupMembersService.addUserGroupMember(this.userGroupData).subscribe(
           (data) => {
-            console.log('User group member added successfully', data);
+            logger.log('User group member added successfully', data);
             this.router.navigate(['/users/user']);
           },
           (error) => {
-            console.error('Error adding user group member', error);
+            logger.error('Error adding user group member', error);
             this.handleError(error);
           }
         );
       },
       (error) => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
         this.handleError(error);
       }
     );
@@ -265,7 +266,7 @@ export class RadxcreateuserComponent {
   // Validate the form fields
   isFormValid(): boolean {
     if (!this.user.name || !this.user.username || !this.user.email || !this.user.phone_number || !this.user.password || !this.user.role || !this.user.company) {
-      console.error('Some required fields are missing.');
+      logger.error('Some required fields are missing.');
       return false;
     }
 
@@ -281,7 +282,7 @@ export class RadxcreateuserComponent {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format regex
     if (!emailRegex.test(this.user.email)) {
       this.emailError = 'Invalid email format.'; // Set error message
-      console.error('Invalid email format.');
+      logger.error('Invalid email format.');
       return false;
     }
 

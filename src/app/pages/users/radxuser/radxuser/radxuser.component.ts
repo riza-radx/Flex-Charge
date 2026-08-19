@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../services/userService/user.service'
@@ -156,7 +157,7 @@ export class RadxuserComponent implements OnInit {
       // this.router.navigate([`/users/user/${this.activeRow.id}`]);  // Navigate to company details page
       const path = `/users/user/${this.activeRow.id}`;
       // console.log('Navigating to:', path);
-      this.router.navigate([path]).catch(err => console.error('Navigation error:', err));
+      this.router.navigate([path]).catch(err => logger.error('Navigation error:', err));
 
     }
   }
@@ -232,15 +233,15 @@ export class RadxuserComponent implements OnInit {
             this.getPartnerMembers(partner_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -253,7 +254,7 @@ export class RadxuserComponent implements OnInit {
         this.currentMonthCountEntry = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -286,7 +287,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -295,14 +296,14 @@ export class RadxuserComponent implements OnInit {
     this.userService.getUserByCompany(company_id).subscribe(
       (data) => {
         this.rows = data.users;
-        console.log("rows", data)
+        logger.log("rows", data)
         this.temp = [...this.rows];
         // console.log(this.rows);
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -315,7 +316,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -358,7 +359,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -371,7 +372,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -391,19 +392,19 @@ export class RadxuserComponent implements OnInit {
                 user: user // Attach the user data
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // Return member without user details in case of error
             }
           }));
           // console.log('Loaded users:', this.users);
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching user group members:', error);
+        logger.error('Error fetching user group members:', error);
       }
     );
   }
@@ -415,7 +416,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -427,7 +428,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -439,7 +440,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -451,7 +452,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -463,7 +464,7 @@ export class RadxuserComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -483,17 +484,17 @@ export class RadxuserComponent implements OnInit {
                 // console.log(this.temp);
               },
               (error) => {
-                console.error(`Error fetching user with ID ${member.user_id}:`, error);
+                logger.error(`Error fetching user with ID ${member.user_id}:`, error);
               }
             );
           });
         } else {
-          console.error('Unexpected response structure:', response);
+          logger.error('Unexpected response structure:', response);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -516,17 +517,17 @@ export class RadxuserComponent implements OnInit {
                 // console.log(this.temp);
               },
               (error) => {
-                console.error(`Error fetching user with ID ${member.user_id}:`, error);
+                logger.error(`Error fetching user with ID ${member.user_id}:`, error);
               }
             );
           });
         } else {
-          console.error('Unexpected response structure:', response);
+          logger.error('Unexpected response structure:', response);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

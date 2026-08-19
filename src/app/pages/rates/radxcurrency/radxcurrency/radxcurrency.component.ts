@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -140,7 +141,7 @@ export class RadxcurrencyComponent implements OnInit {
     this.loadExchangeRates();
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     //this.fetchCurrentMonthCount();
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -185,15 +186,15 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getCurrencies()
@@ -205,7 +206,7 @@ case 'COMPANY_USER':
         this.currentMonthCountEntry = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -222,12 +223,12 @@ case 'COMPANY_USER':
       (data) => {
         this.rows = data.currencies;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -238,12 +239,12 @@ case 'COMPANY_USER':
       (data) => {
         this.rows = data.currency;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -256,7 +257,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -273,7 +274,7 @@ case 'COMPANY_USER':
         this.exchangeRatesTemp = [...this.exchangeRates];
       },
       (error) => {
-        console.error('Exchange rates load failed:', error);
+        logger.error('Exchange rates load failed:', error);
         this.exchangeRates = [];
         this.exchangeRatesTemp = [];
       }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { UserGroupService } from "../../../../services/userGroupService/user-group.service";
 import { Router } from '@angular/router';
@@ -33,12 +34,12 @@ export class CompanycreateusergroupComponent {
   onSubmit() {
     this.userGroupService.addUserGroup(this.userGroup).subscribe(
       response => {
-        console.log('User group created successfully', response);
+        logger.log('User group created successfully', response);
         // Navigate to another page or display a success message
         this.router.navigate(['/users/usergroup']);
       },
       error => {
-        console.error('Error creating user group', error);
+        logger.error('Error creating user group', error);
       }
     );
   }

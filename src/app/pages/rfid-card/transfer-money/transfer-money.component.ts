@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -70,7 +71,7 @@ export class TransferMoneyComponent implements OnInit {
                 this.userDebitBalance = parseFloat(response.user.debit_balance || 0);
             },
             error: (error) => {
-                console.error('Error fetching User details:', error);
+                logger.error('Error fetching User details:', error);
             }
         });
     }
@@ -84,7 +85,7 @@ export class TransferMoneyComponent implements OnInit {
                 this.userGroupId = response.user.usergr_id;
             },
             error => {
-                console.log(error);
+                logger.log(error);
             }
         );
     }

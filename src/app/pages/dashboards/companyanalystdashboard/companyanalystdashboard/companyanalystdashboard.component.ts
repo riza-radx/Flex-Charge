@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import Chart from "chart.js";
 
@@ -122,7 +123,7 @@ export class CompanyanalystdashboardComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const company_id = parsedCugpCred.company_id;
-      console.log('User Group ID:', company_id);
+      logger.log('User Group ID:', company_id);
       this.getUserGroups(company_id);
       this.getChargerLocations(company_id);
       this.getChargingHistory(company_id);
@@ -130,7 +131,7 @@ export class CompanyanalystdashboardComponent implements OnInit {
       this.getConnectors(company_id);
       // this.getCompanyMembers(company_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
 
     this.datasets = [
@@ -170,7 +171,7 @@ export class CompanyanalystdashboardComponent implements OnInit {
   getUserGroups(companyId: number) {
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.userGroups = data.userGroup;
         this.userGroups.forEach(userGroups => {
                   this.getUserGroupMembers(userGroups.usergr_id);
@@ -178,7 +179,7 @@ export class CompanyanalystdashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -207,13 +208,13 @@ export class CompanyanalystdashboardComponent implements OnInit {
   getChargers(companyId: number) {
     this.chargerService.getChargerByCompany(companyId).subscribe(
       (data) => {
-        console.log(data)
+        logger.log(data)
         this.getConnectors(data.charger.charger_id)
         this.chargers = data.chargers || []; // Ensure chargers is an array
         // this.initializeMultiSeriesPieChart(); // Try initializing the chart after chargers are loaded
       },
       (error) => {
-        console.error('Error fetching chargers:', error);
+        logger.error('Error fetching chargers:', error);
       }
     );
   }
@@ -221,12 +222,12 @@ export class CompanyanalystdashboardComponent implements OnInit {
   getConnectors(chargerId: number) {
     this.connectorService.getConnectorByCharger(chargerId).subscribe(
       (data) => {
-        console.log(data)
+        logger.log(data)
         this.connectors = data.connectors || []; // Ensure connectors is an array
         // this.initializeMultiSeriesPieChart(); // Try initializing the chart after connectors are loaded
       },
       (error) => {
-        console.error('Error fetching connectors:', error);
+        logger.error('Error fetching connectors:', error);
       }
     );
   }
@@ -291,13 +292,13 @@ export class CompanyanalystdashboardComponent implements OnInit {
   getChargerLocations(companyId: number) {
     this.chargerLocationService.getAllChargerLocations().subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.chargerLocations = data.chargerLocations;
         this.noOfLocations = data.location.length;
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -305,11 +306,11 @@ export class CompanyanalystdashboardComponent implements OnInit {
   getChargingHistory(chargerId: number) {
     this.chargingHistoryService.getChargingByCharger(chargerId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.chargingHistory = data.chargingHistory;
         this.todaysCharging = this.chargingHistory.length;
 
-        console.log('Charging history:', this.chargingHistory, 'todays:', this.todaysCharging);
+        logger.log('Charging history:', this.chargingHistory, 'todays:', this.todaysCharging);
 
         // Process data for the chart
         const monthlyData = this.aggregateCostByMonth(this.chargingHistory);
@@ -328,7 +329,7 @@ export class CompanyanalystdashboardComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -374,7 +375,7 @@ export class CompanyanalystdashboardComponent implements OnInit {
   }
 
   updateChartData(labels: string[], data: number[]) {
-    console.log(data)
+    logger.log(data)
     this.salesChart.data.labels = labels;
     this.salesChart.data.datasets[0].data = data;
     this.salesChart.update();
@@ -396,11 +397,11 @@ export class CompanyanalystdashboardComponent implements OnInit {
           company.memberCount = data.company_member.length;
         }
 
-        console.log(`Company ID ${userGroupId} Members Count:`, data.company_member.length);
+        logger.log(`Company ID ${userGroupId} Members Count:`, data.company_member.length);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

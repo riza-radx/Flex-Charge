@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../services/userService/user.service';
@@ -69,10 +70,10 @@ export class CompanyuserComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const company_id = parsedCugpCred.company_id;
-      console.log('User Group ID:', company_id);
+      logger.log('User Group ID:', company_id);
       this.getCompanyMembers(company_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getUsers()
   }
@@ -80,7 +81,7 @@ export class CompanyuserComponent implements OnInit {
   getCompanyMembers(company_id: number) {
     this.companyMemberService.getCompanyMemberByCompany(company_id).subscribe(
       (response: any) => {
-        console.log(response);
+        logger.log(response);
         if (response && response.success && Array.isArray(response.company_member)) {
           this.rows = [];
           response.company_member.forEach(member => {
@@ -89,20 +90,20 @@ export class CompanyuserComponent implements OnInit {
                 // console.log(userData.user);
                 this.rows.push(userData.user);
                 this.temp = [...this.rows];
-                console.log(this.temp);
+                logger.log(this.temp);
               },
               (error) => {
-                console.error(`Error fetching user with ID ${member.user_id}:`, error);
+                logger.error(`Error fetching user with ID ${member.user_id}:`, error);
               }
             );
           });
         } else {
-          console.error('Unexpected response structure:', response);
+          logger.error('Unexpected response structure:', response);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -112,12 +113,12 @@ export class CompanyuserComponent implements OnInit {
       (data) => {
         this.rows = data.users;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

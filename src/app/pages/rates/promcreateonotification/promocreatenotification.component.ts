@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -58,8 +59,8 @@ export class PromoCreateNotificationComponent implements OnInit {
     getPromoById(id: number): void {
         this.promoService.getPromo(id).subscribe({
             next: (response) => {
-                console.log('ID:', id);
-                console.log('API response:', response);
+                logger.log('ID:', id);
+                logger.log('API response:', response);
 
                 const promo = response.promo;
                 this.maxSteps = response.promo.offer_charging_count
@@ -67,7 +68,7 @@ export class PromoCreateNotificationComponent implements OnInit {
 
             },
             error: (error) => {
-                console.error('❌ Error fetching promo details:', error);
+                logger.error('❌ Error fetching promo details:', error);
             }
         });
     }
@@ -102,10 +103,10 @@ export class PromoCreateNotificationComponent implements OnInit {
             promo_id: this.promoId
         }));
 
-        console.log("notificationsData", notificationsData);
+        logger.log("notificationsData", notificationsData);
         this.promoService.createPromoNotification(notificationsData).subscribe({
             next: (res: any) => {
-                console.log('Notifications created:', res);
+                logger.log('Notifications created:', res);
 
                 if (res.success === false) {
                     alert(res.message || 'Failed to save notifications.'); // shfaq mesazhin nga backend
@@ -116,7 +117,7 @@ export class PromoCreateNotificationComponent implements OnInit {
                 this.router.navigate(['/rates/promo', this.promoId]); // redirect tek promo details
             },
             error: (err) => {
-                console.error('Error creating notifications:', err);
+                logger.error('Error creating notifications:', err);
                 alert('Failed to save notifications.');
             }
         });

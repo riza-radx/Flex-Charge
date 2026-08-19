@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -112,11 +113,11 @@ export class RadxupdateconnectorsComponent {
     // Call the service to update the connector
     this.connectorService.updateConnector(this.connectorId, connectorData).subscribe({
       next: (response) => {
-        console.log('Connector updated successfully:', response);
+        logger.log('Connector updated successfully:', response);
         this.router.navigate(['/assets/chargers', connectorData.charger_id]); // Redirect after update
       },
       error: (error) => {
-        console.error('Error updating connector:', error);
+        logger.error('Error updating connector:', error);
         this.errorMessage = error.message || 'An error occurred while updating the connector.';
         setTimeout(() => this.errorMessage = '', 5000); // Clear error message after 5 seconds
       }
@@ -145,7 +146,7 @@ export class RadxupdateconnectorsComponent {
         this.selectedStandard = connector.standard;
       },
       error: (error) => {
-        console.error('Error fetching connector details:', error);
+        logger.error('Error fetching connector details:', error);
       }
     });
   }

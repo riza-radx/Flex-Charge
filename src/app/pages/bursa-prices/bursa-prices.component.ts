@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import {
@@ -120,7 +121,7 @@ export class BursaPricesComponent implements OnInit {
         }
       },
       error: (e) => {
-        console.warn('Nuk mund te fetchohet kursi aktual EUR→ALL. Perdorim fallback 100.', e);
+        logger.warn('Nuk mund te fetchohet kursi aktual EUR→ALL. Perdorim fallback 100.', e);
       }
     });
   }
@@ -164,7 +165,7 @@ export class BursaPricesComponent implements OnInit {
         this.feesLoading = false;
       },
       error: (e) => {
-        console.error('Fees load failed:', e);
+        logger.error('Fees load failed:', e);
         this.fees = [];
         this.feesLoading = false;
       }
@@ -245,7 +246,7 @@ export class BursaPricesComponent implements OnInit {
   loadConfig(): void {
     this.bursaService.getConfig().subscribe({
       next: (r) => { this.config = r.config; },
-      error: (e) => console.error('Config load failed:', e)
+      error: (e) => logger.error('Config load failed:', e)
     });
   }
 
@@ -261,7 +262,7 @@ export class BursaPricesComponent implements OnInit {
         this.monthLoading = false;
       },
       error: (e) => {
-        console.error('Month load failed:', e);
+        logger.error('Month load failed:', e);
         this.monthLoading = false;
       }
     });
@@ -371,7 +372,7 @@ export class BursaPricesComponent implements OnInit {
         }
       },
       error: (e) => {
-        console.error('Day load failed:', e);
+        logger.error('Day load failed:', e);
         this.dayLoading = false;
       }
     });

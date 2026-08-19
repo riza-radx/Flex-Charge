@@ -166,6 +166,7 @@
 
 // }
 
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerStatusService } from "../../../../services/chargerStatusService/charger-status.service";
@@ -260,7 +261,7 @@ export class RadxstationstatusComponent implements OnInit {
 
   filterTable(event: any) {
     const query = event.target.value.toLowerCase();
-    console.log('Search query:', query);
+    logger.log('Search query:', query);
   
     // Filter the locations based on the search query
     this.filteredLocations = this.locations.filter(location => {
@@ -276,7 +277,7 @@ export class RadxstationstatusComponent implements OnInit {
     });
   
     // Log the filtered locations for debugging
-    console.log('Filtered Locations:', this.filteredLocations);
+    logger.log('Filtered Locations:', this.filteredLocations);
   }
   
   
@@ -285,7 +286,7 @@ export class RadxstationstatusComponent implements OnInit {
   }
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -307,13 +308,13 @@ export class RadxstationstatusComponent implements OnInit {
             this.getAllLocations();
             break;
           case 'COMPANY_ADMIN':
-            console.log('COMPANY_ADMIN is set to true');
+            logger.log('COMPANY_ADMIN is set to true');
             this.isCompanyAdmin = true;
             this.isCompanyRole = true;
             this.getLocationsByCompanyId(company_id);
             break;
           case 'COMPANY_OPERATOR':
-            console.log('COMPANY_OPERATOR is set to true');
+            logger.log('COMPANY_OPERATOR is set to true');
             this.isCompanyRole = true;
             this.isCompanyOperator = true
             this.getLocationsByCompanyId(company_id);
@@ -344,26 +345,26 @@ export class RadxstationstatusComponent implements OnInit {
           case 'USER':
           case 'COMPANY_USER':
           case 'SUPER_USER':
-            console.log('SUPER_USER is set to true');
+            logger.log('SUPER_USER is set to true');
             this.isUserRole = true;
             this.getLocationsByCompanyId(company_id);
             break;
           case 'USER_GROUP_ADMIN':
-            console.log('USER_GROUP_ADMIN is set to true');
+            logger.log('USER_GROUP_ADMIN is set to true');
             this.isUserGroupAdmin = true;
             this.isUserGroupRole = true;
             this.getUserDetails(user_id);
             // this.getLocationsByCompanyId(company_id);
             break;
           case 'USER_GROUP_MODERATOR':
-            console.log('USER_GROUP_MODERATOR is set to true');
+            logger.log('USER_GROUP_MODERATOR is set to true');
             this.isUserGroupModerator = true;
             this.isUserGroupRole = true;
             this.getUserDetails(user_id);
             // this.getLocationsByCompanyId(company_id);
             break;
           case 'USER_GROUP_USER':
-            console.log('USER_GROUP_USER is set to true');
+            logger.log('USER_GROUP_USER is set to true');
             this.isUserGroupUser = true;
             this.isUserGroupRole = true;
             this.isUserRole = true;
@@ -372,20 +373,20 @@ export class RadxstationstatusComponent implements OnInit {
             break;
           case 'PARTNER_ADMIN':
           case 'PARTNER_MODERATOR':
-            console.log('PARTNER_ROLE is set to true');
+            logger.log('PARTNER_ROLE is set to true');
             this.isPartnerRole = true;
             this.getLocationsByPartnerId(partner_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
   }
@@ -495,12 +496,12 @@ export class RadxstationstatusComponent implements OnInit {
   getUserDetails(id: number): void {
     this.userService.getUserById(id).subscribe({
       next: (response) => {
-        console.log("response.user.isPhoneVerified", response.user.isPhoneVerified)
+        logger.log("response.user.isPhoneVerified", response.user.isPhoneVerified)
         this.companyId = response.user.company_id;
         this.getLocationsByCompanyId(this.companyId);
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }
@@ -512,16 +513,16 @@ export class RadxstationstatusComponent implements OnInit {
         this.chargerService.getChargerByLocation(row.location_id).subscribe(
           (chargerData) => {
             this.locations[index].noOfChargers = chargerData.charger.length;
-            console.log("Full Locations", this.locations);
+            logger.log("Full Locations", this.locations);
           },
           (error) => {
             this.errorMessage = error.message;
-            console.log(error);
+            logger.log(error);
           }
         );
       });
     } else {
-      console.error('Unexpected data structure:', data);
+      logger.error('Unexpected data structure:', data);
     }
   }
 }

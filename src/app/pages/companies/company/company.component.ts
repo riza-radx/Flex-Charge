@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CompanyService } from "../../../services/companyService/company.service";
@@ -98,7 +99,7 @@ export class CompanyComponent implements OnInit {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     //  this.fetchCurrentMonthCount();
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -111,7 +112,7 @@ export class CompanyComponent implements OnInit {
       if (this.userRole) {
         switch (this.userRole) {
           case 'RadX_Admin':
-            console.log('isRadXRole is set to true');
+            logger.log('isRadXRole is set to true');
             this.isRadXRole = true;
 
             break;
@@ -120,15 +121,15 @@ export class CompanyComponent implements OnInit {
             break;
 
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.getCompanies();
@@ -139,7 +140,7 @@ export class CompanyComponent implements OnInit {
         this.currentMonthCountEntry = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -148,14 +149,14 @@ export class CompanyComponent implements OnInit {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
         this.rows = data.company;
-        console.log("rows", this.rows);
+        logger.log("rows", this.rows);
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
 
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )

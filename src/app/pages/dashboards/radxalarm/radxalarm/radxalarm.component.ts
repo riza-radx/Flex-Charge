@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlarmService } from "../../../../services/alarmService/alarm.service";
@@ -102,15 +103,15 @@ export class RadxalarmComponent implements OnInit {
             // this.getAlarmsByPartner(partner_id); // Fetch alarms for the partner
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -137,7 +138,7 @@ export class RadxalarmComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -153,7 +154,7 @@ export class RadxalarmComponent implements OnInit {
         this.alarmCountCurrentMonth = count; // Set the count to the property
       },
       error => {
-        console.error('Error fetching vehicle count:', error);
+        logger.error('Error fetching vehicle count:', error);
         // Optionally, you can set an error message or handle errors here
       }
     );
@@ -196,13 +197,13 @@ export class RadxalarmComponent implements OnInit {
           //   this.fetchConnectorDetails(row, index);
           // });
         } else {
-          console.error("Invalid response structure:", data);
+          logger.error("Invalid response structure:", data);
           this.errorMessage = "Failed to load alarms - Invalid response format";
         }
       },
       (error) => {
         this.errorMessage = "Failed to load alarms";
-        console.error("Alarm fetch error:", error);
+        logger.error("Alarm fetch error:", error);
       }
     );
   }
@@ -217,12 +218,12 @@ export class RadxalarmComponent implements OnInit {
           this.rows[index].charger = chargerData.charger.charger_name;
           this.temp = [...this.rows];
         } else {
-          console.warn("Unexpected charger data format for row:", row);
+          logger.warn("Unexpected charger data format for row:", row);
           this.rows[index].charger = "Unknown Charger";  // Informative fallback
         }
       },
       (error) => {
-        console.error("Error fetching charger data:", error);
+        logger.error("Error fetching charger data:", error);
         this.rows[index].charger = "Error Loading Charger";  // Error fallback
       }
     );
@@ -236,12 +237,12 @@ export class RadxalarmComponent implements OnInit {
           this.rows[index].connector = connectorData.connector.connector_name;
           this.temp = [...this.rows];
         } else {
-          console.warn("Failed to load connector data for row:", row);
+          logger.warn("Failed to load connector data for row:", row);
           this.rows[index].connector = "Unknown";  // Fallback value
         }
       },
       (error) => {
-        console.error("Connector fetch error:", error);
+        logger.error("Connector fetch error:", error);
         this.rows[index].connector = "Error";  // Fallback value for display
       }
     );
@@ -259,13 +260,13 @@ export class RadxalarmComponent implements OnInit {
           // });
           // this.rows.sort((a, b) => b.alarm_id - a.alarm_id);
         } else {
-          console.error('Invalid response structure:', data);
+          logger.error('Invalid response structure:', data);
           this.errorMessage = 'Failed to load alarms - Invalid response format';
         }
       },
       (error) => {
         this.errorMessage = 'Failed to load alarms';
-        console.error('Alarm fetch error:', error);
+        logger.error('Alarm fetch error:', error);
       }
     );
   }
@@ -284,13 +285,13 @@ export class RadxalarmComponent implements OnInit {
           // });
           // this.rows.sort((a, b) => b.alarm_id - a.alarm_id);
         } else {
-          console.error('Invalid response structure:', data);
+          logger.error('Invalid response structure:', data);
           this.errorMessage = 'Failed to load alarms - Invalid response format';
         }
       },
       (error) => {
         this.errorMessage = 'Failed to load alarms';
-        console.error('Alarm fetch error:', error);
+        logger.error('Alarm fetch error:', error);
       }
     );
   }

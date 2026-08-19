@@ -1,5 +1,6 @@
 
 
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { CompanyService } from "../../../../services/companyService/company.service";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -53,19 +54,19 @@ export class RadxcreatecompanyComponent {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      console.log('File selected:', file.name);
+      logger.log('File selected:', file.name);
       this.selectedFile = file;
     } else {
       this.selectedFile = null;
     }
   }
   onSubmit() {
-    console.log('Form submission triggered');
-    console.log('Form Valid:', this.companyForm.valid);
-    console.log('Form Value:', this.companyForm.value);
+    logger.log('Form submission triggered');
+    logger.log('Form Valid:', this.companyForm.valid);
+    logger.log('Form Value:', this.companyForm.value);
 
     if (this.companyForm.invalid) {
-      console.log('Form is invalid');
+      logger.log('Form is invalid');
       this.companyForm.markAllAsTouched();
       return;
     }
@@ -86,17 +87,17 @@ export class RadxcreatecompanyComponent {
       formData.append('company_logo', this.selectedFile, this.selectedFile.name);
     }
 
-    console.log('Company Data to Submit:', formData);
+    logger.log('Company Data to Submit:', formData);
 
     // Send the FormData
     this.companyService.addCompany(formData).subscribe(
       (response) => {
-        console.log('Company created successfully', response);
+        logger.log('Company created successfully', response);
         // Redirect after successful creation
         this.router.navigate(['/companies/company']);
       },
       (error) => {
-        console.error('Error creating company', error);
+        logger.error('Error creating company', error);
         // Handle error
       }
     );

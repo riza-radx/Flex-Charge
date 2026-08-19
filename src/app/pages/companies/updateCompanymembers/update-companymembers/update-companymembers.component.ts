@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { CompanyMemberService } from '../../../../services/companyMemberService/company-member.service';
@@ -164,12 +165,12 @@ export class UpdateCompanymembersComponent implements OnInit {
       newPassword: this.user.newPassword || ''  // Always include, even as empty string
     };
   
-    console.log('Submitting user update:', userUpdatePayload);
+    logger.log('Submitting user update:', userUpdatePayload);
   
     // Update user
     this.userService.updateUser(this.userId, userUpdatePayload).subscribe({
       next: (response: any) => {
-        console.log('User updated successfully:', response);
+        logger.log('User updated successfully:', response);
   
         // Prepare the company member payload
         const companyMemberPayload = {
@@ -182,27 +183,27 @@ export class UpdateCompanymembersComponent implements OnInit {
         this.companyMemberService.updateCompanyMember(this.companyMemberId, companyMemberPayload).subscribe({
           next: (memberResponse: any) => {
             if (memberResponse.success) {
-              console.log('Company member updated successfully:', memberResponse.message);
+              logger.log('Company member updated successfully:', memberResponse.message);
               this.successMessage = memberResponse.message;
               setTimeout(() => {
                 this.successMessage = '';
                 this.router.navigate([`/users/user/${this.userId}`]);
               }, 3000);
             } else {
-              console.error('Failed to update company member:', memberResponse.message);
+              logger.error('Failed to update company member:', memberResponse.message);
               this.errorMessage = memberResponse.message || 'Failed to update company member.';
               setTimeout(() => this.errorMessage = '', 5000);
             }
           },
           error: (error) => {
-            console.error('Error updating company member:', error);
+            logger.error('Error updating company member:', error);
             this.errorMessage = 'An error occurred while updating the company member.';
             setTimeout(() => this.errorMessage = '', 5000);
           }
         });
       },
       error: (error) => {
-        console.error('Error updating user:', error);
+        logger.error('Error updating user:', error);
         this.errorMessage = 'An error occurred while updating the user.';
         setTimeout(() => this.errorMessage = '', 5000);
       }
@@ -214,13 +215,13 @@ export class UpdateCompanymembersComponent implements OnInit {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
-        console.log("Fetched companyId:", companyId);
+        logger.log("Fetched rates:", data.rate);
+        logger.log("Fetched companyId:", companyId);
         this.rates = data.rate;
         this.rateName = data.rate.rate_name;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -229,7 +230,7 @@ export class UpdateCompanymembersComponent implements OnInit {
   getCompanyMemberById(userId: string): void {
     this.companyMemberService.getCompanyMemberByUser(userId).subscribe(
       (response: any) => {
-        console.log(response.company_member[0])
+        logger.log(response.company_member[0])
         const companyMember = response.company_member[0]; // Get the first element of the array
         const userData = companyMember?.User;
         this.companyId = companyMember?.company_id;
@@ -256,11 +257,11 @@ export class UpdateCompanymembersComponent implements OnInit {
             confirmPassword: ''    // Add confirmPassword as empty field
           };
         } else {
-          console.error('No user data found');
+          logger.error('No user data found');
         }
       },
       (error) => {
-        console.error('Error fetching user group member:', error);
+        logger.error('Error fetching user group member:', error);
       }
     );
   }

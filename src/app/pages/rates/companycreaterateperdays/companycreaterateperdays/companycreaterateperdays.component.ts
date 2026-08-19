@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RatePerDaysService } from "../../../../services/ratePerDaysService/rate-per-days.service";
@@ -49,10 +50,10 @@ export class CompanycreaterateperdaysComponent {
     this.userService.getAllUsers().subscribe(
       (data: any) => {
         this.users = data.users;
-        console.log('users:', this.users);
+        logger.log('users:', this.users);
       },
       error => {
-        console.error('Error fetching users:', error);
+        logger.error('Error fetching users:', error);
       }
     );
   }
@@ -60,10 +61,10 @@ export class CompanycreaterateperdaysComponent {
     this.userGroupService.getAllUserGroups().subscribe(
       (data: any) => {
         this.userGroups = data.userGroup;
-        console.log('userGroups:', this.userGroups);
+        logger.log('userGroups:', this.userGroups);
       },
       error => {
-        console.error('Error fetching userGroups:', error);
+        logger.error('Error fetching userGroups:', error);
       }
     );
   }
@@ -83,7 +84,7 @@ export class CompanycreaterateperdaysComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error creating rate per days:', error);
+        logger.error('Error creating rate per days:', error);
       }
     );
   }

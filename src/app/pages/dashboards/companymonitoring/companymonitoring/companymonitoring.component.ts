@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargingService } from "../../../../services/chargingService/charging.service";
@@ -68,10 +69,10 @@ fetchAllData(): void {
         this.fetchCardSerial();
         this.fetchChargingTimes();
       } else {
-        console.error('Error fetching charging records:', response.message);
+        logger.error('Error fetching charging records:', response.message);
       }
     },
-    error: (err) => console.error('Error fetching charging records:', err)
+    error: (err) => logger.error('Error fetching charging records:', err)
   });
 }
 
@@ -89,7 +90,7 @@ fetchCardSerial(): void {
         // Fallback silent — mos dërgo 403/404 te error handler global.
         this.cardSerial[index] = '';
         if (err?.status !== 403 && err?.status !== 404) {
-          console.error('Card serial fetch failed:', err?.status);
+          logger.error('Card serial fetch failed:', err?.status);
         }
       }
     });
@@ -104,10 +105,10 @@ fetchChargingTimes(): void {
           started_time: new Date(charging.strted_time)
         }));
       } else {
-        console.error('Error fetching charging times:', data.message);
+        logger.error('Error fetching charging times:', data.message);
       }
     },
-    error: (err) => console.error('Error fetching charging times:', err)
+    error: (err) => logger.error('Error fetching charging times:', err)
   });
 }
 
@@ -142,10 +143,10 @@ fetchAllChargingDetails(): void {
         this.chargingDetails = response.chargings;
         // console.log('this.chargingDetails', this.chargingDetails);
       } else {
-        console.error('Error fetching charging details:', response.message);
+        logger.error('Error fetching charging details:', response.message);
       }
     },
-    error: (err) => console.error('Error fetching charging details:', err)
+    error: (err) => logger.error('Error fetching charging details:', err)
   });
 }
 

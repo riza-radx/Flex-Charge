@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PartnerService } from "../../../../services/partnerService/partner.service";
 import { Router } from '@angular/router';
@@ -76,7 +77,7 @@ export class RadxcreatepartnerComponent implements OnInit {
       this.selectedCountryCode = this.countries[0].prefix;
     });
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -122,15 +123,15 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getCompanies();
@@ -141,7 +142,7 @@ case 'COMPANY_USER':
     if (file && file.size < 5 * 1024 * 1024 && ['image/png', 'image/jpeg'].includes(file.type)) {
       this.selectedFile = file;
     } else {
-      console.error('Invalid file type or size exceeds the limit.');
+      logger.error('Invalid file type or size exceeds the limit.');
       this.selectedFile = null; // Reset if invalid
     }
   }
@@ -151,10 +152,10 @@ case 'COMPANY_USER':
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
         this.companies = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -162,10 +163,10 @@ case 'COMPANY_USER':
     this.companyService.getCompany(companyId).subscribe(
       (data: any) => {
         this.company = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -239,11 +240,11 @@ case 'COMPANY_USER':
       // Call the service to create the partner
       this.partnerService.createPartner(formData).subscribe(
         response => {
-          console.log('Partner created successfully!', response);
+          logger.log('Partner created successfully!', response);
           this.router.navigate(['/partners/partner']); // Navigate on success
         },
         error => {
-          console.error('Error creating partner:', error);
+          logger.error('Error creating partner:', error);
           this.errorMessage = error.message || 'An error occurred while creating the partner.';
           setTimeout(() => this.errorMessage = '', 5000); // Clear error message after 5 seconds
         }
@@ -253,7 +254,7 @@ case 'COMPANY_USER':
   
   isFormValid(): boolean {
     if (!this.partner.city || !this.partner.email || !this.partner.nipt || !this.partner.partnerName || !this.partner.phoneNumber || !this.partner.address ) {
-      console.error('Some required fields are missing.');
+      logger.error('Some required fields are missing.');
       return false;
     }
 
@@ -268,7 +269,7 @@ case 'COMPANY_USER':
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format regex
     if (!emailRegex.test(this.partner.email)) {
       this.emailError = 'Invalid email format.'; // Set error message
-      console.error('Invalid email format.');
+      logger.error('Invalid email format.');
       return false;
     }
 

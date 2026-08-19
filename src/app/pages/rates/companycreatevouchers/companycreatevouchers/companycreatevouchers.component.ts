@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { VoucherService } from "../../../../services/voucherService/voucher.service";
 import { Router } from '@angular/router';
@@ -30,11 +31,11 @@ export class CompanycreatevouchersComponent {
   onSubmit() {
     this.voucherService.addVoucher(this.voucher).subscribe(
       response => {
-        console.log('Voucher created successfully:', response);
+        logger.log('Voucher created successfully:', response);
         this.router.navigate(['/vouchers']); // Navigate to the vouchers list or a success page
       },
       error => {
-        console.error('Error creating voucher:', error);
+        logger.error('Error creating voucher:', error);
       }
     );
   }

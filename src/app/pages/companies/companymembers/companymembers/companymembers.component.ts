@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { CompanyMemberService } from '../../../../services/companyMemberService/company-member.service';
@@ -60,29 +61,29 @@ export class CompanymembersComponent {
     }
     this.getCompanyDetails(this.companyId);
     this.loadRatesbyCompany(this.companyId);
-    console.log("company id", this.companyId);
-    console.log("this.user.company", this.user.company);
+    logger.log("company id", this.companyId);
+    logger.log("this.user.company", this.user.company);
   }
 
   getCompanyDetails(companyId: string) {
     this.companyService.getCompany(companyId).subscribe(
       (company) => {
-        console.log('Company:', company);
+        logger.log('Company:', company);
         this.companyName = company.company.company_name;
       },
       (error) => {
-        console.error('Error fetching company details', error);
+        logger.error('Error fetching company details', error);
       }
     );
   }
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
-        console.log("Fetched companies:", data.company);
+        logger.log("Fetched companies:", data.company);
         this.companies = data.company.filter(company => company.is_whitelabel === 'false');
       },
       (error) => {
-        console.log("Error fetching companies:", error);
+        logger.log("Error fetching companies:", error);
       }
     );
   }
@@ -90,11 +91,11 @@ export class CompanymembersComponent {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -107,11 +108,11 @@ export class CompanymembersComponent {
       return;
     }
     this.user.created_date = new Date().toISOString();
-    console.log("this.user", this.user)
+    logger.log("this.user", this.user)
 
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
         const userId = response.tokenUser?.userId;
 
         if (!userId) {
@@ -129,11 +130,11 @@ export class CompanymembersComponent {
 
         this.companyMemberService.addCompanyMember(companyMember).subscribe(
           (memberResponse) => {
-            console.log('Company member created successfully', memberResponse);
+            logger.log('Company member created successfully', memberResponse);
             this.router.navigate([`/users/user/${userId}`]);
           },
           (error) => {
-            console.error('Error creating company member', error);
+            logger.error('Error creating company member', error);
 
             // Custom error messages based on possible cases
             if (error.status === 400) {
@@ -147,7 +148,7 @@ export class CompanymembersComponent {
         );
       },
       (error) => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
 
         // Custom frontend error messages (ignoring backend response)
         if (error.status === 400) {

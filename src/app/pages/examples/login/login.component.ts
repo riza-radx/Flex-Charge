@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from "@angular/core";
 import { Router } from '@angular/router'; // Import Router for navigation
 import { AuthService } from "../../../services/authService/auth.service";
@@ -87,13 +88,13 @@ export class LoginComponent implements OnInit {
   // }
 
   public resolved(captchaResponse: string): void {
-      console.log(`Resolved captcha with response: ${captchaResponse}`);
+      logger.log(`Resolved captcha with response: ${captchaResponse}`);
       this.isValidRecaptcha = !!captchaResponse; // Properly update the flag
     }
     
   
     public onError(errorDetails: RecaptchaErrorParameters): void {
-      console.log(`reCAPTCHA error encountered; details:`, errorDetails);
+      logger.log(`reCAPTCHA error encountered; details:`, errorDetails);
     }
 
     
@@ -163,7 +164,7 @@ export class LoginComponent implements OnInit {
   
     this.authService.userLogin(userData).subscribe(
       (response: any) => {
-        console.log(response);
+        logger.log(response);
   
         if (response.success && response.login && response.login.token) {
           this.isPhoneVerified = response.login.correctUser.isPhoneVerified;
@@ -181,12 +182,12 @@ export class LoginComponent implements OnInit {
             // Fetch CUGP and navigate
             this.authService.getCUGPBasedOnUserRole().subscribe(
               (cugpResponse: any) => {
-                console.log('CUGP Response:', cugpResponse);
+                logger.log('CUGP Response:', cugpResponse);
                 localStorage.setItem('cugpCred', JSON.stringify(cugpResponse));
                 this.router.navigate(['/dashboard']);
               },
               (cugpError) => {
-                console.error('CUGP error:', cugpError);
+                logger.error('CUGP error:', cugpError);
                 this.errorMessage = 'Error fetching CUGP data. Please try again.';
               }
             );
@@ -201,7 +202,7 @@ export class LoginComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = 'Login failed. Please try again.';
-        console.error('Login error', error);
+        logger.error('Login error', error);
       }
     );
   }
@@ -210,11 +211,11 @@ export class LoginComponent implements OnInit {
   getUserDetails(id: number): void {
     this.userService.getUserById(id).subscribe({
       next: (response) => {
-        console.log("response.user.isPhoneVerified",response.user.isPhoneVerified)
+        logger.log("response.user.isPhoneVerified",response.user.isPhoneVerified)
         this.isPhoneVerified = response.user.isPhoneVerified;
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }
@@ -232,16 +233,16 @@ export class LoginComponent implements OnInit {
           // Sending verification code to backend
           this.authService.userVerifyPhone(userId, body).subscribe(
             (response) => {
-              console.log('Verification successful', response);
+              logger.log('Verification successful', response);
               // Handle success (e.g., navigate or show a success message)
             },
             (error) => {
               this.errorMessage = error.message || 'Verification failed. Please try again.';
-              console.log('Verification error', error);
+              logger.log('Verification error', error);
             }
           );
         } else {
-          console.log('Phone verification canceled or no verification code provided');
+          logger.log('Phone verification canceled or no verification code provided');
         }
       });
     }

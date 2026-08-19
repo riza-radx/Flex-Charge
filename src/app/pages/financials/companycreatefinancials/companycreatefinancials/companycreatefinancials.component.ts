@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargingHistoryService } from "../../../../services/chargingHistoryService/charging-history.service";
@@ -122,7 +123,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
     this.report.companyId = localStorage.getItem('companyId') || '';
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     const today = new Date();
     today.setDate(today.getDate() - 1);
     this.maxDate = today.toISOString().split('T')[0];
@@ -130,13 +131,13 @@ export class CompanycreatefinancialsComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       this.company_id = parsedCugpCred.company_id;
-      console.log("this.report.companyId ", this.company_id);
+      logger.log("this.report.companyId ", this.company_id);
       this.partner_id = parsedCugpCred.partner_id;
-      console.log('partner_id:', this.partner_id);
+      logger.log('partner_id:', this.partner_id);
       this.usergroup_id = parsedCugpCred.usergr_id;
-      console.log('usergroup_id:', this.usergroup_id);
+      logger.log('usergroup_id:', this.usergroup_id);
       const user_id = parsedCugpCred.user_id || parsedCugpCred.id;
-      console.log('user_id:', user_id);
+      logger.log('user_id:', user_id);
       if (this.userRole) {
         switch (this.userRole) {
           case 'RadX_Admin':
@@ -288,16 +289,16 @@ export class CompanycreatefinancialsComponent implements OnInit {
           //     break;
 
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
 
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.filterReportTypes();
@@ -321,14 +322,14 @@ export class CompanycreatefinancialsComponent implements OnInit {
         (data: any) => {
           this.company = data.company;
           this.report.companyId = this.company_id;
-          console.log('Loaded Company:', this.company);
+          logger.log('Loaded Company:', this.company);
         },
         error => {
-          console.error('Error fetching the company:', error);
+          logger.error('Error fetching the company:', error);
         }
       );
     } else {
-      console.error('Company ID is not provided.');
+      logger.error('Company ID is not provided.');
     }
   }
 
@@ -345,15 +346,15 @@ export class CompanycreatefinancialsComponent implements OnInit {
     } else if (this.isUser || this.isUserGroupUser || this.isCompanyUser || this.isCompanyTechnicalOperator || this.isCompanyMaintenanceSpecialist || this.isCompanyCallCenter) {
       this.reportTypes = ['User_Report'];
     }
-    console.log(this.reportTypes)
+    logger.log(this.reportTypes)
   }
 
 
   loadUsers() {
     this.userService.getAllUsers().subscribe(
-      (data: any) => { this.users = data.users, console.log(data) },
+      (data: any) => { this.users = data.users, logger.log(data) },
       (error: any) => {
-        console.error('Error loading users:', error);
+        logger.error('Error loading users:', error);
         this.reportErrorMessage = 'Failed to load users.';
       }
     );
@@ -365,11 +366,11 @@ export class CompanycreatefinancialsComponent implements OnInit {
         if (data && data.user && data.user.userId) {
           this.getCurrentUserById(data.user.userId);
         } else {
-          console.error('Invalid user data:', data);
+          logger.error('Invalid user data:', data);
         }
       },
       error => {
-        console.error('Error fetching current user:', error);
+        logger.error('Error fetching current user:', error);
       }
     );
   }
@@ -380,13 +381,13 @@ export class CompanycreatefinancialsComponent implements OnInit {
         if (data && data.user) {
           this.users = [{ id: data.user.id, name: data.user.name }];
         } else {
-          console.error('Invalid user details:', data);
+          logger.error('Invalid user details:', data);
           this.users = [];
         }
-        console.log(this.users);
+        logger.log(this.users);
       },
       error => {
-        console.error('Error fetching user by ID:', error);
+        logger.error('Error fetching user by ID:', error);
       }
     );
   }
@@ -396,31 +397,31 @@ export class CompanycreatefinancialsComponent implements OnInit {
   loadUserGroups() {
     this.userGroupService.getAllUserGroups().subscribe(
       (data: any) => {
-        console.log('Fetching user groups', data.userGroup);
-        this.userGroups = data.userGroup, console.log("this.userGroups", this.userGroups)
+        logger.log('Fetching user groups', data.userGroup);
+        this.userGroups = data.userGroup, logger.log("this.userGroups", this.userGroups)
       },
 
-      error => console.error('Error loading user groups:', error)
+      error => logger.error('Error loading user groups:', error)
     );
   }
 
   loadUserGroupById(userGroupId: number) {
     this.userGroupService.getUserGroup(userGroupId).subscribe(
       (data: any) => {
-        console.log('Fetching user groups', data.userGroup);
+        logger.log('Fetching user groups', data.userGroup);
         this.userGroups = [data.userGroup];
-        console.log("this.userGroups", this.userGroups)
+        logger.log("this.userGroups", this.userGroups)
       },
 
-      error => console.error('Error loading user groups:', error)
+      error => logger.error('Error loading user groups:', error)
     );
   }
 
   // Fetch partners
   loadPartners() {
     this.partnerService.getAllPartners().subscribe(
-      (data: any) => { this.partners = data.partners, console.log(data) },
-      error => console.error('Error loading partners:', error)
+      (data: any) => { this.partners = data.partners, logger.log(data) },
+      error => logger.error('Error loading partners:', error)
     );
   }
   loadUsersByCompany(companyId: number) {
@@ -433,7 +434,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
       },
       (error) => {
         this.reportErrorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -446,7 +447,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
         // console.log('companyName:', this.companyName);
       },
       error: (error) => {
-        console.error('Error fetching company details:', error);
+        logger.error('Error fetching company details:', error);
       }
     });
   }
@@ -454,16 +455,16 @@ export class CompanycreatefinancialsComponent implements OnInit {
   // Fetch user groups
   loadUserGroupsByCompany(companyId: number) {
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
-      (data: any) => { this.userGroups = data.userGroup, console.log(data) },
-      error => console.error('Error loading user groups:', error)
+      (data: any) => { this.userGroups = data.userGroup, logger.log(data) },
+      error => logger.error('Error loading user groups:', error)
     );
   }
 
   // Fetch partners
   loadPartnersByCompany(companyId: number) {
     this.partnerService.getPartnerByCompany(companyId).subscribe(
-      (data: any) => { this.partners = data.partner, console.log(data) },
-      error => console.error('Error loading partners:', error)
+      (data: any) => { this.partners = data.partner, logger.log(data) },
+      error => logger.error('Error loading partners:', error)
     );
   }
 
@@ -473,7 +474,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
         this.partners = data.partner ? [data.partner] : []; // Convert object to array
         // console.log(this.partners); // Debugging: Check if it's correctly set
       },
-      error => console.error('Error loading partners:', error)
+      error => logger.error('Error loading partners:', error)
     );
   }
   getUserGroupDetail(usergroup_id: number) {
@@ -482,7 +483,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
         this.userGroups = data.userGroup ? [data.userGroup] : []; // Convert object to array
         // console.log(this.userGroups); // Debugging: Check if it's correctly set
       },
-      error => console.error('Error loading userGroups:', error)
+      error => logger.error('Error loading userGroups:', error)
     );
   }
 
@@ -502,7 +503,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
                 name: user.name
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return null; // In case of error, return null
             }
           }));
@@ -510,7 +511,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
           // Remove any null values (failed fetches)
           this.users = this.users.filter(user => user !== null);
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
@@ -518,7 +519,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
       },
       (error) => {
         this.reportErrorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -539,7 +540,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
                 name: user.name
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return null; // In case of error, return null
             }
           }));
@@ -548,7 +549,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
           this.users = this.users.filter(user => user !== null);
 
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
@@ -556,7 +557,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
       },
       (error) => {
         this.reportErrorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -609,7 +610,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
         this.router.navigate(['/reports/financial']);
       },
       error: (error) => {
-        console.error('Error creating report:', error);
+        logger.error('Error creating report:', error);
         this.reportErrorMessage = this.handleRechargeError(error);
       }
     });
@@ -648,7 +649,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -664,13 +665,13 @@ export class CompanycreatefinancialsComponent implements OnInit {
           this.cards = data.card;
           // console.log('RFID Cards:', this.cards);
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
           //  this.availableCards = []; // Ensure the table is empty if data format is incorrect
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching card data:', error);
+        logger.error('Error fetching card data:', error);
         //   this.availableCards = []; // Ensure the table is empty on error
       }
     );
@@ -684,7 +685,7 @@ export class CompanycreatefinancialsComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching card data:', error);
+        logger.error('Error fetching card data:', error);
       }
     );
   }

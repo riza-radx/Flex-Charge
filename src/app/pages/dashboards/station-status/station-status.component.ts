@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 // import { ChargerStatusService } from "../../../services/chargerStatusService/charger-status.service";
@@ -84,7 +85,7 @@ export class StationStatusComponent implements OnInit {
   ngOnInit() {
     // Retrieve user role from localStorage
     this.userRole = localStorage.getItem('userRole');
-    console.log(localStorage.getItem('userRole'))
+    logger.log(localStorage.getItem('userRole'))
 
     if (this.userRole) {
       switch (this.userRole) {
@@ -138,7 +139,7 @@ export class StationStatusComponent implements OnInit {
           this.isUser = true;
           break;
         default:
-          console.error('Unknown user role:', this.userRole);
+          logger.error('Unknown user role:', this.userRole);
           this.router.navigate(['/login']); // Redirect to login or error page
       }
     }

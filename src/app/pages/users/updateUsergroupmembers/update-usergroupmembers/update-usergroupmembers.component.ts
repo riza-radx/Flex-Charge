@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { UserGroupMembersService } from '../../../../services/userGroupMembersService/user-group-members.service';
@@ -63,7 +64,7 @@ export class UpdateUsergroupmembersComponent implements OnInit {
       this.companyId = parsedCugpCred.company_id;
       this.loadRatesbyCompany(this.companyId);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.route.paramMap.subscribe(params => {
@@ -154,7 +155,7 @@ export class UpdateUsergroupmembersComponent implements OnInit {
     // Proceed with updating the user data
     this.userService.updateUser(this.userId, userUpdatePayload).subscribe({
       next: (response: any) => {
-        console.log('User updated successfully:', response);
+        logger.log('User updated successfully:', response);
 
         // If user group data needs to be updated
         const userGroupMember = {
@@ -166,17 +167,17 @@ export class UpdateUsergroupmembersComponent implements OnInit {
         // Update the user group member role/type
         this.userGroupMemberService.updateUserGroupMember(this.userGroupMemberId, userGroupMember).subscribe({
           next: (memberResponse) => {
-            console.log('User Group member type updated successfully:', memberResponse);
+            logger.log('User Group member type updated successfully:', memberResponse);
             this.router.navigate([`/users/user/${this.userId}`]);
           },
           error: (error) => {
-            console.error('Error updating user group member type:', error);
+            logger.error('Error updating user group member type:', error);
             this.errorMessage = this.handleError(error);
           }
         });
       },
       error: (error) => {
-        console.error('Error updating user:', error);
+        logger.error('Error updating user:', error);
         this.errorMessage = this.handleError(error);
       }
     });
@@ -216,11 +217,11 @@ export class UpdateUsergroupmembersComponent implements OnInit {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -254,11 +255,11 @@ export class UpdateUsergroupmembersComponent implements OnInit {
             dimension_value : userData.dimension_value
           };
         } else {
-          console.error('No user data found');
+          logger.error('No user data found');
         }
       },
       error => {
-        console.error('Error fetching user group member:', error);
+        logger.error('Error fetching user group member:', error);
       }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RatePerDaysService } from "../../../services/ratePerDaysService/rate-per-days.service";
@@ -47,7 +48,7 @@ export class UpdaterateperdaysComponent {
     // Get rateId from the URL
     this.route.paramMap.subscribe(params => {
       this.rateId = params.get('id');
-      console.log(this.rateId);
+      logger.log(this.rateId);
       if (this.rateId) {
         this.ratePerDays.rateId = this.rateId;
       }
@@ -78,7 +79,7 @@ export class UpdaterateperdaysComponent {
       this.errorMessage = 'Rate ID is missing. Please provide a valid Rate ID.';
       return;  // Prevent submission if Rate ID is missing
     }
-    console.log("ratePerDays", this.ratePerDays)
+    logger.log("ratePerDays", this.ratePerDays)
     // Submit the form data to the service to update the rate per day
     this.ratePerDaysService.updateRatePerDay(this.rateId, this.ratePerDays).subscribe(
       (response) => {
@@ -93,7 +94,7 @@ export class UpdaterateperdaysComponent {
       (error) => {
         // Handle any error that occurs during the API request
         this.errorMessage = error.message || 'An unexpected error occurred. Please try again later.';
-        console.error('Error updating rate per day:', error);
+        logger.error('Error updating rate per day:', error);
       }
     );
   }
@@ -107,7 +108,7 @@ export class UpdaterateperdaysComponent {
   }
 
   getRatePerDays() {
-    console.log(this.rateId);
+    logger.log(this.rateId);
     this.ratePerDaysService.getRatePerDay(this.rateId).subscribe(
       (data) => {
         // this.users = data;
@@ -125,11 +126,11 @@ export class UpdaterateperdaysComponent {
           rateType: ratePerDayData.rateType
         };
 
-        console.log('Rate Per Days data:', this.ratePerDays);
+        logger.log('Rate Per Days data:', this.ratePerDays);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { VehicleService } from "../../../../services/vehicleService/vehicle.service";
 import { Router } from '@angular/router';
@@ -26,12 +27,12 @@ export class RadxcreatevehicleComponent {
   onSubmit() {
     this.vehicleService.addVehicle(this.vehicle).subscribe({
       next: (response) => {
-        console.log('Vehicle created successfully:', response);
+        logger.log('Vehicle created successfully:', response);
         // Navigate or show success message
         this.router.navigate(['/vehicles']);
       },
       error: (error) => {
-        console.error('Error creating vehicle:', error);
+        logger.error('Error creating vehicle:', error);
       }
     });
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConnectorService } from 'src/app/services/connectorService/connector.service';
@@ -22,8 +23,8 @@ export class RadxdeleteconnectorsComponent {
   ngOnInit(): void {
     this.connectorId = this.route.snapshot.params['id'];
     this.getConnectorDetails(this.connectorId);
-    console.log('Connector ID:', this.connectorId);
-    console.log('Connector Name:', this.connectorName);  // Debugging line
+    logger.log('Connector ID:', this.connectorId);
+    logger.log('Connector Name:', this.connectorName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -35,12 +36,12 @@ export class RadxdeleteconnectorsComponent {
   confirmDelete(): void {
     this.connectorService.deleteConnector(this.connectorId).subscribe({
       next: (response) => {
-        console.log('Connector deleted successfully:', response);
+        logger.log('Connector deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/assets/chargers', this.chargerId]);
       },
       error: (error) => {
-        console.error('Error deleting connector:', error);
+        logger.error('Error deleting connector:', error);
       }
     });
   }
@@ -50,11 +51,11 @@ export class RadxdeleteconnectorsComponent {
       next: (response) => {
         this.connectorName = response.connector.connector_name;
         this.chargerId = response.connector.charger_id;  // Assuming 'charge_id' exists in the response
-        console.log('response:', response);
-        console.log('connectorName:', this.connectorName);
+        logger.log('response:', response);
+        logger.log('connectorName:', this.connectorName);
       },
       error: (error) => {
-        console.error('Error fetching connector details:', error);
+        logger.error('Error fetching connector details:', error);
       }
     });
   }

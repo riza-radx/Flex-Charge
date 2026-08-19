@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerLocationService } from "../../../../services/chargerLocationService/charger-location.service";
@@ -30,19 +31,19 @@ export class RadxcreatelocationsComponent {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
   onSubmit() {
     this.locationService.createChargerLocation(this.location).subscribe({
       next: (response) => {
-        console.log('Location created successfully:', response);
+        logger.log('Location created successfully:', response);
         // Navigate or show success message
         this.router.navigate(['/locations']);
       },
       error: (error) => {
-        console.error('Error creating location:', error);
+        logger.error('Error creating location:', error);
       }
     });
   }

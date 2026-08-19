@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CardService } from "../../../../services/cardService/card.service";
@@ -63,10 +64,10 @@ export class UsergrouprfidcardComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const usergr_id = parsedCugpCred.usergr_id;
-      console.log('User Group ID:', usergr_id);
+      logger.log('User Group ID:', usergr_id);
       this.getRFIDCards(usergr_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getRFIDCards()
   }
@@ -78,12 +79,12 @@ export class UsergrouprfidcardComponent implements OnInit {
           this.rows = data.card;
           this.temp = [...this.rows];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { RateService } from "../../../../services/rateService/rate.service";
@@ -51,7 +52,7 @@ export class RadxcreaterateComponent implements OnInit {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -92,15 +93,15 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -111,10 +112,10 @@ case 'COMPANY_USER':
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
         this.companies = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -122,10 +123,10 @@ case 'COMPANY_USER':
     this.companyService.getCompany(companyId).subscribe(
       (data: any) => {
         this.company = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -146,7 +147,7 @@ case 'COMPANY_USER':
     this.rateService.addRate(this.rate).subscribe(
       (response) => {
         if (response) {
-          console.log('Rate created successfully', this.rate);
+          logger.log('Rate created successfully', this.rate);
           // Redirect to the rate details page
           this.router.navigate([`/rates/rate`]);
         } else {
@@ -157,7 +158,7 @@ case 'COMPANY_USER':
       (error) => {
         // If an error occurs during the API call
         this.errorMessage = error.message || 'An unexpected error occurred while creating the rate.';
-        console.error('Error creating rate:', error);
+        logger.error('Error creating rate:', error);
       }
     );
   }

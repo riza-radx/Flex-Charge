@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/userService/user.service';
@@ -126,10 +127,10 @@ export class UserGroupDetailsComponent {
   ) { }
 
   ngOnInit() {
-    console.log('ngOnInit user group details');
+    logger.log('ngOnInit user group details');
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
@@ -151,7 +152,7 @@ export class UserGroupDetailsComponent {
             break;
           case 'COMPANY_ADMIN':
             this.isCompanyAdmin = true;
-            console.log("this.isCompanyAdmin", this.isCompanyAdmin)
+            logger.log("this.isCompanyAdmin", this.isCompanyAdmin)
           case 'COMPANY_OPERATOR':
           case 'COMPANY_MODERATOR':
           case 'COMPANY_TECHNICAL_OPERATOR':
@@ -187,27 +188,27 @@ export class UserGroupDetailsComponent {
             this.isUser = true;
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
-    console.log(' this.id', this.id);
-    console.log('getUserGroup');
+    logger.log(' this.id', this.id);
+    logger.log('getUserGroup');
     this.getUserGroup();
-    console.log('getUserGroupMembers');
+    logger.log('getUserGroupMembers');
     this.getUserGroupMembers();
-    console.log('getCards');
+    logger.log('getCards');
     this.getCards();
-    console.log('getVehicles');
+    logger.log('getVehicles');
     this.getVehicles();
-    console.log('getVReports');
+    logger.log('getVReports');
     this.getVReports();
     this.getchargingHistory(this.id);
     this.getDocuments(this.id);
@@ -238,7 +239,7 @@ export class UserGroupDetailsComponent {
         this.router.navigate([`/users/user/${this.activeRow.user_id}`]);
       }
 
-      console.log('activeRow', this.activeRow);
+      logger.log('activeRow', this.activeRow);
     }
   }
 
@@ -247,7 +248,7 @@ export class UserGroupDetailsComponent {
     if (documentUrl) {
       window.open(documentUrl, '_blank');
     } else {
-      console.error('Document URL is not available');
+      logger.error('Document URL is not available');
     }
   }
 
@@ -333,18 +334,18 @@ export class UserGroupDetailsComponent {
   getchargingHistory(id: string) {
     this.chargingHistoryService.getChargingByUserGroup(id).subscribe(
       async (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.chargingHistory)) {
           this.chargingHistory = data.chargingHistory;
 
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -375,17 +376,17 @@ export class UserGroupDetailsComponent {
   getDocuments(id: string) {
     this.documentService.getDocumentByUserGroup(id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.documents)) {
           this.documents = data.documents;
           this.tempDocuments = [...this.documents];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -393,7 +394,7 @@ export class UserGroupDetailsComponent {
   getVReports() {
     this.reportService.getAllReportByUserGroup(this.id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.reports)) {
           // If data.report is an array
           this.reports = data.reports;
@@ -401,31 +402,31 @@ export class UserGroupDetailsComponent {
           // If data.report is a single object
           this.reports = [data.reports];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.reports = []; // Set to an empty array if data is not valid
         }
         this.tempReports = [...this.reports];
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
   getVehicles() {
     this.vehicleService.getVehicleByUserGroup(this.id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.vehicles)) {
           this.vehicles = data.vehicles;
           this.tempVehicles = [...this.vehicles];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -433,21 +434,21 @@ export class UserGroupDetailsComponent {
   getCards() {
     this.cardService.getCardByUserGroup(this.id).subscribe(
       (data: any) => {
-        console.log('API response:', data);
+        logger.log('API response:', data);
 
         // Check if the response contains the 'card' array
         if (data && data.success && Array.isArray(data.card)) {
           this.rfidCards = data.card;
           this.tempRfidCards = [...this.rfidCards]; // Create a shallow copy for the table
-          console.log('RFID Cards:', this.tempRfidCards);
+          logger.log('RFID Cards:', this.tempRfidCards);
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
           this.tempRfidCards = []; // Ensure the table is empty if data format is incorrect
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching card data:', error);
+        logger.error('Error fetching card data:', error);
         this.tempRfidCards = []; // Ensure the table is empty on error
       }
     );
@@ -456,51 +457,51 @@ export class UserGroupDetailsComponent {
   getCard() {
     this.cardService.getCardByUserGroup(this.id).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         if (Array.isArray(data.card)) {
           this.rfidCards = data.card;
           this.rfidCards.forEach((card) => {
-            console.log('Card Id', card.card_id);
+            logger.log('Card Id', card.card_id);
           });
         } else if (data.card) {
           this.rfidCards = [data.card];
           this.tempRfidCards = [...this.rfidCards];
-          console.log('Single Card Id', data.card.card_id);
+          logger.log('Single Card Id', data.card.card_id);
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching card data:', error);
+        logger.log('Error fetching card data:', error);
       }
     );
   }
 
   getUserGroup() {
-    console.log("getUserGroup method called")
+    logger.log("getUserGroup method called")
     this.userGroupService.getUserGroup(this.id).subscribe(
       (data) => {
-        console.log(data.userGroup);
+        logger.log(data.userGroup);
         this.userGroups = data.userGroup;
-        console.log("data", data);
+        logger.log("data", data);
         // Fetch the company details using company_id from userGroup data
         if (this.userGroups.company_id) {
           this.companyService.getCompany(this.userGroups.company_id).subscribe(
             (companyData) => {
-              console.log("Company data:", companyData);
+              logger.log("Company data:", companyData);
               this.userGroups.company_name = companyData.company.company_name;
-              console.log(" this.userGroups.company_name:", this.userGroups.company_name);
+              logger.log(" this.userGroups.company_name:", this.userGroups.company_name);
             },
             (error) => {
-              console.log("Error fetching company data:", error);
+              logger.log("Error fetching company data:", error);
             }
           );
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -514,14 +515,14 @@ export class UserGroupDetailsComponent {
             // Combine member and user into a single object
             return { ...member, user };
           }));
-          console.log('User Group Members with Users:', this.tempUserGroupMembers);
+          logger.log('User Group Members with Users:', this.tempUserGroupMembers);
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching user group members:', error);
+        logger.log('Error fetching user group members:', error);
       }
     );
   }
@@ -529,20 +530,20 @@ export class UserGroupDetailsComponent {
   getRecharges() {
     this.rechargeService.getRechargesByUserGroup(this.id).subscribe(
       (response) => {
-        console.log('API response:', response); // Log the entire response object
+        logger.log('API response:', response); // Log the entire response object
 
         if (response.success && Array.isArray(response.recharges)) {
           this.recharges = response.recharges;
           this.tempRecharges = [...this.recharges];
-          console.log("Fetched recharges:", this.tempRecharges); // Log the actual recharges
+          logger.log("Fetched recharges:", this.tempRecharges); // Log the actual recharges
         } else {
           this.recharges = [];
-          console.log("No recharges available or response format is incorrect.");
+          logger.log("No recharges available or response format is incorrect.");
         }
       },
       (error) => {
         this.errorMessage = error.message || 'Failed to load recharges';
-        console.log('Error:', error); // Log any errors that occur
+        logger.log('Error:', error); // Log any errors that occur
       }
     );
   }
@@ -555,12 +556,12 @@ export class UserGroupDetailsComponent {
           this.tempTransactions = [...this.transactions]; // Kopje për filter
         } else {
           this.transactions = [];
-          console.log("No transactions available or response format is incorrect.");
+          logger.log("No transactions available or response format is incorrect.");
         }
       },
       (error) => {
         this.errorMessage = error.message || 'Failed to load transactions';
-        console.log('Error:', error);
+        logger.log('Error:', error);
       }
     );
   }

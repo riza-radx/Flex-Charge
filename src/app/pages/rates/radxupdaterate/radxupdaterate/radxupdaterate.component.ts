@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -61,7 +62,7 @@ export class RadxupdaterateComponent implements OnInit {
     this.getRateById(this.rateId);
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -102,33 +103,33 @@ case 'COMPANY_USER':
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
     // this.loadCompanies();
-    console.log('this.rateId:', this.rateId);
+    logger.log('this.rateId:', this.rateId);
     // throw new Error('Method not implemented.');
   }
 
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
   loadCompaniesById(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => this.companies = [response.company],
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
   // get ratePerDays(): FormArray {
@@ -170,25 +171,25 @@ case 'COMPANY_USER':
   
     // Prepare the rate data for submission
     const rateData = this.rateForm.value;
-    console.log('Submitting rate data:', rateData);
+    logger.log('Submitting rate data:', rateData);
   
     // Attempt to update the rate by calling the service
     this.rateService.updateRate(this.rateId, rateData).subscribe({
       next: (response) => {
         if (response) {
-          console.log('Rate updated successfully:', response);
+          logger.log('Rate updated successfully:', response);
           // Redirect to the rate details page with the updated rate ID
           this.router.navigate([`/rates/rate/${this.rateId}`]);
         } else {
           // If the response is empty or unexpected
           this.errorMessage = 'Failed to update rate. No response from server.';
-          console.error('Failed to update rate:', response);
+          logger.error('Failed to update rate:', response);
         }
       },
       error: (error) => {
         // If an error occurs during the API call
         this.errorMessage = error.message || 'An unexpected error occurred while updating the rate.';
-        console.error('Error updating rate:', error);
+        logger.error('Error updating rate:', error);
       }
     });
   }
@@ -198,8 +199,8 @@ case 'COMPANY_USER':
     try {
       // Fetch the rate details
       const response = await this.rateService.getRate(id).toPromise();
-      console.log('ID:', id);
-      console.log('API response getRateById:', response);
+      logger.log('ID:', id);
+      logger.log('API response getRateById:', response);
 
       const rate = response.rate;
 
@@ -237,7 +238,7 @@ case 'COMPANY_USER':
       //   this.ratePerDays.push(rateDayGroup);
       // });
     } catch (error) {
-      console.error('Error fetching rate or rate days:', error);
+      logger.error('Error fetching rate or rate days:', error);
     }
   }
 

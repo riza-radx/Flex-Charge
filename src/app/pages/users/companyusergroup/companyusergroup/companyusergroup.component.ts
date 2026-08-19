@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserGroupService } from "../../../../services/userGroupService/user-group.service";
@@ -65,10 +66,10 @@ export class CompanyusergroupComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const company_id = parsedCugpCred.company_id;
-      console.log('User Group ID:', company_id);
+      logger.log('User Group ID:', company_id);
       this.getUserGroups(company_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getUserGroups()
   }
@@ -83,14 +84,14 @@ export class CompanyusergroupComponent implements OnInit {
           this.rows = data.userGroup;  // Access the userGroup array from the response
           this.temp = [...this.rows];
         } else {
-          console.error('Unexpected data format:', data);
+          logger.error('Unexpected data format:', data);
           this.rows = [];
           this.temp = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log('Error fetching user groups:', error);
+        logger.log('Error fetching user groups:', error);
       }
     );
   }

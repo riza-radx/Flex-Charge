@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerService } from 'src/app/services/chargerService/charger.service';
@@ -172,7 +173,7 @@ export class CompanyupdatechargersComponent implements OnInit {
     this.chargerId = this.route.snapshot.params['id'];
     this.getChargerById(this.chargerId);
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     // 🆕 Auto-populate Start me datetime tani kur user checkon toggle-in.
     // Nese user-i e ndryshon Start-in manualisht pas checkimit, ndryshimi mbetet.
@@ -255,33 +256,33 @@ export class CompanyupdatechargersComponent implements OnInit {
           // // this.getCurrencies(company_id);
           // break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getChargerLocations();
     //   this.getPartners();
     //   this.getCompanies();
-    console.log('Charger Form:', this.chargerForm);
-    console.log('Connectors FormArray:', this.connectors?.controls || []);
+    logger.log('Charger Form:', this.chargerForm);
+    logger.log('Connectors FormArray:', this.connectors?.controls || []);
   }
 
   getChargerLocations() {
     this.chargerLocationService.getAllChargerLocations().subscribe(
       (data) => {
-        console.log(data.location);
+        logger.log(data.location);
         this.chargerLocations = data.location;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -289,12 +290,12 @@ export class CompanyupdatechargersComponent implements OnInit {
   getCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
-        console.log(data.company);
+        logger.log(data.company);
         this.companies = data.company;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -302,12 +303,12 @@ export class CompanyupdatechargersComponent implements OnInit {
   getPartners() {
     this.partnerService.getAllPartners().subscribe(
       (data) => {
-        console.log(data.partners);
+        logger.log(data.partners);
         this.partners = data.partners;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -316,12 +317,12 @@ export class CompanyupdatechargersComponent implements OnInit {
   getChargerLocationsByCompany(companyId: number) {
     this.chargerLocationService.getChargerLocationByCompany(companyId).subscribe(
       (data) => {
-        console.log(data.location);
+        logger.log(data.location);
         this.chargerLocations = data.location;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -329,12 +330,12 @@ export class CompanyupdatechargersComponent implements OnInit {
   getChargerLocationsByPartner(partnerId: number) {
     this.chargerLocationService.getChargerLocationByPartner(partnerId).subscribe(
       (data) => {
-        console.log(data.location);
+        logger.log(data.location);
         this.chargerLocations = data.location;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -343,12 +344,12 @@ export class CompanyupdatechargersComponent implements OnInit {
   getCompaniesByCompany(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       (data) => {
-        console.log(data.company);
+        logger.log(data.company);
         this.companies = [data.company];
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -357,12 +358,12 @@ export class CompanyupdatechargersComponent implements OnInit {
   getPartnersByCompany(companyId: number) {
     this.partnerService.getPartnerByCompany(companyId).subscribe(
       (data) => {
-        console.log(data.partner);
+        logger.log(data.partner);
         this.partners = data.partner;
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -370,13 +371,13 @@ export class CompanyupdatechargersComponent implements OnInit {
   getPartnersByPartner(partnerId: number) {
     this.partnerService.getPartner(partnerId).subscribe(
       (data) => {
-        console.log(data.partner);
+        logger.log(data.partner);
         this.partners = [data.partner];
         this.getCompaniesByCompany(data.partner.company_id);
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -414,19 +415,19 @@ export class CompanyupdatechargersComponent implements OnInit {
     const connectorsArray = this.chargerForm.get('connectors') as FormArray;
 
     const currentConnectorsCount = connectorsArray.length;
-    console.log('Current number of connectors:', currentConnectorsCount);
+    logger.log('Current number of connectors:', currentConnectorsCount);
 
     // If the new number of connectors is greater than the current, add new connectors
     if (numberOfConnectors > currentConnectorsCount) {
-      console.log('Adding more connectors:', numberOfConnectors - currentConnectorsCount);
+      logger.log('Adding more connectors:', numberOfConnectors - currentConnectorsCount);
       for (let i = currentConnectorsCount; i < numberOfConnectors; i++) {
         connectorsArray.push(this.createConnectorGroup());
       }
     } else {
-      console.log('No connectors to add');
+      logger.log('No connectors to add');
     }
 
-    console.log('Connectors FormArray after updating:', connectorsArray.controls);
+    logger.log('Connectors FormArray after updating:', connectorsArray.controls);
   }
 
 
@@ -445,11 +446,11 @@ export class CompanyupdatechargersComponent implements OnInit {
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -503,7 +504,7 @@ export class CompanyupdatechargersComponent implements OnInit {
   getChargerById(id: number): void {
     this.chargerService.getCharger(id).subscribe({
       next: (response) => {
-        console.log('API response:', response); // Debugging line
+        logger.log('API response:', response); // Debugging line
         const charger = response.charger;
 
         // Ensure the response data matches the form structure
@@ -553,8 +554,8 @@ export class CompanyupdatechargersComponent implements OnInit {
         // Fetch connectors
         this.connectorService.getConnectorByCharger(id).subscribe({
           next: (connectorResponse) => {
-            console.log('Connector Response:', connectorResponse);
-            console.log('Fetched Connectors:', connectorResponse.connector); // Debugging line
+            logger.log('Connector Response:', connectorResponse);
+            logger.log('Fetched Connectors:', connectorResponse.connector); // Debugging line
 
             const connector = connectorResponse.connector || [];
             this.setConnectors(connector.length);
@@ -573,12 +574,12 @@ export class CompanyupdatechargersComponent implements OnInit {
             });
           },
           error: (error) => {
-            console.error('Error fetching connectors:', error);
+            logger.error('Error fetching connectors:', error);
           }
         });
       },
       error: (error) => {
-        console.error('Error fetching charger details:', error);
+        logger.error('Error fetching charger details:', error);
       }
     });
   }
@@ -644,12 +645,12 @@ export class CompanyupdatechargersComponent implements OnInit {
       delete chargerData.g_l_earnings;
     }
 
-    console.log('Submitting chargerData:', chargerData);
+    logger.log('Submitting chargerData:', chargerData);
 
     this.chargerService.updateCharger(this.chargerId, chargerData).subscribe({
       next: (response: any) => {
         if (!response?.success) {
-          console.error('Failed to update charger:', response?.message);
+          logger.error('Failed to update charger:', response?.message);
           this.errorMessage = response?.message || 'Failed to update charger. Please try again.';
           setTimeout(() => this.errorMessage = '', 5000);
           return;
@@ -671,14 +672,14 @@ export class CompanyupdatechargersComponent implements OnInit {
             }, 3000);
           },
           error: (err) => {
-            console.error('Toggle Switch error:', err);
+            logger.error('Toggle Switch error:', err);
             this.errorMessage = 'Charger u perditesua, por Toggle Switch s\'u ruajt.';
             setTimeout(() => this.errorMessage = '', 5000);
           }
         });
       },
       error: (error) => {
-        console.error('Error updating charger:', error);
+        logger.error('Error updating charger:', error);
         this.errorMessage = 'An error occurred while updating the charger. Please try again.';
         setTimeout(() => this.errorMessage = '', 5000);
       }

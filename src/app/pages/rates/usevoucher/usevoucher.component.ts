@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { VoucherService } from "../../../services/voucherService/voucher.service";
 import { Router } from '@angular/router';
@@ -40,11 +41,11 @@ export class UsevoucherComponent {
 
       this.voucherService.useVoucher(voucherData).subscribe(
         (response) => {
-          console.log('Currency used successfully:', response);
+          logger.log('Currency used successfully:', response);
           this.router.navigate(['/profile']);  // Adjust the navigation as needed
         },
         (error) => {
-          console.error('Error using vouchers:', error);
+          logger.error('Error using vouchers:', error);
         }
       );
     }

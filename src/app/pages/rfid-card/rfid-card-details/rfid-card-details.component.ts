@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardService } from '../../../services/cardService/card.service'
@@ -87,7 +88,7 @@ export class RfidCardDetailsComponent {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -144,15 +145,15 @@ export class RfidCardDetailsComponent {
             // this.getCurrencies(company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.id = this.route.snapshot.paramMap.get('id') as string;
@@ -233,21 +234,21 @@ export class RfidCardDetailsComponent {
         if (response.success && response.card) {
           this.rfidCard = response.card;
           this.card = this.rfidCard;
-          console.log(this.card.status)
+          logger.log(this.card.status)
           if (this.card && this.card.status) {
             this.isExpired = ['active',].includes(this.card.status);
-            console.log('Card Status:', this.card.status);
-            console.log('Is Expired:', this.isExpired);
+            logger.log('Card Status:', this.card.status);
+            logger.log('Is Expired:', this.isExpired);
           }
         } else {
           this.rfidCard = [];
         }
         this.cd.detectChanges();
-        console.log(this.rfidCard);
+        logger.log(this.rfidCard);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -261,11 +262,11 @@ export class RfidCardDetailsComponent {
           this.recharges = [];
         }
         this.tempRecharges = [...this.recharges];
-        console.log(response.recharge);
+        logger.log(response.recharge);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -279,11 +280,11 @@ export class RfidCardDetailsComponent {
           this.transactions = [];
         }
         this.tempTransactions = [...this.transactions];
-        console.log(response.tansaction);
+        logger.log(response.tansaction);
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -295,18 +296,18 @@ export class RfidCardDetailsComponent {
   getchargingHistory(id: string) {
     this.chargingHistoryService.getChargingByCard(id).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.chargingHistory)) {
-          console.log(data.chargingHistory)
+          logger.log(data.chargingHistory)
           this.chargingHistory = data.chargingHistory;
           this.tempChargingHistory = [...this.chargingHistory];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

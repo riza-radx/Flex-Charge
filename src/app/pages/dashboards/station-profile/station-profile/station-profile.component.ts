@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ChargerStatusService } from 'src/app/services/chargerStatusService/charger-status.service';
 // import { StationProfileService } from 'src/app/services/station-profile/station-profile.service';
@@ -57,10 +58,10 @@ export class StationProfileComponent implements OnInit {
             charger.rated_power = status.rated_power;
             charger.online_time = status.online_time;
             charger.current_power = status.current_power;
-            console.log("Charger Status:", charger);
+            logger.log("Charger Status:", charger);
           }
         },
-        error: (err) => console.error('Error fetching charger status:', err)
+        error: (err) => logger.error('Error fetching charger status:', err)
       });
     });
   }

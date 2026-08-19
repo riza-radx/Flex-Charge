@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargerService } from "../../../../services/chargerService/charger.service";
@@ -63,10 +64,10 @@ export class PartnerchargersComponent implements OnInit {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       const partner_id = parsedCugpCred.partner_id;
-      console.log('User Group ID:', partner_id);
+      logger.log('User Group ID:', partner_id);
       this.getChargers(partner_id);
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
     }
     // this.getChargers()
   }
@@ -74,15 +75,15 @@ export class PartnerchargersComponent implements OnInit {
   getChargers(partnerId: number) {
     this.chargerService.getChargerByPartner(partnerId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.rows = data.charger;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from 'src/app/services/userService/user.service';
@@ -21,8 +22,8 @@ export class CompanydeleteuserComponent implements OnInit {
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['id'];
     this.getUserDetails(this.userId);
-    console.log('Charger ID:', this.userId);
-    console.log('Charger Name:', this.userName);  // Debugging line
+    logger.log('Charger ID:', this.userId);
+    logger.log('Charger Name:', this.userName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class CompanydeleteuserComponent implements OnInit {
   confirmDelete(): void {
     this.userService.deleteUser(this.userId).subscribe({
       next: (response) => {
-        console.log('User deleted successfully:', response);
+        logger.log('User deleted successfully:', response);
         this.closePopupHandler();
         // this.router.navigate(['/users/user']);
       },
       error: (error) => {
-        console.error('Error deleting user:', error);
+        logger.error('Error deleting user:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class CompanydeleteuserComponent implements OnInit {
     this.userService.getUserById(id).subscribe({
       next: (response) => {
         this.userName = response.user.name;
-        console.log('response:', response);
-        console.log('userName:', this.userName);
+        logger.log('response:', response);
+        logger.log('userName:', this.userName);
       },
       error: (error) => {
-        console.error('Error fetching User details:', error);
+        logger.error('Error fetching User details:', error);
       }
     });
   }

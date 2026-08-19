@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { VoucherService } from "../../../../services/voucherService/voucher.service";
 import { Router } from '@angular/router';
@@ -66,7 +67,7 @@ export class RadxcreatevouchersComponent implements OnInit {
     this.minDate = `${year}-${month}-${day}`;
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -100,15 +101,15 @@ export class RadxcreatevouchersComponent implements OnInit {
             this.getUsersByCompany(company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     // this.getCompanies();
@@ -118,10 +119,10 @@ export class RadxcreatevouchersComponent implements OnInit {
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
         this.companies = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -129,12 +130,12 @@ export class RadxcreatevouchersComponent implements OnInit {
   getUsers() {
     this.userService.getAllUsers().subscribe(
       (data: any) => {
-        console.log('users:', data);
+        logger.log('users:', data);
         this.users = data.users;
-        console.log('users:', this.users);
+        logger.log('users:', this.users);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -142,10 +143,10 @@ export class RadxcreatevouchersComponent implements OnInit {
     this.companyService.getCompany(companyId).subscribe(
       (data: any) => {
         this.company = data.company;
-        console.log('Companies:', this.companies);
+        logger.log('Companies:', this.companies);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -155,7 +156,7 @@ export class RadxcreatevouchersComponent implements OnInit {
         this.users = data.users
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -173,13 +174,13 @@ export class RadxcreatevouchersComponent implements OnInit {
 
     this.voucherService.addVoucher(this.voucher).subscribe({
       next: (response) => {
-        console.log('Voucher created successfully:', response);
+        logger.log('Voucher created successfully:', response);
         setTimeout(() => {
           this.router.navigate(['/rates/vouchers']);
         }, 1000);
       },
       error: (error) => {
-        console.error('Error creating voucher:', error);
+        logger.error('Error creating voucher:', error);
         this.errorMessage = this.getErrorMessage(error);
       }
     });

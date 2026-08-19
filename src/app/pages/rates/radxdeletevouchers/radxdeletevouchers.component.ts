@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VoucherService } from 'src/app/services/voucherService/voucher.service';
@@ -21,8 +22,8 @@ export class RadxdeletevouchersComponent implements OnInit {
   ngOnInit(): void {
     this.voucherId = this.route.snapshot.params['id'];
     this.getVoucherDetails(this.voucherId); 
-    console.log('voucherId ID:', this.voucherId);
-    console.log('voucher Name:', this.voucherName);  // Debugging line
+    logger.log('voucherId ID:', this.voucherId);
+    logger.log('voucher Name:', this.voucherName);  // Debugging line
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class RadxdeletevouchersComponent implements OnInit {
   confirmDelete(): void {
     this.voucherService.deleteVoucher(this.voucherId).subscribe({
       next: (response) => {
-        console.log('Voucher deleted successfully:', response);
+        logger.log('Voucher deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/rates/vouchers']);
       },
       error: (error) => {
-        console.error('Error deleting voucher:', error);
+        logger.error('Error deleting voucher:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class RadxdeletevouchersComponent implements OnInit {
     this.voucherService.getVoucher(id).subscribe({
       next: (response) => {
         this.voucherName = response.voucher.serial_no; 
-        console.log('response:',response);  
-        console.log('voucherName:', this.voucherName); 
+        logger.log('response:',response);  
+        logger.log('voucherName:', this.voucherName); 
       },
       error: (error) => {
-        console.error('Error fetching voucher details:', error);
+        logger.error('Error fetching voucher details:', error);
       }
     });
   }

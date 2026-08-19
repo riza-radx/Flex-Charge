@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargingService } from "../../../services/chargingService/charging.service";
@@ -143,7 +144,7 @@ case 'COMPANY_USER':
           this.isUser = true;
           break;
         default:
-          console.error('Unknown user role:', this.userRole);
+          logger.error('Unknown user role:', this.userRole);
           this.router.navigate(['/login']); // Redirect to login or error page
       }
     }
@@ -162,7 +163,7 @@ case 'COMPANY_USER':
       (data) => {
         this.rows = data.charging;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
 
         // Fetch charger details for each charging entry
         this.rows.forEach((row, index) => {
@@ -173,7 +174,7 @@ case 'COMPANY_USER':
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
           this.connectorService.getConnector(row.connector_id).subscribe(
@@ -183,7 +184,7 @@ case 'COMPANY_USER':
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
           this.cardService.getCard(row.card_id).subscribe(
@@ -193,7 +194,7 @@ case 'COMPANY_USER':
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
           this.ratePerDaysService.getRatePerDay(row.rate_per_days_id).subscribe(
@@ -203,7 +204,7 @@ case 'COMPANY_USER':
             },
             (error) => {
               this.errorMessage = error.message;
-              console.log(error);
+              logger.log(error);
             }
           );
         });
@@ -211,7 +212,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
 
       }
     )
@@ -225,7 +226,7 @@ case 'COMPANY_USER':
 
     // Handle WebSocket connection open
     this.socket.onopen = (event) => {
-      console.log('WebSocket is open now.');
+      logger.log('WebSocket is open now.');
       // Optionally send a message to server when connected
       // this.socket.send('Hello Server');
     };
@@ -238,12 +239,12 @@ case 'COMPANY_USER':
 
     // Handle WebSocket errors
     this.socket.onerror = (error) => {
-      console.error('WebSocket Error:', error);
+      logger.error('WebSocket Error:', error);
     };
 
     // Handle WebSocket closure
     this.socket.onclose = (event) => {
-      console.log('WebSocket is closed now.');
+      logger.log('WebSocket is closed now.');
     };
   }
 
@@ -251,9 +252,9 @@ case 'COMPANY_USER':
   sendMessageToWebSocket(message: string) {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(message);
-      console.log('Message sent:', message);
+      logger.log('Message sent:', message);
     } else {
-      console.log('WebSocket is not open.');
+      logger.log('WebSocket is not open.');
     }
   }
 

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { PromoService } from "../../../../services/promoService/promo.service";
 import { Router } from '@angular/router';
@@ -24,11 +25,11 @@ export class CompanycreatepromoComponent {
   onSubmit() {
     this.promoService.addPromo(this.promo).subscribe(
       (response) => {
-        console.log('Promo created successfully', response);
+        logger.log('Promo created successfully', response);
         this.router.navigate(['/promos']);  // Redirect to promos list or another page
       },
       (error) => {
-        console.error('Error creating promo', error);
+        logger.error('Error creating promo', error);
       }
     );
   }

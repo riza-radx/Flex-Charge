@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CardService } from "../../../../services/cardService/card.service";
 import { Router } from '@angular/router';
@@ -144,7 +145,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
     this.minDate = `${year}-${month}-${day}`;
 
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -198,15 +199,15 @@ export class RadxcreaterfidcardComponent implements OnInit {
           //   this.getPartnerMembers(partner_id);
           //   break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     //   this.loadUsers();
@@ -218,7 +219,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
   loadUsers() {
     this.userService.getAllUsers().subscribe(
       response => this.users = response.users,
-      error => console.error('Error fetching users', error)
+      error => logger.error('Error fetching users', error)
     );
   }
 
@@ -253,7 +254,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
         this.loadRatesbyCompany(companyId);
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -261,7 +262,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
   loadUserGroupMembers(userGroupIdId: number) {
     this.userGroupMembersService.getUserGroupMemberByUserGroup(userGroupIdId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.userGroupMembers)) {
@@ -275,13 +276,13 @@ export class RadxcreaterfidcardComponent implements OnInit {
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -291,7 +292,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
@@ -299,10 +300,10 @@ export class RadxcreaterfidcardComponent implements OnInit {
     this.userGroupService.getAllUserGroups().subscribe(
       (data: any) => {
         this.filteredUserGroups = data.userGroup;
-        console.log('Companies:', this.userGroups);
+        logger.log('Companies:', this.userGroups);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -317,7 +318,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
   loadCompaniesByID(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => this.company = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
@@ -326,11 +327,11 @@ export class RadxcreaterfidcardComponent implements OnInit {
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
       (data: any) => {
         this.filteredUserGroups = data.userGroup;
-        console.log('Companies:', this.userGroups);
+        logger.log('Companies:', this.userGroups);
         this.loadRatesbyCompany(companyId);
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -341,7 +342,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
         this.filteredPartners = [...this.partners];
       },
       error => {
-        console.error('Error fetching companies:', error);
+        logger.error('Error fetching companies:', error);
       }
     );
   }
@@ -394,12 +395,12 @@ export class RadxcreaterfidcardComponent implements OnInit {
 
     this.card.multiple_charging_session = this.card.multiple_charging_session ? 'true' : 'false';
 
-    console.log('this.isFormValid()', this.isFormValid());
+    logger.log('this.isFormValid()', this.isFormValid());
     if (this.isFormValid()) {
-      console.log('this.card', this.card);
+      logger.log('this.card', this.card);
       this.cardService.addCard(this.card).subscribe({
         next: (response) => {
-          console.log('RFID Card creation response:', response);
+          logger.log('RFID Card creation response:', response);
 
           if (!response.success) {
             this.errorMessage = 'Failed to create RFID card.';
@@ -414,7 +415,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
           }, 3000);
         },
         error: (error) => {
-          console.error('Error creating RFID Card:', error);
+          logger.error('Error creating RFID Card:', error);
           this.handleError(error);
         }
       });
@@ -456,17 +457,17 @@ export class RadxcreaterfidcardComponent implements OnInit {
 
   isFormValid(): boolean {
     if (!this.card.serialNo || !this.card.blockNo || !this.card.expiryDate || !this.card.status) {
-      console.error('Some required fields are missing.');
+      logger.error('Some required fields are missing.');
       return false;
     }
 
     if (this.createFor === 'user' && !this.card.userId) {
-      console.error('User is required when creating for a user.');
+      logger.error('User is required when creating for a user.');
       return false;
     }
 
     if (this.createFor === 'userGroup' && !this.card.usergrId) {
-      console.error('User Group is required when creating for a user group.');
+      logger.error('User Group is required when creating for a user group.');
       return false;
     }
 
@@ -507,7 +508,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
 
 
     if (!this.user.company) {
-      console.error('Company ID is missing');
+      logger.error('Company ID is missing');
       this.errorMessage = 'Company ID is required.';
       return;
     }
@@ -516,13 +517,13 @@ export class RadxcreaterfidcardComponent implements OnInit {
       ? null : Number(this.user.rate_id);
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
 
         const userId = response.tokenUser?.userId;
         const userName = response.tokenUser?.name;
 
         if (!userId) {
-          console.error('User ID not found in the response');
+          logger.error('User ID not found in the response');
           this.errorMessage = 'An error occurred: User ID is missing.';
           return;
         }
@@ -533,23 +534,23 @@ export class RadxcreaterfidcardComponent implements OnInit {
           type: this.user.role
         };
 
-        console.log('Creating company member:', companyMember);
+        logger.log('Creating company member:', companyMember);
 
         this.companyMemberService.addCompanyMember(companyMember).subscribe(
           (memberResponse) => {
-            console.log('Company member created successfully', memberResponse);
+            logger.log('Company member created successfully', memberResponse);
 
             const newUser = { id: userId, name: userName };
             this.filteredUsers.push(newUser);
 
             this.card.userId = userId;
 
-            console.log('New user added to dropdown:', newUser);
+            logger.log('New user added to dropdown:', newUser);
             this.successMessage = 'User successfully added to company.';
             setTimeout(() => (this.successMessage = ''), 5000);
           },
           (error) => {
-            console.error('Error creating company member', error);
+            logger.error('Error creating company member', error);
             this.handleUserError(error);
           }
         );
@@ -557,7 +558,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
         this.closeUserPopup();
       },
       (error) => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
         this.handleUserError(error);
       }
     );
@@ -566,11 +567,11 @@ export class RadxcreaterfidcardComponent implements OnInit {
   loadRatesbyCompany(companyId: number) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
@@ -602,13 +603,13 @@ export class RadxcreaterfidcardComponent implements OnInit {
     } else {
       // Handle selecting an existing location (if needed)
       const selectedLocationId = selectedValue;
-      console.log('Selected Location ID:', selectedLocationId);
+      logger.log('Selected Location ID:', selectedLocationId);
       // You can add additional logic here for using the selected location ID
     }
   }
   openUserPopup(): void {
     this.showUserPopup = true;
-    console.log(this.showUserPopup);
+    logger.log(this.showUserPopup);
   }
 
   // To close the popup
@@ -621,7 +622,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
     if (!this.userGroup.usergr_name || !this.userGroup.usergr_addres ||
       !this.userGroup.usergr_email || !this.userGroup.usergr_city ||
       !this.userGroup.usergr_country || !this.userGroup.usergr_description) {
-      console.error('Some required fields are missing.');
+      logger.error('Some required fields are missing.');
       return false;
     }
 
@@ -636,13 +637,13 @@ export class RadxcreaterfidcardComponent implements OnInit {
     return true;
   }
   onSubmitUserGroup() {
-    console.log('Company ID:', this.card.companyId);
+    logger.log('Company ID:', this.card.companyId);
     this.userGroup.company_id = this.company.company_id;
 
     this.markFormGroupTouched(this.userGroupForm);
 
     if (this.userGroupForm.invalid) {
-      console.error('User group form is invalid!');
+      logger.error('User group form is invalid!');
       this.errorMessage = 'Please fill out all required fields correctly before submitting.';
       return;
     }
@@ -665,16 +666,16 @@ export class RadxcreaterfidcardComponent implements OnInit {
         formData.append('user_group_logo', this.selectedFile);
       }
 
-      console.log('Submitting user group data:', formData);
+      logger.log('Submitting user group data:', formData);
 
       // Call the userGroupService to create the user group
       this.userGroupService.addUserGroup(formData).subscribe(
         (response: any) => {
-          console.log('User group created successfully!', response);
+          logger.log('User group created successfully!', response);
 
           // Ensure response contains user group details
           if (!response?.userGroup?.usergr_id) {
-            console.error('User group ID is missing from the response');
+            logger.error('User group ID is missing from the response');
             this.errorMessage = 'An error occurred: User group ID is missing.';
             return;
           }
@@ -692,7 +693,7 @@ export class RadxcreaterfidcardComponent implements OnInit {
           this.closeUserGroupPopup();
         },
         (error) => {
-          console.error('Error creating user group:', error);
+          logger.error('Error creating user group:', error);
           this.handleUserGroupError(error);
         }
       );
@@ -722,14 +723,14 @@ export class RadxcreaterfidcardComponent implements OnInit {
       this.openUserGroupPopup();
     } else if (selectedValue) {
       this.card.usergrId = selectedValue;
-      console.log('Selected User Group ID:', selectedValue);
+      logger.log('Selected User Group ID:', selectedValue);
     } else {
-      console.warn('No valid user group selected.');
+      logger.warn('No valid user group selected.');
     }
   }
   openUserGroupPopup(): void {
     this.showUserGroupPopup = true;
-    console.log(this.showUserGroupPopup);
+    logger.log(this.showUserGroupPopup);
     setTimeout(() => {
       const firstInput = document.querySelector('input');
       if (firstInput) {

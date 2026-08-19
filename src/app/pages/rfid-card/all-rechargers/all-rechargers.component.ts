@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardService } from 'src/app/services/cardService/card.service';
@@ -126,7 +127,7 @@ export class AllRechargersComponent {
           this.pendingRechargeIds = new Set(res?.rechargeIds || []);
         },
         (err: any) => {
-          console.warn('S\'mund te merren pending fiscal IDs:', err?.message || err);
+          logger.warn('S\'mund te merren pending fiscal IDs:', err?.message || err);
         }
       );
     }
@@ -241,15 +242,15 @@ export class AllRechargersComponent {
             this.loadUsersByUserGroups(this.usergroup_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
   }
@@ -274,7 +275,7 @@ export class AllRechargersComponent {
       return Object.keys(d).some(key => {
         if (typeof d[key] === 'string') {
           const match = d[key].toLowerCase().includes(val); // Check if the property contains the search value
-          if (match) console.log(`Matched: ${d[key]} for ${key}`); // Debug log for matching values
+          if (match) logger.log(`Matched: ${d[key]} for ${key}`); // Debug log for matching values
           return match;
         }
         return false; // Ignore non-string properties
@@ -300,7 +301,7 @@ export class AllRechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -312,7 +313,7 @@ export class AllRechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -323,7 +324,7 @@ export class AllRechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -335,7 +336,7 @@ export class AllRechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -346,7 +347,7 @@ export class AllRechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -358,7 +359,7 @@ export class AllRechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -369,7 +370,7 @@ export class AllRechargersComponent {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -392,20 +393,20 @@ export class AllRechargersComponent {
                 },
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -428,20 +429,20 @@ export class AllRechargersComponent {
                 },
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -489,14 +490,14 @@ export class AllRechargersComponent {
           this.recharge = [...this.rows];
           this.tempRechargers = [...this.recharge];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.recharge = [];
           this.tempRechargers = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -534,7 +535,7 @@ export class AllRechargersComponent {
     // console.log('filters.recharge_from:', filters.recharge_from);
     this.rechargeService.getRechargesByCompany(this.company_id, filters).subscribe(
       (data: any) => {
-        console.log(data);
+        logger.log(data);
         if (data && Array.isArray(data.recharges)) {
           // console.log("data.recharges", data.recharges)
           this.rows = data.recharges.map((row) => ({
@@ -561,14 +562,14 @@ export class AllRechargersComponent {
           this.recharge = [...this.rows];
           this.tempRechargers = [...this.recharge];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.recharge = [];
           this.tempRechargers = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -625,14 +626,14 @@ export class AllRechargersComponent {
           this.recharge = [...this.rows];
           this.tempRechargers = [...this.recharge];
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.recharge = [];
           this.tempRechargers = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -680,14 +681,14 @@ export class AllRechargersComponent {
           this.recharge = [...this.rows];
           this.tempRechargers = [...this.recharge];
         } else {
-          console.error('Expected an array but got:', recharges);
+          logger.error('Expected an array but got:', recharges);
           this.recharge = [];
           this.tempRechargers = [];
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

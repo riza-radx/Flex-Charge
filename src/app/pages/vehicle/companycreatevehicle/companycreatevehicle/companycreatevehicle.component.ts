@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CompanyService } from 'src/app/services/companyService/company.service';
@@ -78,7 +79,7 @@ export class CompanycreatevehicleComponent {
 
   ngOnInit(): void {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -148,15 +149,15 @@ export class CompanycreatevehicleComponent {
             // this.getCurrencies(company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.loadEvVehicleBrands();
@@ -186,7 +187,7 @@ export class CompanycreatevehicleComponent {
         this.evVehicleBrands = [...new Set(vehicles.map((vehicle: any) => vehicle.brand))];
       },
       (error) => {
-        console.error('Error fetching EV vehicle brands', error);
+        logger.error('Error fetching EV vehicle brands', error);
       }
     );
   }
@@ -198,12 +199,12 @@ export class CompanycreatevehicleComponent {
     if (selectedBrand) {
       this.evVehicleService.getEVVehicleByBrand(selectedBrand).subscribe(
         (response) => {
-          console.log('response: EVVehicle[]', response);
+          logger.log('response: EVVehicle[]', response);
           const vehicles = response.data;
           this.evVehicleModels = [...new Set(vehicles.map((vehicle: any) => vehicle.model))];
           this.evVehicleYears = [];  // Reset years when brand changes
         },
-        (error) => console.error('Error fetching EV vehicle models', error)
+        (error) => logger.error('Error fetching EV vehicle models', error)
       );
     } else {
       this.evVehicleModels = [];
@@ -218,7 +219,7 @@ export class CompanycreatevehicleComponent {
           const vehicles = response.data;
           this.evVehicleYears = [...new Set(vehicles.map((vehicle: any) => vehicle.year))];
         },
-        (error) => console.error('Error fetching EV vehicle years', error)
+        (error) => logger.error('Error fetching EV vehicle years', error)
       );
     } else {
       this.evVehicleYears = [];
@@ -228,43 +229,43 @@ export class CompanycreatevehicleComponent {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       response => this.companies = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
   loadUsers() {
     this.userService.getAllUsers().subscribe(
       response => this.users = response.users,
-      error => console.error('Error fetching users', error)
+      error => logger.error('Error fetching users', error)
     );
   }
   loadUser(userId: number) {
     this.userService.getUserById(userId).subscribe(
-      response => { console.log(response); this.users = [response.user] },
-      error => console.error('Error fetching users', error)
+      response => { logger.log(response); this.users = [response.user] },
+      error => logger.error('Error fetching users', error)
     );
   }
 
   loadUserGroups() {
     this.userGroupService.getAllUserGroups().subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = response.userGroup;
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
   loadCompaniesByCompany(companyId: number) {
     this.companyService.getCompany(companyId).subscribe(
       response => this.company = response.company,
-      error => console.error('Error fetching companies', error)
+      error => logger.error('Error fetching companies', error)
     );
   }
 
   loadUsersByCompany(companyId: number) {
     this.companyMemberService.getCompanyMemberByCompany(companyId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.company_member)) {
@@ -278,13 +279,13 @@ export class CompanycreatevehicleComponent {
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -292,10 +293,10 @@ export class CompanycreatevehicleComponent {
   loadUserGroupsByCompany(companyId: number) {
     this.userGroupService.getUserGroupByCompany(companyId).subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = response.userGroup;
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
   // loadCompaniesByUserGroup(userGroupId: number) {
@@ -308,7 +309,7 @@ export class CompanycreatevehicleComponent {
   loadUsersByUserGroup(userGroupId: number) {
     this.userGroupMembersService.getUserGroupMemberByUserGroup(userGroupId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.userGroupMembers)) {
@@ -322,13 +323,13 @@ export class CompanycreatevehicleComponent {
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -336,27 +337,27 @@ export class CompanycreatevehicleComponent {
   loadUserGroupsByUserGroup(userGroupId: number) {
     this.userGroupService.getUserGroup(userGroupId).subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = [response.userGroup];
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
 
   loadPartnersByPartner(partnerId: number) {
     this.partnerService.getPartner(partnerId).subscribe(
       response => {
-        console.log('User groups response:', response);  // Log the full response
+        logger.log('User groups response:', response);  // Log the full response
         this.usergroups = [response.userGroup];
       },
-      error => console.error('Error fetching usergroups', error)
+      error => logger.error('Error fetching usergroups', error)
     );
   }
 
   loadUsersByPartner(partnerId: number) {
     this.partnerMemberService.getPartnerMemberByPartner(partnerId).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
 
         // Ensure that data contains the company_member array
         if (data && Array.isArray(data.company_member)) {
@@ -370,13 +371,13 @@ export class CompanycreatevehicleComponent {
             }
           });
 
-          console.log('Extracted Users:', this.users);
+          logger.log('Extracted Users:', this.users);
         } else {
-          console.error('Unexpected response structure:', data);
+          logger.error('Unexpected response structure:', data);
         }
       },
       (error) => {
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -407,13 +408,13 @@ export class CompanycreatevehicleComponent {
 
     this.vehicleService.addVehicle(this.vehicle).subscribe({
       next: (response) => {
-        console.log('Vehicle created successfully:', response);
+        logger.log('Vehicle created successfully:', response);
         setTimeout(() => {
           this.router.navigate(['/assets/vehicle']);
         }, 1000);
       },
       error: (error) => {
-        console.error('Error creating vehicle:', error);
+        logger.error('Error creating vehicle:', error);
         this.errorMessage = this.getErrorMessage(error);
       }
     });

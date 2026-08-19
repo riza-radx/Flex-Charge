@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChargingService } from "../../../../services/chargingService/charging.service";
@@ -139,13 +140,13 @@ export class RadxmonitoringComponent implements OnInit {
           case 'USER_GROUP_ADMIN':
             this.isUserGroupAdmin = true;
             this.isUserGroupRole = true;
-            console.log("usergr_id", this.usergr_id)
+            logger.log("usergr_id", this.usergr_id)
             this.getChargingsByUserGroupdId(this.usergr_id);
             break;
           case 'USER_GROUP_MODERATOR':
             this.isUserGroupModerator = true;
             this.isUserGroupRole = true;
-            console.log("usergr_id", this.usergr_id)
+            logger.log("usergr_id", this.usergr_id)
             this.getChargingsByUserGroupdId(this.usergr_id);
             break;
           case 'USER_GROUP_USER':
@@ -169,15 +170,15 @@ export class RadxmonitoringComponent implements OnInit {
             this.getChargingsByUserId(this.user_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -200,7 +201,7 @@ export class RadxmonitoringComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -215,7 +216,7 @@ export class RadxmonitoringComponent implements OnInit {
         this.connectToWebSocket();
       },
       error => {
-        console.log(error);
+        logger.log(error);
       }
     )
   }
@@ -230,7 +231,7 @@ export class RadxmonitoringComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -246,7 +247,7 @@ export class RadxmonitoringComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -263,7 +264,7 @@ export class RadxmonitoringComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -277,7 +278,7 @@ export class RadxmonitoringComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -309,7 +310,7 @@ export class RadxmonitoringComponent implements OnInit {
     if (hasUgId) {
       // Loge nje here per cdo charging qe te shihet ne DevTools — heqim pas verifikimit
       if (!charging.__loggedUgWarn) {
-        console.warn(
+        logger.warn(
           '⚠️ willBeFiscalized — UG data mungon nga API. Charging dump:',
           {
             charging_id: charging.charging_id,
@@ -388,7 +389,7 @@ export class RadxmonitoringComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -402,14 +403,14 @@ export class RadxmonitoringComponent implements OnInit {
       this.startCleanupInterval();
       this.fetchChargingTimes();
     } else {
-      console.error('Error fetching charging records:', response.message);
+      logger.error('Error fetching charging records:', response.message);
     }
   }
 
   fetchUserNames(): void {
     this.chargerService.getCharger(this.chargings).subscribe({
       next: (names) => this.userNames = names,
-      error: (err) => console.error('Error fetching user names:', err)
+      error: (err) => logger.error('Error fetching user names:', err)
     });
   }
 
@@ -420,7 +421,7 @@ export class RadxmonitoringComponent implements OnInit {
           // console.log(serial)
           this.cardSerial[index] = serial.card.serial_no; // Ensure this.cardSerial is an array
         },
-        error: (err) => console.error('Error fetching card serial:', err)
+        error: (err) => logger.error('Error fetching card serial:', err)
       });
     });
   }
@@ -433,7 +434,7 @@ export class RadxmonitoringComponent implements OnInit {
           this.userDetails[index] = data.user.name;
           this.userEmail[index] = data.user.email;
         },
-        error: (err) => console.error('Error fetching user name data:', err)
+        error: (err) => logger.error('Error fetching user name data:', err)
       });
     });
   }
@@ -446,10 +447,10 @@ export class RadxmonitoringComponent implements OnInit {
             started_time: new Date(charging.strted_time)
           }));
         } else {
-          console.error('Error fetching charging times:', data.message);
+          logger.error('Error fetching charging times:', data.message);
         }
       },
-      error: (err) => console.error('Error fetching charging times:', err)
+      error: (err) => logger.error('Error fetching charging times:', err)
     });
   }
 
@@ -481,10 +482,10 @@ export class RadxmonitoringComponent implements OnInit {
         if (response.success) {
           this.chargingDetails = response.chargings;
         } else {
-          console.error('Error fetching charging details:', response.message);
+          logger.error('Error fetching charging details:', response.message);
         }
       },
-      error: (err) => console.error('Error fetching charging details:', err)
+      error: (err) => logger.error('Error fetching charging details:', err)
     });
   }
 
@@ -513,15 +514,15 @@ export class RadxmonitoringComponent implements OnInit {
             next: (result: any) => {
             },
             error: (error) => {
-              console.error('Error stopping transaction:', error);
+              logger.error('Error stopping transaction:', error);
             },
           });
         } else {
-          console.error('OCPP ID not found for the given charger.');
+          logger.error('OCPP ID not found for the given charger.');
         }
       },
       error: (error) => {
-        console.error('Error fetching charger details:', error);
+        logger.error('Error fetching charger details:', error);
       }
     });
 
@@ -533,7 +534,7 @@ export class RadxmonitoringComponent implements OnInit {
     this.socket = new WebSocket(socketUrl);
 
     this.socket.onopen = () => {
-      console.log('WebSocket connection established.');
+      logger.log('WebSocket connection established.');
     };
 
     this.socket.onmessage = (event) => {
@@ -560,16 +561,16 @@ export class RadxmonitoringComponent implements OnInit {
           }
         }
       } else {
-        console.warn('Unknown WebSocket message type:', data.type);
+        logger.warn('Unknown WebSocket message type:', data.type);
       }
     };
 
     this.socket.onclose = () => {
-      console.log('WebSocket connection closed.');
+      logger.log('WebSocket connection closed.');
     };
 
     this.socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      logger.error('WebSocket error:', error);
     };
   }
 
@@ -647,7 +648,7 @@ export class RadxmonitoringComponent implements OnInit {
           if (!(isExpired && isFinished)) {
             updatedList.push(item);
           } else {
-            console.log(`Removing charging ID ${item.id}`);
+            logger.log(`Removing charging ID ${item.id}`);
           }
         });
 
@@ -656,7 +657,7 @@ export class RadxmonitoringComponent implements OnInit {
         localStorage.setItem('stoppedChargingData', JSON.stringify(updatedList));
 
       }, (error) => {
-        console.error('Error fetching charging status:', error);
+        logger.error('Error fetching charging status:', error);
       });
 
     }, 60 * 1000); // Run every 1 minute

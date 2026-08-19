@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VoucherService } from "../../../../services/voucherService/voucher.service";
@@ -54,14 +55,14 @@ export class VoucherdetailsComponent implements OnInit {
   getVoucher() {
     this.voucherService.getVoucher(this.id).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         if (data && data.voucher) {
           this.voucher = data.voucher; // Make sure data.voucher is an object
         }
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }

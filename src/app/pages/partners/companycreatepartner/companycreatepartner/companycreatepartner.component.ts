@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component } from '@angular/core';
 import { PartnerService } from "../../../../services/partnerService/partner.service";
 import { Router } from '@angular/router';
@@ -26,11 +27,11 @@ export class CompanycreatepartnerComponent {
   onSubmit() {
     this.partnerService.createPartner(this.partner).subscribe(
       response => {
-        console.log('Partner created successfully!', response);
+        logger.log('Partner created successfully!', response);
         this.router.navigate(['/partners']);
       },
       error => {
-        console.error('Error creating partner:', error);
+        logger.error('Error creating partner:', error);
       }
     );
   }

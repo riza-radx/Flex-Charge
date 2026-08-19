@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../services/authService/auth.service';
 import { PartnerMemberService } from '../../../../services/partner-member.service';
@@ -57,7 +58,7 @@ export class PartnermembersComponent {
     if (cugpCred) {
       const parsedCugpCred = JSON.parse(cugpCred);
       this.companyId = parsedCugpCred.company_id;
-      console.log('Company ID:', this.companyId);
+      logger.log('Company ID:', this.companyId);
       this.getCompanyDetails(this.companyId);
     }
     this.loadCompanies();
@@ -66,9 +67,9 @@ export class PartnermembersComponent {
     this.route.paramMap.subscribe(params => {
       this.partnerId = params.get('id');
       if (!this.partnerId) {
-        console.error('Partner ID not found in the route');
+        logger.error('Partner ID not found in the route');
       } else {
-        console.log('Partner ID:', this.partnerId);
+        logger.log('Partner ID:', this.partnerId);
       }
     });
   }
@@ -76,33 +77,33 @@ export class PartnermembersComponent {
   loadCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data) => {
-        console.log("Fetched companies:", data.company);
+        logger.log("Fetched companies:", data.company);
         this.companies = data.company.filter(company => company.is_whitelabel === 'false');
       },
       (error) => {
-        console.log("Error fetching companies:", error);
+        logger.log("Error fetching companies:", error);
       }
     );
   }
   loadRatesbyCompany(companyId: string) {
     this.rateService.getRateByCompany(companyId).subscribe(
       (data) => {
-        console.log("Fetched rates:", data.rate);
+        logger.log("Fetched rates:", data.rate);
         this.rates = data.rate;
       },
       (error) => {
-        console.log("Error fetching rates:", error);
+        logger.log("Error fetching rates:", error);
       }
     );
   }
   getCompanyDetails(companyId: string) {
     this.companyService.getCompany(companyId).subscribe(
       (company) => {
-        console.log('Company:', company);
+        logger.log('Company:', company);
         this.companyName = company.company.company_name;
       },
       (error) => {
-        console.error('Error fetching company details', error);
+        logger.error('Error fetching company details', error);
       }
     );
   }
@@ -116,10 +117,10 @@ export class PartnermembersComponent {
     this.user.company = this.companyId;
     this.user.rate_id = this.user.rate_id === 0 ? null : this.user.rate_id;
     this.user.created_date = new Date().toISOString();
-    console.log('this.user', this.user);
+    logger.log('this.user', this.user);
     this.authService.userRegisterFromDashboard(this.user).subscribe(
       (response: any) => {
-        console.log('User created successfully', response);
+        logger.log('User created successfully', response);
         // const userId = response.id;  // Assume the API returns the user ID in the response
         const userId = response.tokenUser.userId;
 
@@ -142,11 +143,11 @@ export class PartnermembersComponent {
 
         this.partnerMemberService.addPartnerMember(partnerMember).subscribe(
           (memberResponse) => {
-            console.log('Partner member created successfully', memberResponse);
+            logger.log('Partner member created successfully', memberResponse);
             this.router.navigate([`/users/user/${userId}`]);
           },
           (error) => {
-            console.error('Error creating partner member', error);
+            logger.error('Error creating partner member', error);
 
             // Custom error messages based on possible cases
             if (error.status === 400) {
@@ -160,7 +161,7 @@ export class PartnermembersComponent {
         );
       },
       (error) => {
-        console.error('Error creating user', error);
+        logger.error('Error creating user', error);
 
         // Custom frontend error messages (ignoring backend response)
         if (error.status === 400) {

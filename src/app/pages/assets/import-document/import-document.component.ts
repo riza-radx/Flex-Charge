@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { DocumentService } from "../../../services/documentService/document.service";
 import { CompanyService } from "../../../services/companyService/company.service";
@@ -74,7 +75,7 @@ export class ImportDocumentComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -90,7 +91,7 @@ export class ImportDocumentComponent implements OnInit, OnDestroy {
         this.selectedUserGroup = params['usergr_id'] || '';
         this.selectedUser = params['user_id'] || '';
       });
-      console.log(`Selected IDs - Company: ${this.selectedCompany}, Partner: ${this.selectedPartner}, UserGroup: ${this.selectedUserGroup}, User: ${this.selectedUser}`);
+      logger.log(`Selected IDs - Company: ${this.selectedCompany}, Partner: ${this.selectedPartner}, UserGroup: ${this.selectedUserGroup}, User: ${this.selectedUser}`);
 
       if (this.userRole) {
         switch (this.userRole) {
@@ -156,15 +157,15 @@ case 'COMPANY_USER':
             // this.getCurrencies(company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
 
@@ -184,7 +185,7 @@ case 'COMPANY_USER':
       autoProcessQueue: false,
       init: function () {
         this.on("addedfile", (file) => {
-          console.log('Added file:', file);
+          logger.log('Added file:', file);
           // Create file icon
           var fileExtension = file.name.split('.').pop().toLowerCase();
           var fileType = '';
@@ -234,24 +235,24 @@ case 'COMPANY_USER':
                 formData.append('partnerId', self.selectedPartner || '');
                 formData.append('userGroupId', self.selectedUserGroup || '');
                 formData.append('userId', self.selectedUser || '');
-                console.log('Company Role: Setting partnerId, userGroupId, and userId only');
+                logger.log('Company Role: Setting partnerId, userGroupId, and userId only');
               } else if (self.isPartnerRole) {
                 formData.append('companyId', self.selectedCompany || '');
                 formData.append('userGroupId', self.selectedUserGroup || '');
                 formData.append('userId', self.selectedUser || '');
-                console.log('Partner Role: Setting companyId, userGroupId, and userId only');
+                logger.log('Partner Role: Setting companyId, userGroupId, and userId only');
               } else if (self.isUserGroupRole) {
                 formData.append('companyId', self.selectedCompany || '');
                 formData.append('partnerId', self.selectedPartner || '');
                 formData.append('userId', self.selectedUser || '');
-                console.log('User Group Role: Setting companyId, partnerId, and userId only');
+                logger.log('User Group Role: Setting companyId, partnerId, and userId only');
               } else if (self.isUserRole) {
                 formData.append('companyId', self.selectedCompany || '');
                 formData.append('partnerId', self.selectedPartner || '');
                 formData.append('userGroupId', self.selectedUserGroup || '');
-                console.log('User Role: Setting companyId, partnerId, and userGroupId only');
+                logger.log('User Role: Setting companyId, partnerId, and userGroupId only');
               } else {
-                console.error('No role is selected or undefined roles encountered.');
+                logger.error('No role is selected or undefined roles encountered.');
               }
           
               // Always append the file
@@ -259,14 +260,14 @@ case 'COMPANY_USER':
           
               // Debug FormData
               formData.forEach((value, key) => {
-                console.log(`${key}: ${value}`);
+                logger.log(`${key}: ${value}`);
               });
           
               // Send the document data to the API using Angular service
               self.documentService.addDocumentx(formData).subscribe(
                 response => {
-                  console.log('Document added successfully:', response);
-                  console.log(`Selected IDs - Company: ${self.selectedCompany}, Partner: ${self.selectedPartner}, UserGroup: ${self.selectedUserGroup}, User: ${self.selectedUser}`);
+                  logger.log('Document added successfully:', response);
+                  logger.log(`Selected IDs - Company: ${self.selectedCompany}, Partner: ${self.selectedPartner}, UserGroup: ${self.selectedUserGroup}, User: ${self.selectedUser}`);
                   if (self.selectedCompany){
                     self.router.navigate([`/companies/company/${self.selectedCompany}`]);
                   }
@@ -282,11 +283,11 @@ case 'COMPANY_USER':
                   this.removeFile(file);
                 },
                 error => {
-                  console.error('Error uploading document:', error);
+                  logger.error('Error uploading document:', error);
                 }
               );
             } else {
-              console.log(`File ${file.name} cannot be reprocessed.`);
+              logger.log(`File ${file.name} cannot be reprocessed.`);
             }
           });
 
@@ -304,13 +305,13 @@ case 'COMPANY_USER':
         });
 
         this.on("success", function (file, response) {
-          console.log(`Uploaded: ${file.name}`);
-          console.log("Server response:", response);
+          logger.log(`Uploaded: ${file.name}`);
+          logger.log("Server response:", response);
           this.removeFile(file);  // Optionally remove file preview after successful upload
         });
 
         this.on("error", function (file, errorMessage) {
-          console.error(`Error uploading file: ${file.name}`, errorMessage);
+          logger.error(`Error uploading file: ${file.name}`, errorMessage);
         });
       }
     });
@@ -324,7 +325,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -336,7 +337,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -347,7 +348,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -359,7 +360,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -370,7 +371,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -382,7 +383,7 @@ case 'COMPANY_USER':
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
@@ -402,20 +403,20 @@ case 'COMPANY_USER':
                 user: user // Include user details in the member object
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -435,20 +436,20 @@ case 'COMPANY_USER':
                 user: user.name // Include user details in the member object
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }
@@ -468,20 +469,20 @@ case 'COMPANY_USER':
                 user: user.name // Include user details in the member object
               };
             } catch (error) {
-              console.error('Error fetching user for member:', member, error);
+              logger.error('Error fetching user for member:', member, error);
               return { ...member, user: null }; // In case of error, return member without user details
             }
           }));
         } else {
-          console.error('Expected an array but got:', data);
+          logger.error('Expected an array but got:', data);
           this.users = [];
         }
 
-        console.log(this.users); // Check the final combined data structure
+        logger.log(this.users); // Check the final combined data structure
       },
       (error) => {
         this.errorMessage = error.message;
-        console.error('Error fetching company members:', error);
+        logger.error('Error fetching company members:', error);
       }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { RechargeService } from "../../../../services/rechargeService/recharge.service";
 import { ActivatedRoute, Router } from '@angular/router';
@@ -37,7 +38,7 @@ export class AddradxusergrouprechargesComponent {
 
   ngOnInit() {
     this.usergrId = Number(this.route.snapshot.paramMap.get('id'));
-    console.log("this.usergrId", this.usergrId)
+    logger.log("this.usergrId", this.usergrId)
     if (!this.usergrId) {
       this.errorMessage = 'usergrId ID is missing!';
     } else {
@@ -52,12 +53,12 @@ export class AddradxusergrouprechargesComponent {
       (response) => {
         if (response.success && response.paymentMethod) {
           this.paymentMethods = response.paymentMethod;
-          console.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
+          logger.log("this.paymentMethods = response.paymentMethod;", this.paymentMethods);
           this.populatePaymentMethodOptions();
         }
       },
       (error) => {
-        console.log('Error fetching payment methods for user:', error);
+        logger.log('Error fetching payment methods for user:', error);
       }
     );
   }
@@ -89,12 +90,12 @@ export class AddradxusergrouprechargesComponent {
       topup_note: (this.rechargeForm.value.topup_note || '').trim()    // 🆕 Arsyeja e TopUp-it
     };
   
-    console.log("rechargeData", rechargeData);
-    console.log("this.usergrId", this.usergrId);
+    logger.log("rechargeData", rechargeData);
+    logger.log("this.usergrId", this.usergrId);
   
     this.rechargeService.addRechargeForUserGroupAdmin(this.usergrId, rechargeData).subscribe(
       (response) => {
-        console.log('Recharge successful:', response);
+        logger.log('Recharge successful:', response);
         // window.open(response.retreiveOrder, '_blank');
         this.router.navigate(['/users/usergroup', this.usergrId]);
       },
@@ -115,6 +116,6 @@ export class AddradxusergrouprechargesComponent {
     } else {
       this.errorMessage = 'Failed to process the recharge. Please try again.';
     }
-    console.error('Recharge error:', error);
+    logger.error('Recharge error:', error);
   }
 }

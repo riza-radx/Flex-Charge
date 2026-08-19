@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from '@angular/router'; // Import Router for navigation
 import { AuthService } from "../../../../services/authService/auth.service";
@@ -59,7 +60,7 @@ export class VerifyemailComponent implements OnInit {
       // };
       this.authService.verifyEmail(this.email, this.token).subscribe(
         (response: any) => {
-          console.log(response);
+          logger.log(response);
           // this.emailSentMessage = 'An email is sent to your email. Please check your email you provided.'; // Set success message
           // this.errorMessage = ''; // Clear any error message
           this.router.navigate(['/login']);
@@ -67,7 +68,7 @@ export class VerifyemailComponent implements OnInit {
         (error) => {
           this.errorMessage = error.error.message || 'An error occurred. Please try again.';
           this.emailSentMessage = ''; // Clear any success message if there's an error
-          console.error('Reset Password error', error);
+          logger.error('Reset Password error', error);
         }
       );
     }

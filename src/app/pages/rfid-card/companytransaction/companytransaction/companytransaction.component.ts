@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { TransactionService } from "../../../../services/transactionService/transaction.service";
 import { Router } from '@angular/router';
@@ -68,12 +69,12 @@ export class CompanytransactionComponent implements OnInit {
       (data) => {
         this.rows = data.transaction;
         this.temp = [...this.rows];
-        console.log(this.rows);
+        logger.log(this.rows);
         
       },
       (error) => {
         this.errorMessage = error.message
-        console.log(error);
+        logger.log(error);
         
       }
     )

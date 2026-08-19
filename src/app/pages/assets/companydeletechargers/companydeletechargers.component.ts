@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChargerService } from 'src/app/services/chargerService/charger.service';
@@ -21,8 +22,8 @@ export class CompanydeletechargersComponent implements OnInit {
   ngOnInit(): void {
     this.chargerId = this.route.snapshot.params['id'];
     this.getChargerDetails(this.chargerId);
-    console.log('Charger ID:', this.chargerId);
-    console.log('Charger Name:', this.chargerName);
+    logger.log('Charger ID:', this.chargerId);
+    logger.log('Charger Name:', this.chargerName);
   }
 
   openDeletePopup(row: any): void {
@@ -34,12 +35,12 @@ export class CompanydeletechargersComponent implements OnInit {
   confirmDelete(): void {
     this.chargerService.deleteCharger(this.chargerId).subscribe({
       next: (response) => {
-        console.log('Charger deleted successfully:', response);
+        logger.log('Charger deleted successfully:', response);
         this.closePopupHandler();
         this.router.navigate(['/assets/chargers']);
       },
       error: (error) => {
-        console.error('Error deleting charger:', error);
+        logger.error('Error deleting charger:', error);
       }
     });
   }
@@ -48,11 +49,11 @@ export class CompanydeletechargersComponent implements OnInit {
     this.chargerService.getCharger(id).subscribe({
       next: (response) => {
         this.chargerName = response.charger.charger_name;
-        console.log('response:', response);
-        console.log('Charger Name:', this.chargerName);
+        logger.log('response:', response);
+        logger.log('Charger Name:', this.chargerName);
       },
       error: (error) => {
-        console.error('Error fetching charger details:', error);
+        logger.error('Error fetching charger details:', error);
       }
     });
   }

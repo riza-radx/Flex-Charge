@@ -1,3 +1,4 @@
+import { logger } from '@core/logger';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VehicleService } from "../../../services/vehicleService/vehicle.service";
@@ -71,7 +72,7 @@ export class VehicleDetailsComponent {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.userRole = localStorage.getItem('userRole');
-    console.log('User Role:', this.userRole);
+    logger.log('User Role:', this.userRole);
 
     const cugpCred = localStorage.getItem('cugpCred');
     if (cugpCred) {
@@ -144,15 +145,15 @@ export class VehicleDetailsComponent {
             // this.getCurrencies(company_id);
             break;
           default:
-            console.error('Unknown user role:', this.userRole);
+            logger.error('Unknown user role:', this.userRole);
             this.router.navigate(['/login']); // Redirect to login or error page
         }
       } else {
-        console.error('User role is not defined.');
+        logger.error('User role is not defined.');
         this.router.navigate(['/login']); // Redirect to login or error page
       }
     } else {
-      console.error('No cugpCred found in localStorage');
+      logger.error('No cugpCred found in localStorage');
       this.router.navigate(['/login']); // Redirect to login or error page
     }
     this.getVehicle();
@@ -164,12 +165,12 @@ export class VehicleDetailsComponent {
   getVehicle() {
     this.vehicleService.getVehicle(this.id).subscribe(
       (data) => {
-        console.log(data);
+        logger.log(data);
         this.vehicle = data.vehicle;
       },
       (error) => {
         this.errorMessage = error.message;
-        console.log(error);
+        logger.log(error);
       }
     );
   }
